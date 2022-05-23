@@ -25,8 +25,8 @@ namespace ITS_Middleware.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<Models.User>> Register(UserInput req)
         {
-            user.Username = req.Username;
-            user.Password = GetSHA256(req.Password);
+            user.nombre = req.nombre;
+            user.password = GetSHA256(req.password);
 
             return Ok(user);
         }
@@ -35,13 +35,13 @@ namespace ITS_Middleware.Controllers
         [HttpPost("auth")]
         public async Task<ActionResult<string>> Auth(UserInput req)
         {
-            if (user.Username != req.Username)
+            if (user.nombre != req.nombre)
             {
-                return BadRequest("User Not found");
+                return BadRequest("Usuario incorrecto");
             }
-            if (user.Password != GetSHA256(req.Password))
+            if (user.password != GetSHA256(req.password))
             {
-                return BadRequest("Incorrect password");
+                return BadRequest("Contraseña incorrecta");
             }
 
             string token = GenerateToken(user);
@@ -55,7 +55,7 @@ namespace ITS_Middleware.Controllers
         {
             List<Claim> claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, user.Username, user.Password),
+                new Claim(ClaimTypes.Name, user.nombre, user.password),
             };
 
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
