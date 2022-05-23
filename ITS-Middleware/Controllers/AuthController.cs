@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Authorization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace ITS_Middleware.Controllers
@@ -26,7 +24,7 @@ namespace ITS_Middleware.Controllers
         public async Task<ActionResult<Models.User>> Register(UserInput req)
         {
             user.Username = req.Username;
-            user.Password = GetSHA256(req.Password);
+            user.Password = Tools.Encrypt.GetSHA256(req.Password);
 
             return Ok(user);
         }
@@ -39,7 +37,7 @@ namespace ITS_Middleware.Controllers
             {
                 return BadRequest("User Not found");
             }
-            if (user.Password != GetSHA256(req.Password))
+            if (user.Password != Tools.Encrypt.GetSHA256(req.Password))
             {
                 return BadRequest("Incorrect password");
             }
@@ -74,16 +72,6 @@ namespace ITS_Middleware.Controllers
         }
 
 
-        //Encriptar contraseña
-        public static string GetSHA256(string str)
-        {
-            SHA256 sha256 = SHA256.Create();
-            ASCIIEncoding encoding = new ASCIIEncoding();
-            byte[] stream = null;
-            StringBuilder sb = new StringBuilder();
-            stream = sha256.ComputeHash(encoding.GetBytes(str));
-            for (int i = 0; i < stream.Length; i++) sb.AppendFormat("{0:x2}", stream[i]);
-            return sb.ToString();
-        }
+        
     }
 }
