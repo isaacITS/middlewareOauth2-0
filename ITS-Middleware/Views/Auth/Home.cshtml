@@ -16,21 +16,75 @@ else
             <a class="btn btn-danger" asp-controller="auth" asp-action="logout">Logout</a>
         </div>
     </div>
+
+
+
     <div class="row">
         <div class="col-md-6">
             <h3>Usuarios</h3>
             <form>
+
                 <label for="nombre" class="label-form">Nombre:</label>
                 <input class="form-control" id="nombre" placeholder="Nombre"/>
-            </form>
+
+
+                <label for="fecha" class="label-form">fecha de alta:</label>
+                <input class="form-control" id="nombre" placeholder="fecha de alta"/>
+
+                <label for="fecha" class="label-form">puesto:</label>
+                <input class="form-control" id="puesto" placeholder="puesto"/>
+
+                <label for="fecha" class="label-form">username</label>
+                <input class="form-control" id="username" placeholder="username"/>
+
+                <label for="fecha" class="label-form">password</label>
+              <input class="form-control" type="password" name="pass" id="pass" placeholder="*****" />
+
+              <a class="btn btn-primary" asp-controller="auth" asp-action="activar">activar</a>
+              <a class="btn btn-danger" asp-controller="auth" asp-action="dsactivar">desactivar</a>
+
+                </form>
+
         </div>
         <div class="col-md-6">
             <h3>Proyectos</h3>
             <form>
+
+                <label for="fecha" class="label-form">usuario:</label>
+                <input class="form-control" id="usuario" placeholder="usuario"/>
+
+                <label for="fecha" class="label-form">password</label>
+              <input class="form-control" type="password" name="pass" id="pass" placeholder="•••••" />
+
                 <label for="pr-nombre" class="label-form">Nombre de proyecto:</label>
                 <input class="form-control" id="pr-nombre" placeholder="Nombre de proyecto"/>
-            </form>
-        </div>
+
+                <label for="pr-nombre" class="label-form">consulta</label>
+                <input class="form-control" id="consulta" placeholder="consulta"/>
+
+                    <label for="autenticacion" class="label-form">la autenticacion:</label>
+                 <select class="form-select" aria-label="autenticacion">
+                 <option selected>autenticacion</option>
+                 <option value="1">Cifrado de autenticación SSO</option>
+                  <option value="2">Cifrado de autenticación Oauth 2.0</option>
+
+     </select>
+
+            
+                <label for="cifrado" class="label-form">tipo de cifrado:</label>
+                 <select class="form-select" aria-label="cifrado">
+                 <option selected>tipo de cifrado</option>
+                 <option value="1">sha-256</option>
+                  <option value="2">aes-256</option>
+
+               
+
+     </select>
+                  
+</form>
+         
+
     </div>
+</div>
 </div>
 }
