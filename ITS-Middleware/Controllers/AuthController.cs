@@ -1,77 +1,54 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using ITS_Middleware.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
+
 
 namespace ITS_Middleware.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class AuthController : ControllerBase
+    [Route("auth")]
+    public class AuthController : Controller
     {
-        public static Models.User user = new Models.User();
-        private readonly IConfiguration config;
+        private AccountService accountService;
 
-
-        public AuthController(IConfiguration configuraiton)
+        public AuthController(AccountService acntService)
         {
-            config = configuraiton;
+            accountService = acntService;
         }
 
-        [HttpPost("register")]
-        public async Task<ActionResult<Models.User>> Register(UserInput req)
+        [Route("")]
+        [Route("~/")]
+        [Route("login")]
+        public IActionResult Login()
         {
-            user.Username = req.Username;
-            user.Password = Tools.Encrypt.GetSHA256(req.Password);
-
-            return Ok(user);
+            return View();
         }
 
-        //Autenticacion de usaurio
-        [HttpPost("auth")]
-        public async Task<ActionResult<string>> Auth(UserInput req)
+        [HttpPost("login")]
+        public IActionResult Login(string email, string pass)
         {
-            if (user.Username != req.Username)
+            var user = accountService.Login(email, pass);
+            if (user == null)
             {
-                return BadRequest("User Not found");
+                ViewBag.msg = "Invalid Email or Password";
+                return View("login");
             }
-            if (user.Password != Tools.Encrypt.GetSHA256(req.Password))
-            {
-                return BadRequest("Incorrect password");
-            }
-
-            string token = GenerateToken(user);
-            return Ok(token);
+            HttpContext.Session.SetString("userEmail", email);
+            return RedirectToAction("home");
         }
 
-
-
-        //Generar token
-        private string GenerateToken(Models.User user)
+        [Route("home")]
+        public IActionResult Home()
         {
-            List<Claim> claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.Username, user.Password),
-            };
-
-            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
-                config.GetSection("appSettings:token").Value));
-
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-
-            var token = new JwtSecurityToken(
-                claims: claims,
-                expires: DateTime.Now.AddHours(1),
-                signingCredentials: creds);
-
-            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-
-            return jwt;
+            ViewBag.email = HttpContext.Session.GetString("userEmail");
+            return View("home");
         }
 
 
-        
+        [Route("logout")]
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Remove("userEmail");
+            return View("login");
+        }
     }
 }
