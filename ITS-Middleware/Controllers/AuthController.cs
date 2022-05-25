@@ -20,6 +20,12 @@ namespace ITS_Middleware.Controllers
         [Route("login")]
         public IActionResult Login()
         {
+            if (HttpContext.Session.GetString("userEmail") != null)
+            {
+                
+                ViewBag.email = HttpContext.Session.GetString("userEmail");
+                return View("home");        
+            }
             return View();
         }
 
@@ -39,14 +45,19 @@ namespace ITS_Middleware.Controllers
         [Route("home")]
         public IActionResult Home()
         {
-            ViewBag.email = HttpContext.Session.GetString("userEmail");
-            return View("home");
+            if (HttpContext.Session.GetString("userEmail") != null)
+            {
+                ViewBag.email = HttpContext.Session.GetString("userEmail");
+                return View("home");
+            }
+            return View("login");
         }
 
 
         [Route("logout")]
         public IActionResult Logout()
         {
+            Console.Write("Ok method");
             HttpContext.Session.Remove("userEmail");
             return View("login");
         }

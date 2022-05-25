@@ -1,16 +1,11 @@
-﻿@if (ViewBag.email == null)
-{
-    <h1 class="text-danger">Login to access</h1>
-}
-else
-{
+﻿
     <div class="container">
     <div class="row">
         <div class="col-md-4">
             <h1>Portal de Configuración</h1>
         </div>
         <div class="col-md-4">
-            <p>Hola @ViewBag.email </p>
+            <p>Hola @ViewBag.email</p>
         </div>
         <div class="col-md-4">
             <a class="btn btn-danger" asp-controller="auth" asp-action="logout">Logout</a>
@@ -33,4 +28,3 @@ else
         </div>
     </div>
 </div>
-}
