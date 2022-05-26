@@ -2,15 +2,15 @@
 
 namespace ITS_Middleware.Services
 {
-    public class AccountServiceImpl : AccountService
+    public class AccountServiceImpl //: AccountService
     {
-        private List<User> account;
+       /* private List<UserModel> account;
 
         public AccountServiceImpl()
         {
-            account = new List<User>
+            account = new List<UserModel>
             {
-                new User
+                new UserModel
                 {
                     email = "admin@admin.com",
                     password = "admin123"
@@ -18,9 +18,10 @@ namespace ITS_Middleware.Services
             };
         }
 
-        public User Login(string email, string password)
+        public UserModel Login(string email, string password)
         {
             return account.SingleOrDefault(account => account.email == email && account.password == password);
         }
+       */
     }
 }

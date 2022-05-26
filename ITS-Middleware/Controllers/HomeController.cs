@@ -13,15 +13,11 @@ namespace ITS_Middleware.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public IActionResult Auth()
         {
-            return View();
+            return View("auth/home");
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

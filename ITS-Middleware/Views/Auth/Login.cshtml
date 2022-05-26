@@ -1,8 +1,14 @@
 ﻿<h1>Login</h1>
-@ViewBag.msg
+
+@if(ViewBag.msg != null) {
+    <div class="alert alert-danger" role="alert">
+        @ViewBag.msg
+    </div>
+}
+
 <form asp-controller="auth" asp-action="login" method="post">
-    Email: <input class="form-control" type="email" name="email" id="email" />
-    Password: <input class="form-control" type="password" name="pass" id="pass" />
+    Email: <input class="form-control" type="email" name="email" id="email" required/>
+    Password: <input class="form-control" type="password" name="pass" id="pass" required/>
     <br/>
     <input type="submit" class="btn btn-dark" value="Login"/>
 </form>

@@ -12,16 +12,25 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ITS_Middleware</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Auth" asp-action="home">ITS_Middleware</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
+                    @if (ViewBag.email == null)
+                    {
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Auth" asp-action="login">Login</a>
                         </li>
+                    }
+                    else
+                    {
+                        <li>
+                            <a class="nav-link text-danger" asp-controller="auth" asp-action="logout">Logout</a>
+                        </li>
+                    }
                     </ul>
                 </div>
             </div>

@@ -1,15 +1,24 @@
+using ITS_Middleware.Models;
 using ITS_Middleware.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+IWebHostEnvironment _env = builder.Environment;
+
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddControllers();
+builder.Services.AddSession();
 
-builder.Services.AddSession(options =>
+//builder.Services.AddScoped<AccountService, AccountServiceImpl>();
+
+builder.Configuration.AddJsonFile($"appsettings.{_env.EnvironmentName}.json", optional: true, reloadOnChange: true);
+
+builder.Services.AddDbContext<UsersContext>(options =>
 {
-
+    options.UseSqlServer(builder.Configuration.GetConnectionString("connection"));
 });
-builder.Services.AddScoped<AccountService, AccountServiceImpl>();
 
 var app = builder.Build();
 
@@ -33,6 +42,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Auth}/{action=Login}/{id?}");
 
 app.Run();
