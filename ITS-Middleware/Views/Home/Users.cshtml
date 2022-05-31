@@ -1,0 +1,41 @@
+﻿@using ITS_Middleware.Models.Entities
+@using System.Linq.Expressions
+@model List<Usuario>
+
+@{
+    ViewData["Title"] = "Usuarios";
+}
+
+<h1>Usuarios</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Puesto</th>
+            <th>Fecha de Alta</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (Usuario user in Model) 
+    {
+        <tr>
+            <td>@user.Nombre</td>
+            <td>@user.Email</td>
+            <td>@user.Puesto</td>
+            <td>@user.FechaAlta</td>
+            <td>
+                <button class="btn btn-success">
+                    <span class="material-icons">edit</span>
+                </button>
+                <button class="btn btn-danger">
+                    <span class="material-icons">delete</span>
+                </button>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+

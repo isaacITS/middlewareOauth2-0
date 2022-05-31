@@ -1,28 +1,59 @@
 ﻿using ITS_Middleware.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
+
 
 namespace ITS_Middleware.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        public MiddlewareDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(MiddlewareDbContext master, ILogger<HomeController> logger)
         {
+            _context = master;
             _logger = logger;
         }
 
-        public IActionResult Auth()
+        public IActionResult Home()
         {
-            return View("auth/home");
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("userEmail")))
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+            ViewBag.email = HttpContext.Session.GetString("userEmail");
+            return View();
+        }
+
+        public IActionResult Proyects()
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("userEmail")))
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+            ViewBag.email = HttpContext.Session.GetString("userEmail");
+            return View();
         }
 
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        [HttpGet] //Get all Users
+        public IActionResult Users()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("userEmail")))
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+            try
+            {
+                var data = _context.Usuarios.OrderBy(u => u.Id).ToList();
+                ViewBag.email = HttpContext.Session.GetString("userEmail");
+                return View(data);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message.ToString().Trim());
+                return Json("Error");
+            }
         }
     }
 }

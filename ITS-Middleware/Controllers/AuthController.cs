@@ -1,85 +1,92 @@
 ﻿using ITS_Middleware.Models;
-using ITS_Middleware.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ITS_Middleware.Tools;
 
 
 namespace ITS_Middleware.Controllers
 {
-    [Route("auth")]
     public class AuthController : Controller
     {
-        //private AccountService accountService;
+        private readonly ILogger<AuthController> _logger;
+        public MiddlewareDbContext _context;
 
-        public UsersContext _context;
-
-        public AuthController(/*AccountService acntService*/ UsersContext master)
+        public AuthController(MiddlewareDbContext master, ILogger<AuthController> logger)
         {
-            this._context = master;
-            //accountService = acntService;
+            _context = master;
+            _logger = logger;
         }
 
 
-        /*      Routes      */
-        [Route("")]
-        [Route("~/")]
-        [Route("login")]
         public IActionResult Login()
         {
-            if (HttpContext.Session.GetString("userEmail") != null)
+            try
             {
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userEmail")))
+                {
+                    return View();
+                }
                 ViewBag.email = HttpContext.Session.GetString("userEmail");
-                return View("home");
+                return RedirectToAction("Home", "Home");
             }
-            return View();
-        }
-
-
-        [Route("home")]
-        public IActionResult Home()
-        {
-            if (HttpContext.Session.GetString("userEmail") != null)
+            catch (Exception ex)
             {
-                ViewBag.email = HttpContext.Session.GetString("userEmail");
-                return View("home");
+                Console.WriteLine(ex.Message.ToString().Trim());
+                return Json("Error");
             }
-            return View("login");
         }
-
 
 
 
         /*      Methods Requests        */
         //Autenticacion de credenciales
-        [HttpPost("login")]
+        [HttpPost]
         public IActionResult Login(string email, string pass)
         {
-            var user = _context.Users.Where(foundUser => foundUser.Email == email);
-            //var user = accountService.Login(email, pass);
-            if (user.Any())
+            try
             {
-                if (user.Where(s => s.Email == email && s.Pass == pass).Any())
+                var user = _context.Usuarios.Where(foundUser => foundUser.Email == email);
+                if (user.Any())
                 {
-                    HttpContext.Session.SetString("userEmail", email);
-                    return RedirectToAction("home");
+                    if (user.Where(s => s.Email == email && s.Pass == pass).Any())
+                    {
+                        HttpContext.Session.SetString("userEmail", email);
+                        return RedirectToAction("Home", "Home");
+                    }
+                    else
+                    {
+                        ViewBag.msg = "Invalid Password";
+                        return View("Login");
+                    }
                 }
-                else
-                {
-                    ViewBag.msg = "Invalid Password";
-                    return View("login");
-                }
+                ViewBag.msg = "User not found";
+                return View("Login");
             }
-            ViewBag.msg = "User not found";
-            return View("login");
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message.ToString().Trim());
+
+                return Json("Error");
+            }
+            
         }
+
+        
 
 
         //Clear session
-        [Route("logout")]
         public IActionResult Logout()
         {
-            HttpContext.Session.Remove("userEmail");
-            return View("login");
+            try
+            {
+                HttpContext.Session.Remove("userEmail");
+                return View("Login");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message.ToString().Trim());
+                return Json("Error");
+            }
         }
     }
 }

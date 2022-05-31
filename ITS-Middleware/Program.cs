@@ -15,7 +15,7 @@ builder.Services.AddSession();
 
 builder.Configuration.AddJsonFile($"appsettings.{_env.EnvironmentName}.json", optional: true, reloadOnChange: true);
 
-builder.Services.AddDbContext<UsersContext>(options =>
+builder.Services.AddDbContext<MiddlewareDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("connection"));
 });
