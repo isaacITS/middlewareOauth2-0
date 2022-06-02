@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ITS_Middleware.Tools;
-
+using ITS_Middleware.Models.Entities;
 
 namespace ITS_Middleware.Controllers
 {
@@ -68,10 +68,10 @@ namespace ITS_Middleware.Controllers
 
                 return Json("Error");
             }
-            
+
         }
 
-        
+
 
 
         //Clear session

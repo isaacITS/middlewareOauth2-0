@@ -17,22 +17,38 @@ namespace ITS_Middleware.Controllers
 
         public IActionResult Home()
         {
-            if (string.IsNullOrEmpty(HttpContext.Session.GetString("userEmail")))
+            try
             {
-                return RedirectToAction("Login", "Auth");
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userEmail")))
+                {
+                    return RedirectToAction("Login", "Auth");
+                }
+                ViewBag.email = HttpContext.Session.GetString("userEmail");
+                return View();
             }
-            ViewBag.email = HttpContext.Session.GetString("userEmail");
-            return View();
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message.ToString().Trim());
+                return Json("Error");
+            }
         }
 
         public IActionResult Proyects()
         {
-            if (string.IsNullOrEmpty(HttpContext.Session.GetString("userEmail")))
+            try
             {
-                return RedirectToAction("Login", "Auth");
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userEmail")))
+                {
+                    return RedirectToAction("Login", "Auth");
+                }
+                ViewBag.email = HttpContext.Session.GetString("userEmail");
+                return View();
             }
-            ViewBag.email = HttpContext.Session.GetString("userEmail");
-            return View();
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message.ToString().Trim());
+                return Json("Error");
+            }
         }
 
 

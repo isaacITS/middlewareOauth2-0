@@ -11,14 +11,18 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddControllers();
 builder.Services.AddSession();
 
-//builder.Services.AddScoped<AccountService, AccountServiceImpl>();
+
+DefaultUserService setAdmin = new DefaultUserService();
+//setAdmin.CreateAdmin();
 
 builder.Configuration.AddJsonFile($"appsettings.{_env.EnvironmentName}.json", optional: true, reloadOnChange: true);
+ITS_Middleware.Constants.Vars.CONNECTION_STRING = builder.Configuration.GetSection("ApplicationSettings:ConnectionStrings:DefaultConnection").Value.ToString();
 
 builder.Services.AddDbContext<MiddlewareDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("connection"));
+    options.UseSqlServer(ITS_Middleware.Constants.Vars.CONNECTION_STRING);
 });
+
 
 var app = builder.Build();
 
@@ -38,7 +42,9 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+
 app.UseAuthorization();
+
 
 app.MapControllerRoute(
     name: "default",

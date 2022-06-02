@@ -20,3 +20,13 @@ body {
 .material-icons {
     font-size: 11pt;
 }
+
+body .table thead {
+    background-color: #022338;
+    color: #fff;
+}
+
+body .table tbody tr td {
+    background-color: #093C5D;
+    color: #fff;
+}
