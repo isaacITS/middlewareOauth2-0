@@ -6,46 +6,36 @@
     <title>ITS Middleware @ViewData["Title"]</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/ITS_Middleware.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css" />
     <link rel="stylesheet" href="~/css/ModalStyle.css"/>
+    <link rel="shortcut icon" href="~/icon-page.png" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-controller="Home" asp-action="Home">ITS Middleware</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                    @if (string.IsNullOrEmpty(ViewBag.email))
-                    {
-                        <li class="nav-item">
-                            Login
-                        </li>
-                    }
-                    else
-                    {
-                        <li>
-                            <a class="nav-link" asp-controller="Home" asp-action="Proyects">Administrador de proyectos</a>
-                        </li>
-                        <li>
-                            <a class="nav-link" asp-controller="Home" asp-action="Users">Administrador de usuarios</a>
-                        </li>
-                        <li>
-                            <a class="nav-link text-danger" asp-controller="Auth" asp-action="Logout">Logout</a>
-                        </li>
-                    }
-                    </ul>
-                </div>
+    
+        <header>
+            <div class="nav-bar-top">
+                <h3>ITS Middleware</h3>
+                <a id="btn-active-menu" title="Abrir Menu" onclick="actionSlideMenu()"><span id="btn-icon-menu" class="material-icons md-48">menu</span></a>
             </div>
-        </nav>
-    </header>
+            <nav id="sidenav">
+                <div class="sidenav">
+                    @if (string.IsNullOrEmpty(ViewBag.email)) 
+                    {
+                        <a style="color: #d3d3d3;"><span class="material-icons md-36">login</span>&nbsp;Inicia Sesión</a>
+                    } else 
+                    {
+                        <a asp-controller="Home" asp-action="Projects"><span class="material-icons md-36">widgets</span>&nbsp;Proyectos</a>
+                        <a asp-controller="Home" asp-action="Users"><span class="material-icons md-36">manage_accounts</span>&nbsp;Usuarios</a>
+                        <a asp-controller="Auth" asp-action="Logout"><span class="material-icons md-36">logout</span>&nbsp;Cerrar Sesión</a>
+                    }
+                </div>
+            </nav>
+        </header>   
+    <br><br><br>
+
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()

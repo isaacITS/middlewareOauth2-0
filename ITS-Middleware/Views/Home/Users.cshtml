@@ -8,7 +8,7 @@
 
 <h1 class="text-center">Administrador de Usuarios</h1>
 <br />
-<button type="button" class="btn btn-outline-primary" onclick="openNewModal()">Agregar Usaurio</button>
+<a asp-controller="Home" asp-action="RegisterUser" class="btn btn-outline-primary">Agregar Usuario</a>
 
 <table class="table table-striped" style="width:100%">
     <thead>
@@ -30,12 +30,12 @@
             <td>@user.Puesto</td>
             <td>@user.FechaAlta.ToShortDateString()</td>
             <td>
-                <button class="btn btn-success" onclick="openModal()">
+                <a class="btn btn-success" asp-controller="Home" asp-route-id="@user.Id" asp-action="EditUser">
                     <span class="material-icons">edit</span>
-                </button>
-                <button class="btn btn-danger">
+                </a>
+                <a class="btn btn-danger" asp-controller="Home" asp-action="DeleteUser" asp-route-id="@user.Id">
                     <span class="material-icons">delete</span>
-                </button>
+                </a>
             </td>
             <td>
                     @if(user.Activo)

@@ -27,7 +27,7 @@ namespace ITS_Middleware.Controllers
                     return View();
                 }
                 ViewBag.email = HttpContext.Session.GetString("userEmail");
-                return RedirectToAction("Home", "Home");
+                return RedirectToAction("Projects", "Home");
             }
             catch (Exception ex)
             {
@@ -48,18 +48,18 @@ namespace ITS_Middleware.Controllers
                 var user = _context.Usuarios.Where(foundUser => foundUser.Email == email);
                 if (user.Any())
                 {
-                    if (user.Where(s => s.Email == email && s.Pass == pass).Any())
+                    if (user.Where(s => s.Email == email && s.Pass == Encrypt.GetSHA256(pass)).Any())
                     {
                         HttpContext.Session.SetString("userEmail", email);
-                        return RedirectToAction("Home", "Home");
+                        return RedirectToAction("Projects", "Home");
                     }
                     else
                     {
-                        ViewBag.msg = "Invalid Password";
+                        ViewBag.msg = "Contraseña Incorrecta";
                         return View("Login");
                     }
                 }
-                ViewBag.msg = "User not found";
+                ViewBag.msg = "Usuario no registrado";
                 return View("Login");
             }
             catch (Exception ex)

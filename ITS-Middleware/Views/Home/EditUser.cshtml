@@ -1,0 +1,33 @@
+﻿@model ITS_Middleware.Models.Entities.Usuario
+
+@{
+    Layout = "_Layout";
+}
+
+<h1>EDITAR USUARIOS</h1>
+
+
+<hr />
+<div class="col-md-6">
+
+    <form asp-controller="Home" asp-action="UpdateUser" method="post">
+        <label for="nombre" class="label-form">Nombre:</label>
+        <input class="form-control" name="Nombre" asp-for="Nombre" id="nombre" placeholder="Nombre"/>
+
+        <label for="puesto" class="label-form">puesto:</label>
+        <input class="form-control" id="puesto" asp-for="Puesto" name="puesto" placeholder="Puesto" />
+
+        <label for="email" class="label-form">Correo electrónico</label>
+        <input class="form-control" id="email" asp-for="Email" name="email" placeholder="Correo electrónico" />
+        
+        <label for="fecha" class="label-form">password</label>
+        <input class="form-control" type="password" asp-for="Pass" name="Pass" id="pass" placeholder="*****" />
+
+        <input class="form-control" type="hidden"  asp-for="FechaAlta" name="FechaAlta" id="fechaAlta" placeholder="dd/mm/yyyy" />
+        <br/>
+        <button class="btn btn-success" type="submit" value="EditarUsuario">Actualizar</button>
+      
+
+    </form>
+
+</div>
