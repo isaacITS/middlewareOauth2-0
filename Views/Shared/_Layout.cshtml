@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ITS Middleware @ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" href="~/css/ModalStyle.css"/>
+    <link rel="shortcut icon" href="~/icon-page.png" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    
+        <header>
+            <div class="nav-bar-top">
+                <h3>ITS Middleware</h3>
+                <a id="btn-active-menu" title="Abrir Menu" onclick="actionSlideMenu()"><span id="btn-icon-menu" class="material-icons md-48">menu</span></a>
+            </div>
+            <nav id="sidenav">
+                <div class="sidenav">
+                    @if (string.IsNullOrEmpty(ViewBag.email)) 
+                    {
+                        <a style="color: #d3d3d3;"><span class="material-icons md-36">login</span>&nbsp;Inicia Sesión</a>
+                    } else 
+                    {
+                        <a asp-controller="Home" asp-action="Projects"><span class="material-icons md-36">widgets</span>&nbsp;Proyectos</a>
+                        <a asp-controller="Home" asp-action="Users"><span class="material-icons md-36">manage_accounts</span>&nbsp;Usuarios</a>
+                        <a asp-controller="Auth" asp-action="Logout"><span class="material-icons md-36">logout</span>&nbsp;Cerrar Sesión</a>
+                    }
+                </div>
+            </nav>
+        </header>   
+    <br><br><br>
+
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2022 - ITS_Middleware - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

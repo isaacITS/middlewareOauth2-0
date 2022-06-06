@@ -1,0 +1,139 @@
+﻿@using ITS_Middleware.Models.Entities
+@using System.Linq.Expressions
+@model List<Usuario>
+
+@{
+    ViewData["Title"] = "Usuarios";
+}
+
+<h1 class="text-center">Administrador de Usuarios</h1>
+<br />
+<a asp-controller="Home" asp-action="RegisterUser" class="btn btn-outline-primary">Agregar Usuario</a>
+
+<table class="table table-striped" style="width:100%">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Puesto</th>
+            <th>Fecha de Alta</th>
+            <th>Acciones</th>
+            <th>Estatus</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (Usuario user in Model) 
+    {
+        <tr>
+            <td>@user.Nombre</td>
+            <td>@user.Email</td>
+            <td>@user.Puesto</td>
+            <td>@user.FechaAlta.ToShortDateString()</td>
+            <td>
+                <a class="btn btn-success" asp-controller="Home" asp-route-id="@user.Id" asp-action="EditUser">
+                    <span class="material-icons">edit</span>
+                </a>
+                <a class="btn btn-danger" asp-controller="Home" asp-action="DeleteUser" asp-route-id="@user.Id">
+                    <span class="material-icons">delete</span>
+                </a>
+            </td>
+            <td>
+                    @if(user.Activo)
+                    {
+                        <div class="form-check form-switch" id="toggle-status">
+                            <input class="form-check-input" type="checkbox" id="togBtn" checked>
+                        </div>
+                    } else
+                    {
+                        <div class="form-check form-switch" id="toggle-status">
+                            <input class="form-check-input" type="checkbox" id="togBtn">
+                        </div>
+                    }
+             </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+
+
+
+<div id="editModal" class="modal">
+  <div class="modal-content">
+      <span class="material-icons close" onclick="closeModal()">highlight_off</span>
+      <h3 class="text-center">Editar Usaurio</h3>
+    <form>
+        <div class="row">
+            <div class="col-md-6">
+                <label for="name" class="form-label">Nombre del usuario:</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="Nombre" required/>
+            </div>
+            <div class="col-md-6">
+                <label for="puesto" class="form-label">Puesto del usuario:</label>
+                <input type="text" class="form-control" id="puesto" name="puesto" placeholder="Puesto" required/>
+            </div>
+            <div class="col-md-6">
+                <label for="email" class="form-label">Email del usuario:</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Email" required/>
+            </div>
+            <div class="col-md-6">
+                <label for="password" class="form-label">Contraseña del usuario:</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Contraseña" required/>
+            </div>
+        </div>
+        <br/>
+        <div class="text-center">
+            <div class="row">
+                <div class="col">
+                    <input type="submit" class="btn btn-success" value="Actualizar"/>
+                </div>
+                <div class="col">
+                    <input type="reset" class="btn btn-outline-danger" value="Limpiar"/>
+                </div>
+            </div>
+        </div>
+    </form>
+  </div>
+</div>
+
+<div id="newUserModal" class="modal">
+  <div class="modal-content">
+      <span class="material-icons close" onclick="closeModal()">highlight_off</span>
+      <h3 class="text-center">Agregar Usaurio</h3>
+    <form>
+        <div class="row">
+            <div class="col-md-6">
+                <label for="name" class="form-label">Nombre del usuario:</label>
+                <input type="text" class="form-control" id="newName" name="newName" placeholder="Nombre" required/>
+            </div>
+            <div class="col-md-6">
+                <label for="puesto" class="form-label">Puesto del usuario:</label>
+                <input type="text" class="form-control" id="newPuesto" name="newPuesto" placeholder="Puesto" required/>
+            </div>
+            <div class="col-md-6">
+                <label for="email" class="form-label">Email del usuario:</label>
+                <input type="email" class="form-control" id="newEmail" name="newEmail" placeholder="Email" required/>
+            </div>
+            <div class="col-md-6">
+                <label for="password" class="form-label">Contraseña del usuario:</label>
+                <input type="password" class="form-control" id="newPassword" name="newPassword" placeholder="Contraseña" required/>
+            </div>
+        </div>
+        <br/>
+        <div class="text-center">
+            <div class="row">
+                <div class="col">
+                    <input type="submit" class="btn btn-success" value="Guardar"/>
+                </div>
+                <div class="col">
+                    <input type="reset" class="btn btn-outline-danger" value="Limpiar"/>
+                </div>
+            </div>
+        </div>
+    </form>
+  </div>
+</div>
+
+@section scripts {
+    <script src="~/js/DataTable.js" type="text/javascript"></script>
+}
