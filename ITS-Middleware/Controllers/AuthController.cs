@@ -69,8 +69,14 @@ namespace ITS_Middleware.Controllers
             try
             {
                 var user = _context.Usuarios.Where(foundUser => foundUser.Email == email);
+                
                 if (user.Any())
                 {
+                    if (user.Where(u => u.Activo == false).Any())
+                    {
+                        ViewBag.msg = "El usaurio esta inactivo";
+                        return View("Login");
+                    }
                     if (user.Where(s => s.Email == email && s.Pass == Encrypt.GetSHA256(pass)).Any())
                     {
                         HttpContext.Session.SetString("userEmail", email);
