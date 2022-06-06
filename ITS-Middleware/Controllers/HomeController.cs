@@ -3,6 +3,8 @@ using ITS_Middleware.Models;
 using ITS_Middleware.Models.Entities;
 using ITS_Middleware.Tools;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 
 namespace ITS_Middleware.Controllers
@@ -47,7 +49,7 @@ namespace ITS_Middleware.Controllers
                 {
                     return RedirectToAction("Login", "Auth");
                 }
-                var data = _context.Usuarios.OrderBy(u => u.Id).ToList();
+                var data = _context.Usuarios.Where(u => u.Id >= 2).ToList();
                 ViewBag.email = HttpContext.Session.GetString("userEmail");
                 return View(data);
             }
@@ -64,7 +66,7 @@ namespace ITS_Middleware.Controllers
             {
                 if (string.IsNullOrEmpty(HttpContext.Session.GetString("userEmail")))
                 {
-                    RedirectToAction("Login", "Auth");
+                    return RedirectToAction("Login", "Auth");
                 }
                 ViewBag.email = HttpContext.Session.GetString("userEmail");
                 return View();
@@ -77,14 +79,21 @@ namespace ITS_Middleware.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> RegisterUser([Bind("Nombre,FechaAlta,Puesto,Email,Pass")] Usuario user)
+        public async Task<IActionResult> RegisterUser([Bind("Nombre,FechaAlta,Puesto,Email,Pass,Activo")] Usuario user)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
+                    var getEmail = _context.Usuarios.FirstOrDefault(u => u.Email == user.Email);
+                    if (getEmail != null)
+                    {
+                        ViewBag.msg = $"El Correo {user.Email} ya esta registrado";
+                        return View(user);
+                    }
                     var passHashed = Encrypt.GetSHA256(user.Pass);
                     user.Pass = passHashed;
+                    user.Activo = true;
                     _context.Add(user);
 
                     await _context.SaveChangesAsync();
@@ -109,18 +118,22 @@ namespace ITS_Middleware.Controllers
                 if (string.IsNullOrEmpty(HttpContext.Session.GetString("userEmail")))
                 {
                     return RedirectToAction("Login", "Auth");
-                }
-                if (id == null)
+                } else
                 {
-                    return NotFound();
+                    ViewBag.email = HttpContext.Session.GetString("userEmail");
+                    if (id == null || id == 1)
+                    {
+                        ViewBag.msg = "No se ingresó un ID válido o no puede ser editado";
+                        return View();
+                    }
+                    var usuario = await _context.Usuarios.FindAsync(id);
+                    if (usuario == null)
+                    {
+                        ViewBag.msg = "El ID no coincide con un usuario registrado";
+                        return View();
+                    }
+                    return View(usuario);
                 }
-                var usuario = await _context.Usuarios.FindAsync(id);
-                if (usuario == null)
-                {
-                    return NotFound();
-                }
-                ViewBag.email = HttpContext.Session.GetString("userEmail");
-                return View(usuario);
             }
             catch (Exception ex) 
             {
@@ -130,37 +143,74 @@ namespace ITS_Middleware.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateUser(int id, [Bind("Id,Nombre,Pass,FechaAlta,Puesto,Email")] Usuario user)
+        public async Task<IActionResult> UpdateUser(Usuario user)
         {
-            if (id != user.Id)
+            try
             {
-                return NotFound();
+                user.Pass = SetPassword(user);
+                var local = _context.Set<Usuario>().Local.FirstOrDefault(entry => entry.Id.Equals(user.Id));
+                if (local != null) _context.Entry(local).State = EntityState.Detached;
+                _context.Entry(user).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Users", "Home");
             }
-
-            if (ModelState.IsValid)
+            catch (Exception ex)
             {
-                try
-                {
-                    var passHash = Encrypt.GetSHA256(user.Pass);
-                    user.Pass = passHash;
+                Console.WriteLine(ex.Message.ToString());
+                throw;
+            }
+        }
 
-                    _context.Update(user);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction("Users", "Home");
-                }
-                catch (DbUpdateConcurrencyException)
+        /*UPDATE USER STATUS*/
+        public IActionResult UpdateStatus(int? id)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userEmail")))
                 {
-                    if (!UsuarioExiste(user.Id))
+                    return RedirectToAction("Login", "Auth");
+                }
+                else
+                {
+                    ViewBag.email = HttpContext.Session.GetString("userEmail");
+                    if (id == null || id == 1)
                     {
-                        return NotFound();
+                        ViewBag.msg = "No se ingresó un ID válido o no puede ser activado/desactivado";
+                        return View("ChangeStatus");
                     }
-                    else
+                    var usuario = _context.Usuarios.Find(id);
+                    if (usuario == null)
                     {
-                        throw;
+                        ViewBag.msg = "El ID no coincide con un usuario registrado";
+                        return View("ChangeStatus");
                     }
+                    return View("ChangeStatus", usuario);
                 }
             }
-            return View("EditUser", user);
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message.ToString());
+                throw;
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateStatus(Usuario user)
+        {
+            try
+            {
+                user.Activo = !user.Activo;
+                var local = _context.Set<Usuario>().Local.FirstOrDefault(entry => entry.Id.Equals(user.Id));
+                if (local != null) _context.Entry(local).State = EntityState.Detached;
+                _context.Entry(user).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Users", "Home");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message.ToString());
+                throw;
+            }
         }
 
 
@@ -168,17 +218,33 @@ namespace ITS_Middleware.Controllers
         //Eliminar usuario
         public async Task<IActionResult> DeleteUser(int? id)
         {
-            if (id == null)
+            try
             {
-                return NotFound();
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userEmail")))
+                {
+                    return RedirectToAction("Login", "Auth");
+                } else
+                {
+                    ViewBag.email = HttpContext.Session.GetString("userEmail");
+                    if (id == null || id == 1)
+                    {
+                        ViewBag.msg = "No se ingresó un ID válido o no puede ser eliminado";
+                        return View();
+                    }
+                    var usuario = await _context.Usuarios.FindAsync(id);
+                    if (usuario == null)
+                    {
+                        ViewBag.msg = "El ID No coincide con un usuario registrado";
+                        return View();
+                    }
+                    return View(usuario);
+                }
             }
-            var usuario = await _context.Usuarios.FindAsync(id);
-            if (usuario == null)
+            catch (Exception ex)
             {
-                return NotFound();
+                Console.WriteLine(ex.Message.ToString());
+                throw;
             }
-            ViewBag.email = HttpContext.Session.GetString("userEmail");
-            return View(usuario);
         }
 
 
@@ -186,14 +252,22 @@ namespace ITS_Middleware.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteUser(int id)
         {
-            var user = await _context.Usuarios.FindAsync(id);
-            if (user != null)
+            try
             {
-                _context.Usuarios.Remove(user);
-                await _context.SaveChangesAsync();
+                var user = await _context.Usuarios.FindAsync(id);
+                if (user != null)
+                {
+                    _context.Usuarios.Remove(user);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction("Users", "Home");
+                }
                 return RedirectToAction("Users", "Home");
             }
-            return RedirectToAction("Users", "Home");
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message.ToString());
+                throw;
+            }
         }
 
 
@@ -201,6 +275,25 @@ namespace ITS_Middleware.Controllers
         private bool UsuarioExiste(int id)
         {
             return _context.Usuarios.Any(e => e.Id == id);
+        }
+
+        private string SetPassword(Usuario userModel)
+        {
+            if (string.IsNullOrEmpty(userModel.Pass))
+            {
+                var getUsrData = _context.Usuarios.FirstOrDefault(u => u.Id == userModel.Id);
+                if (getUsrData != null) return getUsrData.Pass;
+            }
+            return Tools.Encrypt.GetSHA256(userModel.Pass);
+        }
+
+        private bool SetStatus(Usuario userModel)
+        {
+            if(userModel.Activo)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

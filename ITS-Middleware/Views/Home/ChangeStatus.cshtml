@@ -1,6 +1,6 @@
 ﻿@model ITS_Middleware.Models.Entities.Usuario
 
-<h1>ELIMINAR USUARIO</h1>
+<h1>ACTUALIZAR ESTATUS</h1>
 @if(ViewBag.msg != null) {
     <div class="text-center">
         <div class="alert alert-warning" role="alert">
@@ -9,11 +9,13 @@
     </div>
 } else
 {
-<h4>¿Estas seguro de eliminar?</h4>
 <hr />
-<form asp-controller="Home" asp-action="DeleteUser" method="post">
+<form asp-controller="Home" asp-action="UpdateStatus" method="post">
     <div class="col-md-6">
         <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="FechaAlta">
+        <input type="hidden" asp-for="Pass">
+        <input type="hidden" asp-for="Activo">
         <div class="mb-3">
             <label for="nombre" class="label-form">Nombre:</label>
             <input class="form-control" name="Nombre" asp-for="Nombre" readonly/>
@@ -29,7 +31,7 @@
         <br />
         <div class="row g-2">
             <div class="col-md-6">
-                <button class="btn btn-danger" type="submit" value="Eliminar"><span class="material-icons">delete_forever</span>&nbsp;Eliminar</button>
+                <button class="btn btn-danger" type="submit"><span class="material-icons">update</span>&nbsp;Actualizar</button>
             </div>
             <div class="col-md-6">
                 <a asp-controller="Home" asp-action="Users" class="btn btn-outline-primary"><span class="material-icons">undo</span>&nbsp;Cancelar</a>

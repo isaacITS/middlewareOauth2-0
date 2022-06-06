@@ -7,10 +7,15 @@
 }
 
 <h1 class="text-center">Administrador de Usuarios</h1>
-<br />
-<a asp-controller="Home" asp-action="RegisterUser" class="btn btn-outline-primary">Agregar Usuario</a>
 
-<table class="table table-striped" style="width:100%">
+<hr />
+<br />
+<a asp-controller="Home" asp-action="RegisterUser" class="btn btn-outline-primary">
+    <span class="material-icons">person_add</span>&nbsp;Agregar Usuario
+</a>
+<br/>
+
+<table class="table table-hover" style="width:100%">
     <thead>
         <tr>
             <th>Nombre</th>
@@ -24,34 +29,30 @@
     <tbody>
     @foreach (Usuario user in Model) 
     {
-        <tr>
-            <td>@user.Nombre</td>
-            <td>@user.Email</td>
-            <td>@user.Puesto</td>
-            <td>@user.FechaAlta.ToShortDateString()</td>
-            <td>
-                <a class="btn btn-success" asp-controller="Home" asp-route-id="@user.Id" asp-action="EditUser">
-                    <span class="material-icons">edit</span>
-                </a>
-                <a class="btn btn-danger" asp-controller="Home" asp-action="DeleteUser" asp-route-id="@user.Id">
-                    <span class="material-icons">delete</span>
-                </a>
-            </td>
-            <td>
-                    @if(user.Activo)
-                    {
-                        <div class="form-check form-switch" id="toggle-status">
-                            <input class="form-check-input" type="checkbox" id="togBtn" checked>
-                        </div>
-                    } else
-                    {
-                        <div class="form-check form-switch" id="toggle-status">
-                            <input class="form-check-input" type="checkbox" id="togBtn">
-                        </div>
-                    }
-             </td>
-        </tr>
-    }
+            <tr>
+                <td>@user.Nombre</td>
+                <td>@user.Email</td>
+                <td>@user.Puesto</td>
+                <td>@user.FechaAlta.ToShortDateString()</td>
+                <td>
+                    <a class="btn btn-success" asp-controller="Home" asp-route-id="@user.Id" asp-action="EditUser">
+                        <span class="material-icons">edit</span>
+                    </a>
+                    <a class="btn btn-danger" asp-controller="Home" asp-action="DeleteUser" asp-route-id="@user.Id">
+                        <span class="material-icons">delete</span>
+                    </a>
+                </td>
+                <td>
+                    <a style="cursor: pointer;" asp-controller="Home" asp-action="UpdateStatus" asp-route-id="@user.Id">
+                        @if (user.Activo) {
+                            <span class="material-icons md-36">toggle_on</span>
+                        } else {
+                            <span class="material-icons md-36">toggle_off</span>
+                        }
+                    </a>
+                 </td>
+                </tr>
+        }
     </tbody>
 </table>
 

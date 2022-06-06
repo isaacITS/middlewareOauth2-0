@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ITS_Middleware.Tools;
 using ITS_Middleware.Models.Entities;
+using ITS_Middleware.Services;
 
 namespace ITS_Middleware.Controllers
 {
@@ -22,6 +23,28 @@ namespace ITS_Middleware.Controllers
         {
             try
             {
+                var adminEmail = "admin.its@seekers.com";
+                var checkAdmin = _context.Usuarios.FirstOrDefault(u => u.Email == adminEmail);
+                if (checkAdmin != null)
+                {
+                    Console.WriteLine("Usuario Principal y ha sido registrado");
+                }
+                else
+                {
+                    Usuario usuario = new()
+                    {
+                        Activo = true,
+                        Nombre = "Administrador",
+                        FechaAlta = DateTime.Now,
+                        Email = adminEmail,
+                        Pass = Tools.Encrypt.GetSHA256("admin123"),
+                        Puesto = "Administracion"
+                    };
+                    _context.Add(usuario);
+                    _context.SaveChanges();
+                    Console.WriteLine("Usaurio principal registrado");
+                }
+
                 if (string.IsNullOrEmpty(HttpContext.Session.GetString("userEmail")))
                 {
                     return View();
@@ -51,6 +74,8 @@ namespace ITS_Middleware.Controllers
                     if (user.Where(s => s.Email == email && s.Pass == Encrypt.GetSHA256(pass)).Any())
                     {
                         HttpContext.Session.SetString("userEmail", email);
+                        ViewBag.msg = null;
+                        ViewBag.alertType = null;
                         return RedirectToAction("Projects", "Home");
                     }
                     else

@@ -5,6 +5,11 @@ html {
     font-family: 'Roboto';
 }
 
+.btn span {
+    margin: 0;
+}
+
+
 @media (min-width: 768px) {
     html {
         font-size: 16px;
@@ -107,6 +112,7 @@ header .nav-bar-top {
     #btn-active-menu:hover {
         color: #df1847;
     }
+
 
 @media screen and (max-height: 450px) {
     .sidenav {

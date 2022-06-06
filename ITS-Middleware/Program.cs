@@ -12,9 +12,6 @@ builder.Services.AddControllers();
 builder.Services.AddSession();
 
 
-DefaultUserService setAdmin = new DefaultUserService();
-//setAdmin.CreateAdmin();
-
 builder.Configuration.AddJsonFile($"appsettings.{_env.EnvironmentName}.json", optional: true, reloadOnChange: true);
 ITS_Middleware.Constants.Vars.CONNECTION_STRING = builder.Configuration.GetSection("ApplicationSettings:ConnectionStrings:DefaultConnection").Value.ToString();
 
@@ -22,6 +19,7 @@ builder.Services.AddDbContext<MiddlewareDbContext>(options =>
 {
     options.UseSqlServer(ITS_Middleware.Constants.Vars.CONNECTION_STRING);
 });
+
 
 
 var app = builder.Build();
@@ -50,4 +48,16 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Auth}/{action=Login}/{id?}");
 
+
 app.Run();
+
+
+public class DefaultAdmin
+{
+    public MiddlewareDbContext _context;
+
+    public DefaultAdmin(MiddlewareDbContext master)
+    {
+        _context = master;
+    }
+}
