@@ -1,52 +1,6 @@
 ﻿﻿<style>
-
 body{
-        background-color: #093C5D;
-    }
-    .submit {
-    font-style: normal;
-    width: 100%;
-    height: 40px;
-    background: #FABB00;
-    border: none;
-    border-radius: 10px;
-    color: #093C5D;
-    margin-bottom: 16px;
-}
-    .form-control {
-    font-style: normal;
-    font-style: normal;
-    color: black;
-    width: 100%;
-    border: 2px solid #093C5D;
-    margin-bottom: 15px;
-    padding: 11px 10px;
-    background: #d2d2d2;
-    font-size: 14px;
-    font-weight: bold;
-}
-    .form-login {
-    width: 400px;
-    height: 340px;
-    background: #d2d2d2;
-    margin: auto;
-    margin-top: 10px;
-    box-shadow: 7px 13px 37px #000;
-    padding: 20px 30px;
-    border-top: 4px solid #017bab;
-    color: white;
-}
-.form-login h5 {
-    margin: 0;
-    text-align: center;
-    height: 40px;
-    margin-bottom: 30px;
-    border-bottom: 1px solid;
-    font-size: 20px;
-    color: #093C5D;
-}
-.InfoCuadroLogin{
-    color:#093C5D;
+    background-color: #093C5D;
 }
 </style>
 @{
@@ -72,11 +26,13 @@ body{
 
 <form asp-controller="auth" asp-action="login" method="post" class="form-login">
     <h5>Iniciar sesión</h5>
-    <label class="InfoCuadroLogin">Correo Electrónico: </label>
+    <img src="~/img/main-logo.jpg" alt="IT-Seekers image"/>
+    <br />
+    <label for="email" class="label-form">Correo Electrónico: </label>
     <input class="form-control" type="email" name="email" id="email" placeholder="Correo Electrónico" required/>
-    <label class="InfoCuadroLogin">Contraseña: </label>
+    <label for="pass" class="label-form">Contraseña: </label>
     <input class="form-control" type="password" name="pass" id="pass" placeholder="Contraseña" required/>
-    <input class="submit" type="submit" value="Ingresar">
+    <input class="btn submit" type="submit" value="Ingresar">
     <br/>
 </form>
 
