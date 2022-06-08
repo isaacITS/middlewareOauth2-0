@@ -1,4 +1,31 @@
-﻿.modal {
+﻿#ventana-modal {
+    position: fixed;
+    right: 0;
+    top: 0;
+    margin-right: auto;
+    margin-left: auto;
+    z-index: 3;
+    width: 350px;
+    text-align: center;
+}
+
+    #ventana-modal .modal-dialog {
+        position: relative;
+        text-align: center;
+    }
+
+#ventana-modal .modal-dialog button {
+    position: absolute; 
+    top: 5px;
+    right: 5px;
+    color: #000;
+    transition: all .2s;
+}
+
+#ventana-modal .modal-dialog button:hover {
+    color: #e20000;
+}
+.modal {
     display: none;
     position: fixed;
     z-index: 1;

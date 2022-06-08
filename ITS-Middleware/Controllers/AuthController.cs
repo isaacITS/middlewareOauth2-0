@@ -74,7 +74,7 @@ namespace ITS_Middleware.Controllers
                 {
                     if (user.Where(u => u.Activo == false).Any())
                     {
-                        ViewBag.msg = "El usaurio esta inactivo";
+                        ViewBag.msg = "El usuario esta inactivo";
                         return View("Login");
                     }
                     if (user.Where(s => s.Email == email && s.Pass == Encrypt.GetSHA256(pass)).Any())

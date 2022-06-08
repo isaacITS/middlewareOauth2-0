@@ -10,12 +10,12 @@
 
 <hr />
 <br />
-<a asp-controller="Home" asp-action="RegisterUser" class="btn btn-outline-primary">
+<a asp-controller="Home" asp-action="RegisterUser" class="btn btn-primary">
     <span class="material-icons">person_add</span>&nbsp;Agregar Usuario
 </a>
 <br/>
 
-<table class="table table-hover" style="width:100%">
+<table class="table table-hover table-responsive" style="width:100%">
     <thead>
         <tr>
             <th>Nombre</th>
@@ -35,20 +35,24 @@
                 <td>@user.Puesto</td>
                 <td>@user.FechaAlta.ToShortDateString()</td>
                 <td>
-                    <a class="btn btn-success" asp-controller="Home" asp-route-id="@user.Id" asp-action="EditUser">
-                        <span class="material-icons">edit</span>
+                    <a class="btn btn-primary" asp-controller="Home" asp-route-id="@user.Id" asp-action="EditUser">
+                        <span class="material-icons md-8">edit</span>
                     </a>
                     <a class="btn btn-danger" asp-controller="Home" asp-action="DeleteUser" asp-route-id="@user.Id">
-                        <span class="material-icons">delete</span>
+                        <span class="material-icons md-8">delete</span>
                     </a>
                 </td>
                 <td>
-                    <a style="cursor: pointer;" asp-controller="Home" asp-action="UpdateStatus" asp-route-id="@user.Id">
-                        @if (user.Activo) {
-                            <span class="material-icons md-36">toggle_on</span>
-                        } else {
-                            <span class="material-icons md-36">toggle_off</span>
+                    <a class="btn btn-secondary" asp-controller="Home" asp-action="UpdateStatus" asp-route-id="@user.Id">
+                        <span class="material-icons md-8">
+                        @if (user.Activo)
+                        {
+                            <text>highlight_off</text>
+                        } else
+                        {
+                            <text>check_circle_outline</text>
                         }
+                        </span>
                     </a>
                  </td>
                 </tr>

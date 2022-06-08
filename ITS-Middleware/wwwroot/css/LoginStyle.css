@@ -1,45 +1,85 @@
-﻿.form-login .submit {
-    width: 95%;
-    margin-left: auto;
-    margin-right: auto;
-    height: 40px;
-    background-color: #df1847;
-    border: none;
-    border-radius: 5px;
-    color: #fff;
-    margin-bottom: 16px;
-}
-
-.form-login .submit:hover {
-    background-color: #FF7070;
-    color: #000;
-}
-
-.form-login .form-control {
-    width: 100%;
-    border: 1px solid #093C5D;
-    margin-bottom: 15px;
-    padding: 10px;
-    background: #00000016;
-    font-size: 14px;
-}
-
-.form-login {
+﻿.form-login {
     width: 400px;
     background-color: #fff;
     margin: auto;
     text-align: center;
     margin-top: 10px;
-    box-shadow: 7px 13px 37px #2323231b;
+    box-shadow: 5px 5px 10px 2px #00000073;
     padding: 20px;
     border-top: 4px solid #017bab;
     border-radius: 10px;
     color: #093C5D;
 }
 
-.form-login label {
+.form-login .login-form-content {
     text-align: left;
+}
 
+.form-login .login-form-content label {
+    font-weight: 600;
+}
+
+.form-login .login-form-content .input-group span {
+    padding: 10px;
+    height: 43px;
+    line-height: 20px;
+    color: #fff;
+    background-color: #093C5D;
+    border-radius: 5px;
+    border: solid 1px #F1F1F1;
+}
+
+.form-login .login-form-content .input-group {
+    margin-bottom: 10px;
+}
+
+.form-login .login-form-content small {
+    display: none;
+}
+
+.form-login .login-form-content .input-group input {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    transition: all .5s;
+    border: solid 1px #F1F1F1;
+}
+
+
+.form-login .login-form-content .input-group #btn-action-pass {
+    cursor: pointer;
+    background: none;
+    color: #093C5D;
+    transition: all .3s;
+}
+
+.form-login .login-form-content .input-group #btn-action-pass:hover {
+    background-color: #093C5D;
+    color: #f5f5f5;
+}
+
+.form-login .submit {
+    width: 95%;
+    margin-top: 5px;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #df1847;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    font-weight: bold;
+    padding: 10px;
+    transition: all .3s;
+}
+
+#icon-status-email {
+    background: none;
+    color: #12b100;
+    border: none;
+}
+
+.form-login .submit:hover {
+    background-color: #a90000;
 }
 
 .form-login h5 {
@@ -52,7 +92,12 @@
 }
 
 .form-login img {
-    width: 150px;
-    height: 40px;
+    width: 250px;
     margin-bottom: 15px;
+}
+
+@media screen and (max-width: 500px) {
+    .form-login {
+        width: 95%;
+    }
 }
