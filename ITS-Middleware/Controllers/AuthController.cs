@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ITS_Middleware.Tools;
-using ITS_Middleware.Models.Entities;
 using ITS_Middleware.Services;
 
 namespace ITS_Middleware.Controllers

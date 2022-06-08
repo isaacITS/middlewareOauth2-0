@@ -1,5 +1,4 @@
 ﻿using ITS_Middleware.Models;
-using ITS_Middleware.Models.Entities;
 
 namespace ITS_Middleware.Services
 {

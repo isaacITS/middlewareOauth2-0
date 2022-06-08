@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using ITS_Middleware.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace ITS_Middleware.Models
 {
-    public partial class MiddlewareDbContext : DbContext
+    public partial class middlewareITSContext : DbContext
     {
-        public MiddlewareDbContext()
+        public middlewareITSContext()
         {
         }
 
-        public MiddlewareDbContext(DbContextOptions<MiddlewareDbContext> options)
+        public middlewareITSContext(DbContextOptions<middlewareITSContext> options)
             : base(options)
         {
         }
@@ -34,7 +33,7 @@ namespace ITS_Middleware.Models
             {
                 entity.ToTable("proyectos");
 
-                entity.HasIndex(e => e.Nombre, "UQ__proyecto__72AFBCC6349FBD46")
+                entity.HasIndex(e => e.Nombre, "UQ__proyecto__72AFBCC6AFE52246")
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnName("id");
@@ -44,6 +43,12 @@ namespace ITS_Middleware.Models
                 entity.Property(e => e.Descripcion)
                     .HasMaxLength(1)
                     .HasColumnName("descripcion");
+
+                entity.Property(e => e.FechaAlta)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fechaAlta");
+
+                entity.Property(e => e.IdUsuarioRegsitra).HasColumnName("idUsuarioRegsitra");
 
                 entity.Property(e => e.MetodoAutenticacion)
                     .HasMaxLength(50)
@@ -69,13 +74,18 @@ namespace ITS_Middleware.Models
                     .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("usuario");
+
+                entity.HasOne(d => d.IdUsuarioRegsitraNavigation)
+                    .WithMany(p => p.Proyectos)
+                    .HasForeignKey(d => d.IdUsuarioRegsitra)
+                    .HasConstraintName("FK__proyectos__idUsu__4AB81AF0");
             });
 
             modelBuilder.Entity<Usuario>(entity =>
             {
                 entity.ToTable("usuarios");
 
-                entity.HasIndex(e => e.Email, "UQ__usuarios__AB6E6164B23D24B9")
+                entity.HasIndex(e => e.Email, "UQ__usuarios__AB6E6164A123E0D5")
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnName("id");

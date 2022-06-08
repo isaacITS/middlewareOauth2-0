@@ -1,6 +1,5 @@
 ﻿using System.Data.Entity.Infrastructure;
 using ITS_Middleware.Models;
-using ITS_Middleware.Models.Entities;
 using ITS_Middleware.Tools;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

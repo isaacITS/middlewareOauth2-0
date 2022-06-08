@@ -17,10 +17,12 @@ create table proyectos(
 	nombre varchar(50) unique,
 	descripcion nvarchar,
 	usuario varchar(50) not null,
+	fechaAlta datetime not null,
 	tipoCifrado varchar(50),
 	metodoAutenticacion varchar(50),
 	pass varchar(150) not null,
-	activo bit not null
+	activo bit not null,
+	idUsuarioRegsitra int foreign key references usuarios(id)
 );
 
 insert into usuarios values('Administrador', GETUTCDATE(), 'Admin', 'admin@admin.com', HASHBYTES('SHA2_256','admin123'), 1);
