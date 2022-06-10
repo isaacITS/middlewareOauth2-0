@@ -7,136 +7,69 @@
 }
 
 <h1 class="text-center">Administrador de Usuarios</h1>
-
 <hr />
-<br />
-<a asp-controller="Home" asp-action="RegisterUser" class="btn btn-primary">
+<a class="btn btn-primary" id="btnViewRegUser" data-bs-toggle="modal" data-bs-target="#modalRegister">
     <span class="material-icons">person_add</span>&nbsp;Agregar Usuario
 </a>
-<br/>
 
-<table class="table table-hover table-responsive" style="width:100%">
-    <thead>
-        <tr>
-            <th>Nombre</th>
-            <th>Correo</th>
-            <th>Puesto</th>
-            <th>Fecha de Alta</th>
-            <th>Acciones</th>
-            <th>Estatus</th>
-        </tr>
-    </thead>
-    <tbody>
-    @foreach (Usuario user in Model) 
-    {
+<div class="table-responsive" id="usersTableContent">
+    <table class="table table-striped table-hover" style="width:100%">
+        <thead>
             <tr>
-                <td>@user.Nombre</td>
-                <td>@user.Email</td>
-                <td>@user.Puesto</td>
-                <td>@user.FechaAlta.ToShortDateString()</td>
-                <td>
-                    <a class="btn btn-primary" asp-controller="Home" asp-route-id="@user.Id" asp-action="EditUser">
-                        <span class="material-icons md-8">edit</span>
-                    </a>
-                    <a class="btn btn-danger" asp-controller="Home" asp-action="DeleteUser" asp-route-id="@user.Id">
-                        <span class="material-icons md-8">delete</span>
-                    </a>
-                </td>
-                <td>
-                    <a class="btn btn-secondary" asp-controller="Home" asp-action="UpdateStatus" asp-route-id="@user.Id">
-                        <span class="material-icons md-8">
-                        @if (user.Activo)
-                        {
-                            <text>highlight_off</text>
-                        } else
-                        {
-                            <text>check_circle_outline</text>
-                        }
-                        </span>
-                    </a>
-                 </td>
-                </tr>
-        }
-    </tbody>
-</table>
-
-
-
-
-<div id="editModal" class="modal">
-  <div class="modal-content">
-      <span class="material-icons close" onclick="closeModal()">highlight_off</span>
-      <h3 class="text-center">Editar Usaurio</h3>
-    <form>
-        <div class="row">
-            <div class="col-md-6">
-                <label for="name" class="form-label">Nombre del usuario:</label>
-                <input type="text" class="form-control" id="name" name="name" placeholder="Nombre" required/>
-            </div>
-            <div class="col-md-6">
-                <label for="puesto" class="form-label">Puesto del usuario:</label>
-                <input type="text" class="form-control" id="puesto" name="puesto" placeholder="Puesto" required/>
-            </div>
-            <div class="col-md-6">
-                <label for="email" class="form-label">Email del usuario:</label>
-                <input type="email" class="form-control" id="email" name="email" placeholder="Email" required/>
-            </div>
-            <div class="col-md-6">
-                <label for="password" class="form-label">Contraseña del usuario:</label>
-                <input type="password" class="form-control" id="password" name="password" placeholder="Contraseña" required/>
-            </div>
-        </div>
-        <br/>
-        <div class="text-center">
-            <div class="row">
-                <div class="col">
-                    <input type="submit" class="btn btn-success" value="Actualizar"/>
-                </div>
-                <div class="col">
-                    <input type="reset" class="btn btn-outline-danger" value="Limpiar"/>
-                </div>
-            </div>
-        </div>
-    </form>
-  </div>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Puesto</th>
+                <th>Fecha de Alta</th>
+                <th>Acciones</th>
+                <th>Estatus</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (Usuario user in Model) 
+        {
+                <tr>
+                    <td>@user.Nombre</td>
+                    <td>@user.Email</td>
+                    <td>@user.Puesto</td>
+                    <td>@user.FechaAlta.ToShortDateString()</td>
+                    <td>
+                        <a class="btn btn-primary" asp-controller="Home" asp-route-id="@user.Id" asp-action="EditUser">
+                            <span class="material-icons md-8">edit</span>
+                        </a>
+                        <a class="btn btn-danger" asp-controller="Home" asp-action="DeleteUser" asp-route-id="@user.Id">
+                            <span class="material-icons md-8">delete</span>
+                        </a>
+                    </td>
+                    <td>
+                        <a class="btn btn-secondary" asp-controller="Home" asp-action="UpdateStatus" asp-route-id="@user.Id">
+                            <span class="material-icons md-8">
+                            @if (user.Activo)
+                            {
+                                <text>highlight_off</text>
+                            } else
+                            {
+                                <text>check_circle_outline</text>
+                            }
+                            </span>
+                        </a>
+                     </td>
+                    </tr>
+            }
+        </tbody>
+    </table>
 </div>
 
-<div id="newUserModal" class="modal">
-  <div class="modal-content">
-      <span class="material-icons close" onclick="closeModal()">highlight_off</span>
-      <h3 class="text-center">Agregar Usaurio</h3>
-    <form>
-        <div class="row">
-            <div class="col-md-6">
-                <label for="name" class="form-label">Nombre del usuario:</label>
-                <input type="text" class="form-control" id="newName" name="newName" placeholder="Nombre" required/>
-            </div>
-            <div class="col-md-6">
-                <label for="puesto" class="form-label">Puesto del usuario:</label>
-                <input type="text" class="form-control" id="newPuesto" name="newPuesto" placeholder="Puesto" required/>
-            </div>
-            <div class="col-md-6">
-                <label for="email" class="form-label">Email del usuario:</label>
-                <input type="email" class="form-control" id="newEmail" name="newEmail" placeholder="Email" required/>
-            </div>
-            <div class="col-md-6">
-                <label for="password" class="form-label">Contraseña del usuario:</label>
-                <input type="password" class="form-control" id="newPassword" name="newPassword" placeholder="Contraseña" required/>
+<!--Modals for CRUD-->
+ <div class="modal fade" id="modalRegister" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="staticBackdropLabel">Registrar usuario</h3>
+                    <button type="button" class="btn-close btn-close-modal-views" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="registerModalBody"></div>
             </div>
         </div>
-        <br/>
-        <div class="text-center">
-            <div class="row">
-                <div class="col">
-                    <input type="submit" class="btn btn-success" value="Guardar"/>
-                </div>
-                <div class="col">
-                    <input type="reset" class="btn btn-outline-danger" value="Limpiar"/>
-                </div>
-            </div>
-        </div>
-    </form>
-  </div>
 </div>
 
 @section scripts {

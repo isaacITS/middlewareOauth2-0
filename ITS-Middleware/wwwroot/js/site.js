@@ -1,31 +1,4 @@
-﻿//Modal
-var modal = document.getElementById("editModal");
-const modalNew = document.getElementById("newUserModal")
-
-function openModal() {
-    modal.style.display = "block";
-}
-
-function openNewModal() {
-    modalNew.style.display = "block";
-}
-
-function closeModal() {
-    modal.style.display = "none";
-    modalNew.style.display = "none"
-}
-
-window.onclick = function (event) {
-    if (event.target == modal) {
-        modal.style.display = "none";
-    }
-    if (event.target == modalNew) {
-        modalNew.style.display = "none"
-    }
-}
-
-
-const btnIconMenu = document.getElementById('btn-icon-menu')
+﻿const btnIconMenu = document.getElementById('btn-icon-menu')
 const btnActiveMenu = document.getElementById('btn-active-menu')
 
 
@@ -40,4 +13,33 @@ function actionSlideMenu() {
         btnActiveMenu.setAttribute('title', 'Abrir Menu')
     }
 }
+
+//GET PARTIALS VIEWS (CRUD VIEWS)
+$('#btnViewRegUser').on('click', () => {
+    $('#registerModalBody').fadeOut(1)
+    $.ajax({
+        type: 'GET',
+        url: '/User/Register',
+        success: function (resp) {
+            if (resp == "Error") {
+                window.location.href = '/Error'
+                console.log("Error al obtener vista registro")
+                return;
+            }
+            $("#registerModalBody").append(resp).hide();
+            $('#registerModalBody').fadeIn();
+        },
+        error: function (resp) {
+            console.log(resp)
+        }
+    })
+})
+
+
+
+
+//Remove forms modal content
+$('.btn-close-modal-views').on('click', () => {
+    $('#registerUserForm').remove()
+})
 

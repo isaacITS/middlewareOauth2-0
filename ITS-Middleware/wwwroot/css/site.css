@@ -26,8 +26,22 @@ body {
     font-family: 'Roboto';
 }
 
-.material-icons {
-    font-size: 11pt;
+.btn span {
+    font-size: 18px;
+    vertical-align: middle;
+}
+
+body .table {
+    text-align: center;
+}
+
+body .table .btn {
+    width: 35px;
+    padding: 6px;
+}
+
+body .table thead tr th {
+    text-align: center;
 }
 
 body .table thead {
@@ -36,8 +50,11 @@ body .table thead {
 }
 
 body .table tbody tr td {
-    background-color: #e9e9e9;
+    background-color: #f2f2f2;
     color: #191919;
+    vertical-align: middle;
+    font-size: 15px;
+    font-weight: 600;
 }
 
 header nav {
@@ -107,9 +124,29 @@ header .nav-bar-top {
     transition: all .3s;
 }
 
-    #btn-active-menu:hover {
-        color: #df1847;
+#btn-active-menu:hover {
+    color: #df1847;
+}
+
+.modal {
+    animation-name: animateModal;
+    animation-duration: .5s;
+}
+
+.modal .modal-dialog .modal-content .modal-header h3 {
+    text-align: center;
+    font-weight: 600;
+}
+
+
+@keyframes animateModal {
+    50% {
+        transform: scale(1.1);
     }
+    100% {
+        transform: scale(1);
+    }
+}
 
 
 @media screen and (max-height: 450px) {
