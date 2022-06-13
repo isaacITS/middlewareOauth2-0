@@ -1,19 +1,18 @@
 ﻿using System.Data.Entity.Infrastructure;
-using ITS_Middleware.Models;
-using ITS_Middleware.Tools;
+using ITS_Middleware.Models.Context;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
-
+using ITS_Middleware.Models;
 
 namespace ITS_Middleware.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        public MiddlewareDbContext _context;
+        public middlewareITSContext _context;
 
-        public HomeController(MiddlewareDbContext master, ILogger<HomeController> logger)
+        public HomeController(middlewareITSContext master, ILogger<HomeController> logger)
         {
             _context = master;
             _logger = logger;
@@ -57,6 +56,12 @@ namespace ITS_Middleware.Controllers
                 Console.WriteLine(ex.Message.ToString().Trim());
                 return Json("Error");
             }
+        }
+
+
+        public IActionResult Error(ErrorViewModel errorViewModel)
+        {
+            return View(errorViewModel);
         }
     }
 }

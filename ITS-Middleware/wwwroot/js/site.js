@@ -14,32 +14,67 @@ function actionSlideMenu() {
     }
 }
 
-//GET PARTIALS VIEWS (CRUD VIEWS)
-$('#btnViewRegUser').on('click', () => {
-    $('#registerModalBody').fadeOut(1)
+
+
+
+//Functions get tables content and views
+function GetUsersList() {
+    $('#contentView').fadeOut(1)
+    $('#viewsLoader').show()
     $.ajax({
         type: 'GET',
-        url: '/User/Register',
+        url: siteurl + 'Home/Users',
         success: function (resp) {
             if (resp == "Error") {
-                window.location.href = '/Error'
-                console.log("Error al obtener vista registro")
+                window.location.href = '/Home/Error';
                 return;
             }
-            $("#registerModalBody").append(resp).hide();
-            $('#registerModalBody').fadeIn();
+            $("#contentView").empty().append(resp).hide();
+            $('#viewsLoader').hide();
+            $("#contentView").fadeIn();
         },
         error: function (resp) {
-            console.log(resp)
+            console.log(resp);
         }
-    })
-})
+    });
+}
 
 
 
-
-//Remove forms modal content
-$('.btn-close-modal-views').on('click', () => {
-    $('#registerUserForm').remove()
-})
+function ShowToastMessage(type, title_short_text, body_text) {
+    if (type == 'success') {
+        $('#toast-title-icon').text('thumb_up_alt');
+        $('#toast-title-text').text(' Listo');
+        $('#toast-body-text').addClass('text-light');
+        $('#liveToast').removeClass("bg-warning");
+        $('#liveToast').removeClass("bg-danger");
+        $('#liveToast').removeClass("bg-info");
+        $('#liveToast').addClass("bg-success");
+    } else if (type == 'warning') {
+        $('#toast-title-icon').text('warning');
+        $('#toast-title-text').text(' Advertencia');
+        $('#liveToast').removeClass("bg-success");
+        $('#liveToast').removeClass("bg-danger");
+        $('#liveToast').removeClass("bg-info");
+        $('#liveToast').addClass("bg-warning");
+    } else if (type == 'error') {
+        $('#toast-title-icon').text('error');
+        $('#toast-title-text').text(' Error');
+        $('#toast-body-text').addClass('text-light');
+        $('#liveToast').removeClass("bg-success");
+        $('#liveToast').removeClass("bg-warning");
+        $('#liveToast').removeClass("bg-info");
+        $('#liveToast').addClass("bg-danger");
+    } else if (type == 'information') {
+        $('#toast-title-text').text(' Información');
+        $('#toast-title-icon').text('info');
+        $('#liveToast').removeClass("bg-success");
+        $('#liveToast').removeClass("bg-warning");
+        $('#liveToast').removeClass("bg-danger");
+        $('#liveToast').addClass("bg-info");
+    }
+    $('#toast-title-short-text').text(title_short_text);
+    $('#toast-body-text').text(body_text);
+    $('#liveToast').toast('show');
+}
 

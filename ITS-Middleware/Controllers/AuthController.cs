@@ -1,17 +1,16 @@
-﻿using ITS_Middleware.Models;
-using Microsoft.AspNetCore.Http;
+﻿using ITS_Middleware.Models.Context;
 using Microsoft.AspNetCore.Mvc;
 using ITS_Middleware.Tools;
-using ITS_Middleware.Services;
+using ITS_Middleware.Models.Entities;
 
 namespace ITS_Middleware.Controllers
 {
     public class AuthController : Controller
     {
         private readonly ILogger<AuthController> _logger;
-        public MiddlewareDbContext _context;
+        public middlewareITSContext _context;
 
-        public AuthController(MiddlewareDbContext master, ILogger<AuthController> logger)
+        public AuthController(middlewareITSContext master, ILogger<AuthController> logger)
         {
             _context = master;
             _logger = logger;

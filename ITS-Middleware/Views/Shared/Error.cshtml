@@ -11,9 +11,10 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>ITS Middleware - Error</title>
+    <title>Error - Portal de Configuración</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="shortcut icon" href="~/icon-page.png" type="image/x-icon">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -64,16 +65,9 @@ body{
 <div id="main">
     	<div class="fof">
 <h1 class="text-danger"><span class="material-icons align-middle" style="font-size:48px;">error</span>&nbsp;Error.</h1>
-<h2 class="text-danger">Un error ha ocurrido mientras se procesaba la solicitud.</h2>
+<h2 class="text-danger">Un error ha ocurrido mientras se procesaba la solicitud</h2>
 <br/>
 <h2>El(los) siguiente(s) error(es) surgieron en la aplicaci&oacute;n:</h2>
-<br/>
-@foreach(string errorMsg in (IEnumerable<string>)TempData["ErrorsMessages"])
-{
-    <p style="font-size:16px;">
-        <strong>Error #@errorCounter :&nbsp;</strong> <code style="font-size:16px;">@errorMsg</code>
-    </p>
-    errorCounter++;
-}    	
+<br/> 	
 </div>
 </div>

@@ -1,0 +1,13 @@
+﻿@using ITS_Middleware.Models.Entities
+@model Usuario
+
+<form id="deleteUserForm">
+        <input type="hidden" asp-for="Id" />
+        <div class="mb-3">
+            <p class="text-danger"><span class="align-middle material-icons">report_problem</span>&nbsp;Esta accion no se puede deshacer</p>
+            <label for="nombre" class="label-form">Usuario:</label>
+            <input class="form-control" name="Nombre" asp-for="Nombre" readonly/>
+        </div>
+ </form>
+
+ <script src="~/js/userScripts.js" asp-append-version="true"></script>

@@ -1,12 +1,12 @@
-﻿using ITS_Middleware.Models;
+﻿using ITS_Middleware.Models.Context;
 
 namespace ITS_Middleware.Services
 {
     public class DefaultUserService
     {
-        public MiddlewareDbContext? _context;
+        public middlewareITSContext? _context;
 
-        public DefaultUserService(MiddlewareDbContext context)
+        public DefaultUserService(middlewareITSContext context)
         {
             _context = context;
             try

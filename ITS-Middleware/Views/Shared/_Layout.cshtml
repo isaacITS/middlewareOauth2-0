@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ITS Middleware @ViewData["Title"]</title>
+    <title>Portal de configuración</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css" />
@@ -11,12 +11,13 @@
     <link rel="shortcut icon" href="~/icon-page.png" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet">
 </head>
 <body>
     
         <header>
             <div class="nav-bar-top">
-                <h3>Portal de Configuración de Middleware OAuth</h3>
+                <h3>Portal de Configuración OAuth</h3>
                 <a id="btn-active-menu" title="Abrir Menu" onclick="actionSlideMenu()"><span id="btn-icon-menu" class="material-icons md-48">menu</span></a>
             </div>
             <nav id="sidenav">
@@ -27,7 +28,7 @@
                     } else 
                     {
                         <a asp-controller="Home" asp-action="Projects"><span class="material-icons md-36">widgets</span>&nbsp;Proyectos</a>
-                        <a asp-controller="Home" asp-action="Users"><span class="material-icons md-36">manage_accounts</span>&nbsp;Usuarios</a>
+                        <a onclick="GetUsersList()" href="#"><span class="material-icons md-36">manage_accounts</span>&nbsp;Usuarios</a>
                         <a asp-controller="Auth" asp-action="Logout"><span class="material-icons md-36">logout</span>&nbsp;Cerrar Sesión</a>
                     }
                 </div>
@@ -39,20 +40,40 @@
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
-            
+            <div class="ring" id="viewsLoader" style="display:none;">
+                <span></span>
+            </div>
+            <div id="contentView"></div>
         </main>
     </div>
 
-    <br />
+
+    <div class="position-fixed top-0 end-0 p-3" style="z-index: 1000">
+      <div id="liveToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+          <span class="material-icons" id="toast-title-icon"></span>
+          <strong class="me-auto" id="toast-title-text"></strong>
+          <small id="toast-title-short-text"></small>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="toast-body-text">
+        </div>
+      </div>
+    </div>
     <footer class="footer text-muted text-center">
         <div class="container">
             &copy; 2022 - IT-Seekers
         </div>
     </footer>
+    <script type="text/javascript">
+        siteurl='@Url.Content("~/")';
+    </script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+     <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

@@ -1,5 +1,4 @@
-using ITS_Middleware.Models;
-using ITS_Middleware.Services;
+using ITS_Middleware.Models.Context;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,7 +14,7 @@ builder.Services.AddSession();
 builder.Configuration.AddJsonFile($"appsettings.{_env.EnvironmentName}.json", optional: true, reloadOnChange: true);
 ITS_Middleware.Constants.Vars.CONNECTION_STRING = builder.Configuration.GetSection("ApplicationSettings:ConnectionStrings:DefaultConnection").Value.ToString();
 
-builder.Services.AddDbContext<MiddlewareDbContext>(options =>
+builder.Services.AddDbContext<middlewareITSContext>(options =>
 {
     options.UseSqlServer(ITS_Middleware.Constants.Vars.CONNECTION_STRING);
 });
@@ -50,14 +49,3 @@ app.MapControllerRoute(
 
 
 app.Run();
-
-
-public class DefaultAdmin
-{
-    public MiddlewareDbContext _context;
-
-    public DefaultAdmin(MiddlewareDbContext master)
-    {
-        _context = master;
-    }
-}

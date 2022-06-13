@@ -1,22 +1,24 @@
-﻿using System.Data.Entity.Infrastructure;
-using ITS_Middleware.Models;
+﻿using ITS_Middleware.Models.Context;
 using ITS_Middleware.Tools;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using ITS_Middleware.Models.Entities;
 
 namespace ITS_Middleware.Controllers
 {
     public class UserController : Controller
     {
         private readonly ILogger<UserController> _logger;
-        public MiddlewareDbContext _context;
+        public middlewareITSContext _context;
 
-        public UserController(MiddlewareDbContext master, ILogger<UserController> logger)
+        public UserController(middlewareITSContext master, ILogger<UserController> logger)
         {
             _context = master;
             _logger = logger;
         }
+
+
 
         public IActionResult Register()
         {
@@ -37,26 +39,25 @@ namespace ITS_Middleware.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register(Usuario user)
+        public IActionResult Register(Usuario user)
         {
             try
             {
+                user.FechaAlta = DateTime.Now;
+                user.Activo = true;
+                user.Pass = Encrypt.GetSHA256(user.Pass);
                 if (ModelState.IsValid)
                 {
                     var getEmail = _context.Usuarios.FirstOrDefault(u => u.Email == user.Email);
                     if (getEmail != null)
                     {
-                        return Json($"El Correo {user.Email} ya esta registrado");
+                        return Json("Email Existe");
                     }
-                    var passHashed = Encrypt.GetSHA256(user.Pass);
-                    user.Pass = passHashed;
-                    user.Activo = true;
                     _context.Add(user);
-
-                    await _context.SaveChangesAsync();
-                    return Json("Usuario almacenado correctamente");
+                    _context.SaveChanges();
+                    return Json("Usuario registrado");
                 }
-                return Json("El modelo no es valido", user);
+                return Json(user);
             }
             catch (Exception ex)
             {
@@ -68,7 +69,7 @@ namespace ITS_Middleware.Controllers
 
 
         //Editar usuario
-        public async Task<IActionResult> EditUser(int? id)
+        public IActionResult EditUser(int? id)
         {
             try
             {
@@ -82,15 +83,15 @@ namespace ITS_Middleware.Controllers
                     if (id == null || id == 1)
                     {
                         ViewBag.msg = "No se ingresó un ID válido o no puede ser editado";
-                        return View();
+                        return RedirectToAction("Projects", "Home");
                     }
-                    var usuario = await _context.Usuarios.FindAsync(id);
+                    var usuario = _context.Usuarios.Find(id);
                     if (usuario == null)
                     {
                         ViewBag.msg = "El ID no coincide con un usuario registrado";
-                        return View();
+                        return RedirectToAction("Projects", "Home");
                     }
-                    return View(usuario);
+                    return PartialView(usuario);
                 }
             }
             catch (Exception ex)
@@ -134,15 +135,15 @@ namespace ITS_Middleware.Controllers
                     if (id == null || id == 1)
                     {
                         ViewBag.msg = "No se ingresó un ID válido o no puede ser activado/desactivado";
-                        return View("ChangeStatus");
+                        return RedirectToAction("Projects", "Home");
                     }
                     var usuario = _context.Usuarios.Find(id);
                     if (usuario == null)
                     {
                         ViewBag.msg = "El ID no coincide con un usuario registrado";
-                        return View("ChangeStatus");
+                        return RedirectToAction("Projects", "Home");
                     }
-                    return View("ChangeStatus", usuario);
+                    return PartialView("ChangeStatus", usuario);
                 }
             }
             catch (Exception ex)
@@ -151,6 +152,7 @@ namespace ITS_Middleware.Controllers
                 throw;
             }
         }
+
 
         [HttpPost]
         public async Task<IActionResult> UpdateStatus(Usuario user)
@@ -174,7 +176,7 @@ namespace ITS_Middleware.Controllers
 
 
         //Eliminar usuario
-        public async Task<IActionResult> DeleteUser(int? id)
+        public IActionResult DeleteUser(int? id)
         {
             try
             {
@@ -188,15 +190,15 @@ namespace ITS_Middleware.Controllers
                     if (id == null || id == 1)
                     {
                         ViewBag.msg = "No se ingresó un ID válido o no puede ser eliminado";
-                        return View();
+                        return RedirectToAction("Projects", "Home");
                     }
-                    var usuario = await _context.Usuarios.FindAsync(id);
+                    var usuario = _context.Usuarios.Find(id);
                     if (usuario == null)
                     {
                         ViewBag.msg = "El ID No coincide con un usuario registrado";
-                        return View();
+                        return RedirectToAction("Projects", "Home");
                     }
-                    return View(usuario);
+                    return PartialView(usuario);
                 }
             }
             catch (Exception ex)
