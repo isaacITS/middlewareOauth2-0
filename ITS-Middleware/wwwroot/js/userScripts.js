@@ -1,4 +1,6 @@
-﻿//CRUD REQUEST
+﻿var idUserDelete
+
+//CRUD REQUEST
 $(document).ready(() => {
     $('#btnRegisterUser').on('click', () => {
         if (validateData().ok) {
@@ -16,11 +18,12 @@ $(document).ready(() => {
                         return;
                     } else if (response != null) {
                         if (response == "Email Existe") {
+                            closeModal()
                             ShowToastMessage('warning', 'Correo no válido', `El correo ${$('#Email').val()} ya esta en uso`)
                         } else {
-                            $('.btn-close-modal-views').trigger('click')
+                            closeModal()
                             ShowToastMessage('success', 'Usuario registrado', "Se ha registrado el usuario correctamente")
-                            GetUsersList();
+                            GetUsersList()
                         }
                     }
                 },
@@ -38,21 +41,79 @@ $(document).ready(() => {
         }
     });
 
-    $('#ButtonUpdateUser').on('click', function () {
+    $('#btnUpdateUser').on('click', function () {
         var formData = $('#updateUserForm').serialize()
+        if (validUpdateData().ok) {
+            $.ajax({
+                type: 'post',
+                url: siteurl + 'User/UpdateUser/',
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                dataType: "json",
+                data: formData,
+                success: function (response) {
+                    if (!response.ok) {
+                        window.location.href = '/Home/Error';
+                        return;
+                    } else if (response.ok) {
+                        closeModal()
+                        ShowToastMessage('success', 'Usuario actualizado', response.msg);
+                        GetUsersList()
+                    }
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        } else {
+            ShowToastMessage('error', 'Datos no válidos', validateData().msg)
+        }
+    });
+
+    $('#btnUpdateStatusUser').on('click', function () {
+        var formData = $('#updateStatusUserForm').serialize()
         $.ajax({
             type: 'post',
-            url: siteurl + 'User/EditUser/',
+            url: siteurl + 'User/UpdateStatus/',
             contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
             dataType: "json",
             data: formData,
             success: function (response) {
-                if (response == "Error") {
+                if (!response.ok) {
                     window.location.href = '/Home/Error';
                     return;
-                } else if (response != null) {
-                    ShowToastMessage('success', 'Ahora', "Usuario actualizado correctamente");
-                    GetUsersList();
+                } else if (response.ok) {
+                    closeModal()
+                    ShowToastMessage('success', 'Estatus actualizado', response.msg)
+                    GetUsersList()
+                }
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    });
+
+    $('#btnDeleteUser').on('click', function () {
+        $.ajax({
+            type: 'post',
+            url: siteurl + 'User/DeleteUser/',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: idUserDelete,
+            success: function (response) {
+                if (!response.ok) {
+                    window.location.href = '/Home/Error';
+                    return;
+                } else if (response.ok) {
+                    closeModal()
+                    ShowToastMessage('success', 'Usuario eliminado', response.msg)
+                    GetUsersList()
                 }
             },
             failure: function (response) {
@@ -87,6 +148,27 @@ function validateData() {
         return {
             ok: false,
             msg: "Ingresa una contraseña segura"
+        }
+    }
+    return {
+        ok: true,
+        msg: "OK"
+    }
+}
+
+function validUpdateData() {
+    var validEmail = new RegExp("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$")
+    if ($('#Nombre').val() == '' || $('#Email').val() == '' || $('#Puesto').val() == '') {
+        return {
+            ok: false,
+            msg: "Se deben llenar todos los campos"
+        }
+    }
+    if (!validEmail.test($('#Email').val())) {
+        $('#Email').css('background-color', 'rgba(209, 0, 0, 0.26)')
+        return {
+            ok: false,
+            msg: "Ingresa un correo válido"
         }
     }
     return {

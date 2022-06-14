@@ -27,8 +27,9 @@ namespace ITS_Middleware.Controllers
                 {
                     return RedirectToAction("Login", "Auth");
                 }
+                var data = _context.Proyectos.Where(p => p.Id > 0).ToList();
                 ViewBag.email = HttpContext.Session.GetString("userEmail");
-                return View();
+                return View(data);
             }
             catch (Exception ex)
             {

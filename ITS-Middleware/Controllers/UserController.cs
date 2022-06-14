@@ -82,14 +82,12 @@ namespace ITS_Middleware.Controllers
                     ViewBag.email = HttpContext.Session.GetString("userEmail");
                     if (id == null || id == 1)
                     {
-                        ViewBag.msg = "No se ingresó un ID válido o no puede ser editado";
-                        return RedirectToAction("Projects", "Home");
+                        return Json(new { ok = false, msg= "No se ingresó un ID válido o no puede ser editado" });
                     }
                     var usuario = _context.Usuarios.Find(id);
                     if (usuario == null)
                     {
-                        ViewBag.msg = "El ID no coincide con un usuario registrado";
-                        return RedirectToAction("Projects", "Home");
+                        return Json(new { ok = false, msg = "El ID no coincide con un usuario registrado" });
                     }
                     return PartialView(usuario);
                 }
@@ -102,7 +100,7 @@ namespace ITS_Middleware.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateUser(Usuario user)
+        public IActionResult UpdateUser(Usuario user)
         {
             try
             {
@@ -110,12 +108,13 @@ namespace ITS_Middleware.Controllers
                 var local = _context.Set<Usuario>().Local.FirstOrDefault(entry => entry.Id.Equals(user.Id));
                 if (local != null) _context.Entry(local).State = EntityState.Detached;
                 _context.Entry(user).State = EntityState.Modified;
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Users", "Home");
+                _context.SaveChangesAsync();
+                return Json(new {ok= true, msg = "Se ha actualizado el usuario con éxito" });
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message.ToString());
+                return Json(new { ok = false, msg = "Error" });
                 throw;
             }
         }
@@ -134,14 +133,12 @@ namespace ITS_Middleware.Controllers
                     ViewBag.email = HttpContext.Session.GetString("userEmail");
                     if (id == null || id == 1)
                     {
-                        ViewBag.msg = "No se ingresó un ID válido o no puede ser activado/desactivado";
-                        return RedirectToAction("Projects", "Home");
+                        return Json(new {ok=false, msg = "No se ingresó un ID válido o no puede ser activado/desactivado"});
                     }
                     var usuario = _context.Usuarios.Find(id);
                     if (usuario == null)
                     {
-                        ViewBag.msg = "El ID no coincide con un usuario registrado";
-                        return RedirectToAction("Projects", "Home");
+                        return Json(new { ok = false, msg = "El ID no coincide con un usuario registrado" });
                     }
                     return PartialView("ChangeStatus", usuario);
                 }
@@ -149,13 +146,14 @@ namespace ITS_Middleware.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message.ToString());
+                return Json(new { ok = false, msg = "Error" });
                 throw;
             }
         }
 
 
         [HttpPost]
-        public async Task<IActionResult> UpdateStatus(Usuario user)
+        public IActionResult UpdateStatus(Usuario user)
         {
             try
             {
@@ -163,12 +161,13 @@ namespace ITS_Middleware.Controllers
                 var local = _context.Set<Usuario>().Local.FirstOrDefault(entry => entry.Id.Equals(user.Id));
                 if (local != null) _context.Entry(local).State = EntityState.Detached;
                 _context.Entry(user).State = EntityState.Modified;
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Users", "Home");
+                _context.SaveChanges();
+                return Json(new { ok = true, msg = "Estatus de usuario actualizado" });
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message.ToString());
+                return Json(new { ok = false, msg = "Error" });
                 throw;
             }
         }
@@ -189,14 +188,12 @@ namespace ITS_Middleware.Controllers
                     ViewBag.email = HttpContext.Session.GetString("userEmail");
                     if (id == null || id == 1)
                     {
-                        ViewBag.msg = "No se ingresó un ID válido o no puede ser eliminado";
-                        return RedirectToAction("Projects", "Home");
+                        return Json(new { ok = true, msg = "No se ingresó un ID válido o no puede ser eliminado" });
                     }
                     var usuario = _context.Usuarios.Find(id);
                     if (usuario == null)
                     {
-                        ViewBag.msg = "El ID No coincide con un usuario registrado";
-                        return RedirectToAction("Projects", "Home");
+                        return Json(new { ok = true, msg = "El ID No coincide con un usuario registrado" });
                     }
                     return PartialView(usuario);
                 }
@@ -204,6 +201,7 @@ namespace ITS_Middleware.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message.ToString());
+                return Json(new { ok = false, msg = "Error" });
                 throw;
             }
         }
@@ -211,22 +209,23 @@ namespace ITS_Middleware.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> DeleteUser(int id)
+        public IActionResult DeleteUser([FromBody] int id)
         {
             try
             {
-                var user = await _context.Usuarios.FindAsync(id);
+                var user = _context.Usuarios.Find(id);
                 if (user != null)
                 {
                     _context.Usuarios.Remove(user);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction("Users", "Home");
+                    _context.SaveChanges();
+                    return Json(new { ok = true, msg = "Usuario eliminado con éxito" });
                 }
-                return RedirectToAction("Users", "Home");
+                return Json(new { ok = false, msg = "No se puede eliminar el usuario" });
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message.ToString());
+                return Json(new { ok = false, msg = "Error" });
                 throw;
             }
         }
@@ -240,7 +239,7 @@ namespace ITS_Middleware.Controllers
 
         private string SetPassword(Usuario userModel)
         {
-            if (string.IsNullOrEmpty(userModel.Pass))
+            if (string.IsNullOrEmpty(userModel.Pass) || userModel.Pass.Length < 8)
             {
                 var getUsrData = _context.Usuarios.FirstOrDefault(u => u.Id == userModel.Id);
                 if (getUsrData != null) return getUsrData.Pass;

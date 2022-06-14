@@ -40,10 +40,14 @@ function GetUsersList() {
 }
 
 
+function closeModal() {
+    $('.btn-close-modal-view').click()
+}
+
 
 function ShowToastMessage(type, title_short_text, body_text) {
     if (type == 'success') {
-        $('#toast-title-icon').text('thumb_up_alt');
+        $('#toast-title-icon').text('done');
         $('#toast-title-text').text(' Listo');
         $('#toast-body-text').addClass('text-light');
         $('#liveToast').removeClass("bg-warning");

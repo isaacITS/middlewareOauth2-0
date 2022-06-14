@@ -25,14 +25,17 @@ $('#modalRegisterView').on('click', () => {
 
 $('.modalUpdateView').on('click', function () {
     getUpdateUserView($(this).attr('data-idUser'))
+    idUserUpdate = $(this).attr('data-idUser')
 })
 
 $('.modalDeleteView').on('click', function () {
     getDeleteUserView($(this).attr('data-idUser'))
+    idUserDelete = $(this).attr('data-idUser')
 })
 
 $('.modalStatusView').on('click', function () {
     getUpdateStatusUserView($(this).attr('data-idUser'))
+    idUserUpdateStatus = $(this).attr('data-idUser')
 })
 
 function getUpdateUserView(id) {
@@ -86,8 +89,8 @@ function getDeleteUserView(id) {
 function getUpdateStatusUserView(id) {
     $('.modal-dialog').fadeOut(1)
     $('#viewsLoader').show()
-    $('.modal-title').html('¿Cambiar estatus de usuario?')
-    $('.modal-footer').html("<button type='button' class='btn btn-outline-secondary btn-close-modal-view' data-bs-dismiss='modal'><span class='align-middle material-icons'>close</span>&nbsp;Cancelar</button><button class='btn btn-success' id='btnUpdateStatusUser' type='button'><span class='align-middle material-icons'>update</span>&nbsp;Cambiar</button>")
+    $('.modal-title').html('¿Actualizar estatus de usuario?')
+    $('.modal-footer').html("<button type='button' class='btn btn-outline-secondary btn-close-modal-view' data-bs-dismiss='modal'><span class='align-middle material-icons'>close</span>&nbsp;Cancelar</button><button class='btn btn-success' id='btnUpdateStatusUser' type='button'><span class='align-middle material-icons'>update</span>&nbsp;Actualizar</button>")
     $.ajax({
         type: 'GET',
         url: siteurl + `User/UpdateStatus/${id}`,

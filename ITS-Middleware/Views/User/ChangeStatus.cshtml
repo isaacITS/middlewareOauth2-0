@@ -6,17 +6,18 @@
         <input type="hidden" asp-for="FechaAlta">
         <input type="hidden" asp-for="Pass">
         <input type="hidden" asp-for="Activo" id="Activo">
-        <input type="hidden" id="Puesto" asp-for="Puesto"/>
-        <input type="hidden" id="Email" asp-for="Email"/>
-        <p class="text-warning">Se <strong id="action-update"></strong> el usuario</p>
-        <div class="mb-3">
-            <label for="nombre" class="label-form">Nombre:</label>
-            <input class="form-control" name="Nombre" asp-for="Nombre" readonly/>
+        <input type="hidden" asp-for="Puesto"/>
+        <input type="hidden" asp-for="Email"/>
+        <input type="hidden" id="Nombre" asp-for="Nombre"/>
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+          Se <strong id="action-update"></strong> el usuario <strong id="userName"></strong>.
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
  </form>
 
 <script type="text/javascript">
-    if ($('#Activo').val() || $('#Activo').val() == true) {
+    $('#userName').append($('#Nombre').val())
+    if ($('#Activo').val() == "True") {
         $('#action-update').append("Desactivará")
     } else {
         $('#action-update').append("Activará")
