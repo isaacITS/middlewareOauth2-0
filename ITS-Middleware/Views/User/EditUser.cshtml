@@ -1,0 +1,26 @@
+﻿@using ITS_Middleware.Models.Entities
+@model Usuario
+
+<form id="updateUserForm">
+        <input type="hidden" asp-for="Id"/>
+        <input type="hidden" asp-for="FechaAlta"/>
+        <input type="hidden" asp-for="Activo"/>
+        <div class="mb-3">
+            <label for="nombre" class="label-form">Nombre:</label>
+            <input class="form-control" asp-for="Nombre" id="Nombre" placeholder="Nombre" required/>
+        </div>
+        <div class="mb-3">
+            <label for="puesto" class="label-form">Puesto:</label>
+            <input class="form-control" id="Puesto" asp-for="Puesto" placeholder="Puesto" required/>
+        </div>
+        <div class="mb-3">
+            <label for="email" class="label-form">Correo electrónico:</label>
+            <input class="form-control" id="Email" asp-for="Email" placeholder="Correo electrónico" required/>
+        </div>
+        <div class="mb-3">
+            <label for="pass" class="label-form">Contrase&ntilde;a:</label>
+            <input class="form-control" type="password" asp-for="Pass" id="Pass" placeholder="*************" />
+        </div>
+</form>
+
+<script src="~/js/userScripts.js" asp-append-version="true"></script>

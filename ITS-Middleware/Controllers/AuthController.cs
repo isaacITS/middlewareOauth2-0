@@ -1,89 +1,121 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using ITS_Middleware.Models.Context;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Authorization;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
+using ITS_Middleware.Tools;
+using ITS_Middleware.Models.Entities;
 
 namespace ITS_Middleware.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class AuthController : ControllerBase
+    public class AuthController : Controller
     {
-        public static Models.User user = new Models.User();
-        private readonly IConfiguration config;
+        private readonly ILogger<AuthController> _logger;
+        public middlewareITSContext _context;
 
-
-        public AuthController(IConfiguration configuraiton)
+        public AuthController(middlewareITSContext master, ILogger<AuthController> logger)
         {
-            config = configuraiton;
+            _context = master;
+            _logger = logger;
         }
 
-        [HttpPost("register")]
-        public async Task<ActionResult<Models.User>> Register(UserInput req)
-        {
-            user.Username = req.Username;
-            user.Password = GetSHA256(req.Password);
 
-            return Ok(user);
-        }
-
-        //Autenticacion de usaurio
-        [HttpPost("auth")]
-        public async Task<ActionResult<string>> Auth(UserInput req)
+        public IActionResult Login()
         {
-            if (user.Username != req.Username)
+            try
             {
-                return BadRequest("User Not found");
+                var adminEmail = "admin.its@seekers.com";
+                var checkAdmin = _context.Usuarios.FirstOrDefault(u => u.Email == adminEmail);
+                if (checkAdmin != null)
+                {
+                    Console.WriteLine("Usuario Principal y ha sido registrado");
+                }
+                else
+                {
+                    Usuario usuario = new()
+                    {
+                        Activo = true,
+                        Nombre = "Administrador",
+                        FechaAlta = DateTime.Now,
+                        Email = adminEmail,
+                        Pass = Tools.Encrypt.GetSHA256("admin123"),
+                        Puesto = "Administracion"
+                    };
+                    _context.Add(usuario);
+                    _context.SaveChanges();
+                    Console.WriteLine("Usaurio principal registrado");
+                }
+
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userEmail")))
+                {
+                    return View();
+                }
+                ViewBag.email = HttpContext.Session.GetString("userEmail");
+                return RedirectToAction("Projects", "Home");
             }
-            if (user.Password != GetSHA256(req.Password))
+            catch (Exception ex)
             {
-                return BadRequest("Incorrect password");
+                Console.WriteLine(ex.Message.ToString().Trim());
+                return Json("Error");
+            }
+        }
+
+
+
+        /*      Methods Requests        */
+        //Autenticacion de credenciales
+        [HttpPost]
+        public IActionResult Login(string email, string pass)
+        {
+            try
+            {
+                var user = _context.Usuarios.Where(foundUser => foundUser.Email == email);
+                
+                if (user.Any())
+                {
+                    if (user.Where(u => u.Activo == false).Any())
+                    {
+                        ViewBag.msg = "El usuario esta inactivo";
+                        return View("Login");
+                    }
+                    if (user.Where(s => s.Email == email && s.Pass == Encrypt.GetSHA256(pass)).Any())
+                    {
+                        HttpContext.Session.SetString("userEmail", email);
+                        ViewBag.msg = null;
+                        ViewBag.alertType = null;
+                        return RedirectToAction("Projects", "Home");
+                    }
+                    else
+                    {
+                        ViewBag.msg = "Contraseña Incorrecta";
+                        return View("Login");
+                    }
+                }
+                ViewBag.msg = "Usuario no registrado";
+                return View("Login");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message.ToString().Trim());
+
+                return Json("Error");
             }
 
-            string token = GenerateToken(user);
-            return Ok(token);
         }
 
 
 
-        //Generar token
-        private string GenerateToken(Models.User user)
+
+        //Clear session
+        public IActionResult Logout()
         {
-            List<Claim> claims = new List<Claim>
+            try
             {
-                new Claim(ClaimTypes.Name, user.Username, user.Password),
-            };
-
-            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
-                config.GetSection("appSettings:token").Value));
-
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-
-            var token = new JwtSecurityToken(
-                claims: claims,
-                expires: DateTime.Now.AddHours(1),
-                signingCredentials: creds);
-
-            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-
-            return jwt;
-        }
-
-
-        //Encriptar contraseña
-        public static string GetSHA256(string str)
-        {
-            SHA256 sha256 = SHA256.Create();
-            ASCIIEncoding encoding = new ASCIIEncoding();
-            byte[] stream = null;
-            StringBuilder sb = new StringBuilder();
-            stream = sha256.ComputeHash(encoding.GetBytes(str));
-            for (int i = 0; i < stream.Length; i++) sb.AppendFormat("{0:x2}", stream[i]);
-            return sb.ToString();
+                HttpContext.Session.Remove("userEmail");
+                return View("Login");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message.ToString().Trim());
+                return Json("Error");
+            }
         }
     }
 }

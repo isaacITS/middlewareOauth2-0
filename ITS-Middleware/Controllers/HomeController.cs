@@ -1,32 +1,68 @@
-﻿using ITS_Middleware.Models;
+﻿using System.Data.Entity.Infrastructure;
+using ITS_Middleware.Models.Context;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
+using Microsoft.EntityFrameworkCore;
+using System.Reflection;
+using ITS_Middleware.Models;
 
 namespace ITS_Middleware.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        public middlewareITSContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(middlewareITSContext master, ILogger<HomeController> logger)
         {
+            _context = master;
             _logger = logger;
         }
 
-        public IActionResult Index()
+        
+        public IActionResult Projects()
         {
-            return View();
+            try
+            {
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userEmail")))
+                {
+                    return RedirectToAction("Login", "Auth");
+                }
+                var data = _context.Proyectos.Where(p => p.Id > 0).ToList();
+                ViewBag.email = HttpContext.Session.GetString("userEmail");
+                return View(data);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message.ToString().Trim());
+                return Json("Error");
+            }
         }
 
-        public IActionResult Privacy()
+
+        [HttpGet] //Get all Users
+        public IActionResult Users()
         {
-            return View();
+            try
+            {
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userEmail")))
+                {
+                    return RedirectToAction("Login", "Auth");
+                }
+                var data = _context.Usuarios.Where(u => u.Id >= 2).ToList();
+                ViewBag.email = HttpContext.Session.GetString("userEmail");
+                return PartialView(data);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message.ToString().Trim());
+                return Json("Error");
+            }
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+
+        public IActionResult Error(ErrorViewModel errorViewModel)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View(errorViewModel);
         }
     }
 }

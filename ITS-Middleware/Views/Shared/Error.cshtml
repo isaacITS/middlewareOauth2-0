@@ -1,25 +1,73 @@
 ﻿@model ErrorViewModel
+
 @{
     ViewData["Title"] = "Error";
+    Layout = null;
+    int errorCounter = 1;
+}
+<!DOCTYPE html>
+<html lang="es-mx">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Error - Portal de Configuración</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="shortcut icon" href="~/icon-page.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+</head>
+<style>
+*{
+    transition: all 0.6s;
 }
 
-<h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">An error occurred while processing your request.</h2>
-
-@if (Model.ShowRequestId)
-{
-    <p>
-        <strong>Request ID:</strong> <code>@Model.RequestId</code>
-    </p>
+html {
+    height: 100%;
 }
 
-<h3>Development Mode</h3>
-<p>
-    Swapping to <strong>Development</strong> environment will display more detailed information about the error that occurred.
-</p>
-<p>
-    <strong>The Development environment shouldn't be enabled for deployed applications.</strong>
-    It can result in displaying sensitive information from exceptions to end users.
-    For local debugging, enable the <strong>Development</strong> environment by setting the <strong>ASPNETCORE_ENVIRONMENT</strong> environment variable to <strong>Development</strong>
-    and restarting the app.
-</p>
+body{
+    font-family: 'Lato', sans-serif;
+    margin: 0;
+}
+
+#main{
+    display: table;
+    width: 100%;
+    height: 100vh;
+    text-align: center;
+}
+
+.fof{
+	  display: table-cell;
+	  vertical-align: middle;
+}
+
+.fof h1{
+	  font-size: 50px;
+	  display: inline-block;
+	  padding-right: 12px;
+	  animation: type .5s alternate infinite;
+}
+
+@@keyframes type{
+	  from{box-shadow: inset -3px 0px 0px #888;}
+	  to{box-shadow: inset -3px 0px 0px transparent;}
+}
+</style>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons"  rel="stylesheet">
+<style src=""></style>
+
+<div id="main">
+    	<div class="fof">
+<h1 class="text-danger"><span class="material-icons align-middle" style="font-size:48px;">error</span>&nbsp;Error.</h1>
+<h2 class="text-danger">Un error ha ocurrido mientras se procesaba la solicitud</h2>
+<br/>
+<h2>El(los) siguiente(s) error(es) surgieron en la aplicaci&oacute;n:</h2>
+<br/> 	
+</div>
+</div>
