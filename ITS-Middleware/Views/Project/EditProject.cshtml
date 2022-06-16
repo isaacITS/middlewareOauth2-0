@@ -8,19 +8,31 @@
         <input type="hidden" asp-for="IdUsuarioRegsitra"/>
         <div class="mb-3">
             <label for="Nombre" class="label-form">Nombre:</label>
-            <input class="form-control" asp-for="Nombre" id="nombre" placeholder="Nombre" />
+            <div class="input-group flex-nowrap">
+                <span class="material-icons input-group-text" id="addon-wrapping">grid_view</span>
+                <input class="form-control" asp-for="Nombre" id="Nombre" placeholder="Nombre" />
+            </div>
         </div>
         <div class="mb-3">
             <label for="Usuario" class="label-form">Usuario:</label>
-            <input class="form-control" id="Usuario" asp-for="Usuario" placeholder="Usuario" />
+            <div class="input-group flex-nowrap">
+                <span class="material-icons input-group-text" id="addon-wrapping">account_circle</span>
+                <input class="form-control" id="Usuario" asp-for="Usuario" placeholder="Usuario" />
+            </div>
         </div>
         <div class="mb-3">
             <label for="Pass" class="label-form">Contraseña:</label>
-            <input class="form-control" id="Pass" asp-for="Pass" placeholder="*************"/>
+            <div class="input-group flex-nowrap">
+                <span class="material-icons input-group-text" id="addon-wrapping">vpn_key</span>
+                <input class="form-control" type="password" id="Pass" asp-for="Pass" value="0000000000" placeholder="Contrase&ntilde;a"/>
+            </div>
         </div>
         <div class="mb-3">
             <label for="Descripcion" class="label-form">Descripción:</label>
-            <input class="form-control" id="Descripcion" asp-for="Descripcion" placeholder="Descripcion" />
+            <div class="input-group flex-nowrap">
+                <span class="material-icons input-group-text" id="addon-wrapping">assignment</span>
+                <input class="form-control" id="Descripcion" asp-for="Descripcion" placeholder="Descripcion" />
+            </div>
         </div>
         <div class="mb-3">
             <label for="TipoCifrado" class="label-form">Tipo de cifrado:</label>

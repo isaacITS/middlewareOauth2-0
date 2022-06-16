@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ITS_Middleware.Tools;
 using ITS_Middleware.Models.Entities;
-using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace ITS_Middleware.Controllers
 {
@@ -93,6 +93,48 @@ namespace ITS_Middleware.Controllers
                 return Json("Error");
             }
 
+        }
+
+
+        public IActionResult RestorePassBefore()
+        {
+            try
+            {
+                return View();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message.ToString());
+                return Json(new { ok = false, msg = "Error" });
+                throw;
+            }
+        }
+
+        //Restore password method
+        [HttpPost]
+        public IActionResult RestorePass(string email)
+        {
+            try
+            {
+                var token = Encrypt.GetSHA256(Guid.NewGuid().ToString());
+                var user = _context.Usuarios.Where(u => u.Email == email).FirstOrDefault();
+
+                if (user != null)
+                {
+                    var local = _context.Set<Usuario>().Local.FirstOrDefault(entry => entry.Email.Equals(user.Email));
+                    if (local != null) _context.Entry(local).State = EntityState.Detached;
+                    _context.Entry(user).State = EntityState.Modified;
+                    _context.SaveChanges();
+                    return View("RestorePass", user);
+                }
+                return Json(new { ok = false, msg = "No se encontró el correo " });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message.ToString());
+                return Json(new { ok = false, msg = "Error" });
+                throw;
+            }
         }
 
 

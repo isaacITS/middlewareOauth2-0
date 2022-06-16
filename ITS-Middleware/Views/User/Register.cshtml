@@ -6,19 +6,32 @@
         <input type="hidden" asp-for="Id"/>
         <div class="mb-3">
             <label for="Nombre" class="label-form">Nombre:</label>
-            <input class="form-control" type="text" id="Nombre" asp-for="Nombre" placeholder="Nombre" required />
+            <div class="input-group flex-nowrap">
+                <span class="material-icons input-group-text" id="addon-wrapping">account_circle</span>
+                <input class="form-control" asp-for="Nombre" id="Nombre" placeholder="Nombre" required/>
+            </div>
         </div>
         <div class="mb-3">
             <label for="Puesto" class="label-form">Puesto:</label>
-            <input class="form-control" type="text" id="Puesto" asp-for="Puesto" placeholder="Puesto" required/>
+            <div class="input-group flex-nowrap">
+                <span class="material-icons input-group-text" id="addon-wrapping">badge</span>
+                <input class="form-control" id="Puesto" asp-for="Puesto" placeholder="Puesto" required/>
+            </div>
         </div>
         <div class="mb-3">
             <label for="Email" class="label-form">Correo electr&oacute;nico:</label>
-            <input class="form-control" id="Email" type="email" asp-for="Email" placeholder="Correo electrónico" required/>
+            <div class="input-group flex-nowrap">
+                <span class="material-icons input-group-text" id="addon-wrapping">email</span>
+                <input class="form-control" id="Email" asp-for="Email" placeholder="Correo electrónico" required/>
+            </div>
         </div>
         <div class="mb-3">
             <label for="Password" class="label-form">Contrase&ntilde;a:</label>
-            <input class="form-control" type="password" asp-for="Pass" id="Pass" placeholder="Contrase&ntilde;a" required/>
+            <div class="input-group flex-nowrap">
+                <span class="material-icons input-group-text" id="addon-wrapping">vpn_key</span>
+                <input class="form-control" type="password" asp-for="Pass" id="Pass" value="0000000000" placeholder="Contrase&ntilde;a" />
+                <span class="material-icons input-group-text" id="btn-action-pass" onclick="showHiddePass()">visibility_off</span>
+            </div>
         </div>
     </div>
 </form>

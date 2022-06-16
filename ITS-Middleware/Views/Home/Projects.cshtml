@@ -41,7 +41,7 @@
                         </button>
                     </td>
                     <td>
-                        <button class="btn btn-secondary modalStatusProjectView" data-idProject="@project.Id" data-bs-toggle="modal" data-bs-target="#projectModal">
+                        <button class="btn btn-secondary modalStatusProjectView" data-idProject="@project.Id" title="@if (project.Activo){<text>Desactivar</text>} else{<text>Activar</text>}</span>" data-bs-toggle="modal" data-bs-target="#projectModal">
                             <span class="material-icons">@if (project.Activo){<text>clear</text>} else{<text>done</text>}</span>
                         </button>
                     </td>

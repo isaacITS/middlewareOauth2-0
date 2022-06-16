@@ -5,11 +5,17 @@
     <input type="hidden" asp-for="Id"/>
         <div class="mb-3">
             <label for="nombre" class="label-form">Nombre:</label>
-            <input class="form-control" asp-for="Nombre" id="Nombre" placeholder="Nombre" />
+            <div class="input-group flex-nowrap">
+                <span class="material-icons input-group-text" id="addon-wrapping">grid_view</span>
+                <input class="form-control" asp-for="Nombre" id="Nombre" placeholder="Nombre" />
+            </div>
         </div>
         <div class="mb-3">
             <label for="Descripcion" class="label-form">Descripción:</label>
-            <input class="form-control" id="Descripcion" asp-for="Descripcion" placeholder="Descripcion" />
+            <div class="input-group flex-nowrap">
+                <span class="material-icons input-group-text" id="addon-wrapping">assignment</span>
+                <input class="form-control" id="Descripcion" asp-for="Descripcion" placeholder="Descripcion" />
+            </div>
         </div>
         <div class="mb-3">
             <label for="TipoCifrado" class="label-form">Tipo de cifrado:</label>
@@ -28,11 +34,17 @@
         </div>
         <div class="mb-3">
             <label for="Usuario" class="label-form">Usuario:</label>
-            <input class="form-control" id="Usuario" asp-for="Usuario" placeholder="Usuario" />
+            <div class="input-group flex-nowrap">
+                <span class="material-icons input-group-text" id="addon-wrapping">account_circle</span>
+                <input class="form-control" id="Usuario" asp-for="Usuario" placeholder="Usuario" />
+            </div>
         </div>
         <div class="mb-3">
-            <label for="pass" class="label-form">Contrase&ntilde;a:</label>
-            <input class="form-control" type="password" asp-for="Pass" id="Pass" placeholder="Contrase&ntilde;a" />
+            <label for="Pass" class="label-form">Contrase&ntilde;a:</label>
+            <div class="input-group flex-nowrap">
+                <span class="material-icons input-group-text" id="addon-wrapping">vpn_key</span>
+                <input class="form-control" type="password" id="Pass" asp-for="Pass" placeholder="Contrase&ntilde;a"/>
+            </div>
         </div>
 </form>
 
