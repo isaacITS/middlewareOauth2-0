@@ -1,7 +1,8 @@
-﻿using ITS_Middleware.Models.Context;
+﻿using ITS_Middleware.Models;
 using Microsoft.AspNetCore.Mvc;
 using ITS_Middleware.Tools;
 using ITS_Middleware.Models.Entities;
+using Microsoft.AspNetCore.Http;
 
 namespace ITS_Middleware.Controllers
 {
@@ -66,35 +67,29 @@ namespace ITS_Middleware.Controllers
         {
             try
             {
-                var user = _context.Usuarios.Where(foundUser => foundUser.Email == email);
-                
-                if (user.Any())
+                var user = _context.Usuarios.Where(u => u.Email == email).FirstOrDefault();
+                if (user == null)
                 {
-                    if (user.Where(u => u.Activo == false).Any())
-                    {
-                        ViewBag.msg = "El usuario esta inactivo";
-                        return View("Login");
-                    }
-                    if (user.Where(s => s.Email == email && s.Pass == Encrypt.GetSHA256(pass)).Any())
-                    {
-                        HttpContext.Session.SetString("userEmail", email);
-                        ViewBag.msg = null;
-                        ViewBag.alertType = null;
-                        return RedirectToAction("Projects", "Home");
-                    }
-                    else
-                    {
-                        ViewBag.msg = "Contraseña Incorrecta";
-                        return View("Login");
-                    }
+                    ViewBag.msg = "Usuario no registrado";
+                    return View();
                 }
-                ViewBag.msg = "Usuario no registrado";
-                return View("Login");
+                if (!user.Activo)
+                {
+                    ViewBag.msg = "El usuario esta deshabilitado";
+                    return View();
+                }
+                if (user.Pass != Encrypt.GetSHA256(pass))
+                {
+                    ViewBag.msg = "Contraseña Incorrecta";
+                    return View();
+                }
+                HttpContext.Session.SetString("userEmail", email);
+                HttpContext.Session.SetString("idUser", user.Id.ToString());
+                return RedirectToAction("Home", "Home");
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message.ToString().Trim());
-
                 return Json("Error");
             }
 
@@ -109,6 +104,7 @@ namespace ITS_Middleware.Controllers
             try
             {
                 HttpContext.Session.Remove("userEmail");
+                HttpContext.Session.Remove("idUser");
                 return View("Login");
             }
             catch (Exception ex)

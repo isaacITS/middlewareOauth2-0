@@ -1,9 +1,8 @@
 ﻿using System.Data.Entity.Infrastructure;
-using ITS_Middleware.Models.Context;
+using ITS_Middleware.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
-using ITS_Middleware.Models;
 
 namespace ITS_Middleware.Controllers
 {
@@ -18,7 +17,25 @@ namespace ITS_Middleware.Controllers
             _logger = logger;
         }
 
-        
+        public IActionResult Home()
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userEmail")))
+                {
+                    return RedirectToAction("Login", "Auth");
+                }
+                ViewBag.email = HttpContext.Session.GetString("userEmail");
+                return View();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message.ToString().Trim());
+                return Json("Error");
+            }
+        }
+
+        [HttpGet]
         public IActionResult Projects()
         {
             try
@@ -28,8 +45,7 @@ namespace ITS_Middleware.Controllers
                     return RedirectToAction("Login", "Auth");
                 }
                 var data = _context.Proyectos.Where(p => p.Id > 0).ToList();
-                ViewBag.email = HttpContext.Session.GetString("userEmail");
-                return View(data);
+                return PartialView(data);
             }
             catch (Exception ex)
             {
@@ -49,7 +65,6 @@ namespace ITS_Middleware.Controllers
                     return RedirectToAction("Login", "Auth");
                 }
                 var data = _context.Usuarios.Where(u => u.Id >= 2).ToList();
-                ViewBag.email = HttpContext.Session.GetString("userEmail");
                 return PartialView(data);
             }
             catch (Exception ex)

@@ -1,4 +1,4 @@
-﻿using ITS_Middleware.Models.Context;
+﻿using ITS_Middleware.Models;
 using ITS_Middleware.Tools;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,8 +18,6 @@ namespace ITS_Middleware.Controllers
             _logger = logger;
         }
 
-
-
         public IActionResult Register()
         {
             try
@@ -28,7 +26,6 @@ namespace ITS_Middleware.Controllers
                 {
                     return RedirectToAction("Login", "Auth");
                 }
-                ViewBag.email = HttpContext.Session.GetString("userEmail");
                 return PartialView();
             }
             catch (Exception ex)
@@ -79,7 +76,6 @@ namespace ITS_Middleware.Controllers
                 }
                 else
                 {
-                    ViewBag.email = HttpContext.Session.GetString("userEmail");
                     if (id == null || id == 1)
                     {
                         return Json(new { ok = false, msg= "No se ingresó un ID válido o no puede ser editado" });
@@ -130,7 +126,6 @@ namespace ITS_Middleware.Controllers
                 }
                 else
                 {
-                    ViewBag.email = HttpContext.Session.GetString("userEmail");
                     if (id == null || id == 1)
                     {
                         return Json(new {ok=false, msg = "No se ingresó un ID válido o no puede ser activado/desactivado"});
@@ -185,7 +180,6 @@ namespace ITS_Middleware.Controllers
                 }
                 else
                 {
-                    ViewBag.email = HttpContext.Session.GetString("userEmail");
                     if (id == null || id == 1)
                     {
                         return Json(new { ok = true, msg = "No se ingresó un ID válido o no puede ser eliminado" });

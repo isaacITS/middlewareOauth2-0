@@ -4,7 +4,7 @@ using ITS_Middleware.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace ITS_Middleware.Models.Context
+namespace ITS_Middleware.Models
 {
     public partial class middlewareITSContext : DbContext
     {
@@ -34,7 +34,7 @@ namespace ITS_Middleware.Models.Context
             {
                 entity.ToTable("proyectos");
 
-                entity.HasIndex(e => e.Nombre, "UQ__proyecto__72AFBCC6AFE52246")
+                entity.HasIndex(e => e.Nombre, "UQ__proyecto__72AFBCC62CE9FE42")
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnName("id");
@@ -42,7 +42,7 @@ namespace ITS_Middleware.Models.Context
                 entity.Property(e => e.Activo).HasColumnName("activo");
 
                 entity.Property(e => e.Descripcion)
-                    .HasMaxLength(1)
+                    .HasMaxLength(1000)
                     .HasColumnName("descripcion");
 
                 entity.Property(e => e.FechaAlta)
@@ -75,11 +75,6 @@ namespace ITS_Middleware.Models.Context
                     .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("usuario");
-
-                entity.HasOne(d => d.IdUsuarioRegsitraNavigation)
-                    .WithMany(p => p.Proyectos)
-                    .HasForeignKey(d => d.IdUsuarioRegsitra)
-                    .HasConstraintName("FK__proyectos__idUsu__4AB81AF0");
             });
 
             modelBuilder.Entity<Usuario>(entity =>
@@ -116,6 +111,11 @@ namespace ITS_Middleware.Models.Context
                     .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("puesto");
+
+                entity.Property(e => e.TokenRecovery)
+                    .HasMaxLength(200)
+                    .IsUnicode(false)
+                    .HasColumnName("tokenRecovery");
             });
 
             OnModelCreatingPartial(modelBuilder);

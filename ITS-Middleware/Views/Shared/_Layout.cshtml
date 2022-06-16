@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="es-mx">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -15,27 +15,23 @@
 </head>
 <body>
     
-        <header>
+    @if (!string.IsNullOrEmpty(ViewBag.email))
+    {
+       <header>
             <div class="nav-bar-top">
                 <h3>Portal de Configuración OAuth</h3>
                 <a id="btn-active-menu" title="Abrir Menu" onclick="actionSlideMenu()"><span id="btn-icon-menu" class="material-icons md-48">menu</span></a>
             </div>
             <nav id="sidenav">
                 <div class="sidenav">
-                    @if (string.IsNullOrEmpty(ViewBag.email)) 
-                    {
-                        <a style="color: #d3d3d3;"><span class="material-icons md-36">login</span>&nbsp;Inicia Sesión</a>
-                    } else 
-                    {
-                        <a asp-controller="Home" asp-action="Projects"><span class="material-icons md-36">widgets</span>&nbsp;Proyectos</a>
-                        <a onclick="GetUsersList()" href="#"><span class="material-icons md-36">manage_accounts</span>&nbsp;Usuarios</a>
-                        <a asp-controller="Auth" asp-action="Logout"><span class="material-icons md-36">logout</span>&nbsp;Cerrar Sesión</a>
-                    }
+                    <a onclick="GetProjectsList()" href="#"><span class="material-icons md-36">widgets</span>&nbsp;Proyectos</a>
+                    <a onclick="GetUsersList()" href="#"><span class="material-icons md-36">manage_accounts</span>&nbsp;Usuarios</a>
+                    <a asp-controller="Auth" asp-action="Logout"><span class="material-icons md-36">logout</span>&nbsp;Cerrar Sesión</a>
                 </div>
             </nav>
-        </header>   
-    <br><br><br>
-
+        </header> 
+    }
+       
 
     <div class="container">
         <main role="main" class="pb-3">

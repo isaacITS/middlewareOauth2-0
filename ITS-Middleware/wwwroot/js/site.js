@@ -19,6 +19,10 @@ function actionSlideMenu() {
 
 //Functions get tables content and views
 function GetUsersList() {
+    $("#sidenav").css('width',"0")
+    btnIconMenu.innerHTML = 'menu'
+    btnActiveMenu.setAttribute('title', 'Abrir Menu')
+
     $('#contentView').fadeOut(1)
     $('#viewsLoader').show()
     $.ajax({
@@ -37,6 +41,31 @@ function GetUsersList() {
             console.log(resp);
         }
     });
+}
+
+function GetProjectsList() {
+    $("#sidenav").css('width', "0")
+    btnIconMenu.innerHTML = 'menu'
+    btnActiveMenu.setAttribute('title', 'Abrir Menu')
+
+    $('#contentView').fadeOut(1)
+    $('#viewsLoader').show()
+    $.ajax({
+        type: 'GET',
+        url: siteurl + 'Home/Projects',
+        success: function (resp) {
+            if (resp == "Error") {
+                window.location.href = '/Home/Error';
+                return;
+            }
+            $("#contentView").empty().append(resp).hide();
+            $('#viewsLoader').hide();
+            $("#contentView").fadeIn();
+        },
+        error: function (resp) {
+            console.log(resp);
+        }
+    })
 }
 
 

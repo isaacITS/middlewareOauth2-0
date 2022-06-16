@@ -1,0 +1,43 @@
+﻿@using ITS_Middleware.Models.Entities
+@model Proyecto
+
+<form id="updateProjectForm">
+        <input type="hidden" asp-for="Id" name="Id"/>
+        <input type="hidden" asp-for="FechaAlta" name="FechaAlta"/>
+        <input type="hidden" asp-for="Activo" name="Activo"/>
+        <input type="hidden" asp-for="IdUsuarioRegsitra"/>
+        <div class="mb-3">
+            <label for="Nombre" class="label-form">Nombre:</label>
+            <input class="form-control" asp-for="Nombre" id="nombre" placeholder="Nombre" />
+        </div>
+        <div class="mb-3">
+            <label for="Usuario" class="label-form">Usuario:</label>
+            <input class="form-control" id="Usuario" asp-for="Usuario" placeholder="Usuario" />
+        </div>
+        <div class="mb-3">
+            <label for="Pass" class="label-form">Contraseña:</label>
+            <input class="form-control" id="Pass" asp-for="Pass" placeholder="*************"/>
+        </div>
+        <div class="mb-3">
+            <label for="Descripcion" class="label-form">Descripción:</label>
+            <input class="form-control" id="Descripcion" asp-for="Descripcion" placeholder="Descripcion" />
+        </div>
+        <div class="mb-3">
+            <label for="TipoCifrado" class="label-form">Tipo de cifrado:</label>
+            <select id="TipoCifrado" asp-for="TipoCifrado" name="TipoCifrado" class="form-select" aria-label="cifrado">
+                <option selected>Tipo de cifrado</option>
+                <option value="sha-256">SHA-256</option>
+                <option value="aes-256">AES-256</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="MetodoAutenticacion" class="label-form">Metodo de autenticación:</label>
+            <select id="MetodoAutenticacion" asp-for="MetodoAutenticacion" name="MetodoAutenticacion" class="form-select" aria-label="autenticacion">
+                <option value="SSO">Single Sign On</option>
+                <option value="Oauth2-0">Oauth2.0</option>
+                <option value="JWT">JsonWebToken</option>
+            </select>
+        </div>
+</form>
+
+<script src="~/js/projectScripts.js" asp-append-version="true"></script>

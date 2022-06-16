@@ -1,0 +1,20 @@
+﻿@model ITS_Middleware.Models.Entities.Proyecto
+
+<form id="deleteProjectForm">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="Nombre" id="Nombre"/>
+
+    <div class="mb-3">
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            ¿Eliminar el proyecto <strong id="projectName"></strong>?
+            <p><span class="align-middle material-icons">report_problem</span>&nbsp;Esta accion no se puede deshacer</p>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+ </form>
+
+ <script>
+     $('#projectName').append($('#Nombre').val())
+ </script>
+
+ <script src="~/js/projectScripts.js" asp-append-version="true"></script>

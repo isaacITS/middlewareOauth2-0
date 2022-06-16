@@ -1,33 +1,12 @@
-﻿﻿<style>
-body{
-    background-color: #093C5D;
-}
+﻿<style>
+    body{
+        background-color: #093C5D;
+    }
 </style>
-@{
-    ViewData["Title"] = "Login";
-}
 
-@if(ViewBag.msg != null) {
-    <div class="alert" id="ventana-modal">
-       <div class="modal-dialog">
-           <button class="btn btn-danger">
-               <span class="material-icons">highlight_off</span>
-           </button>
-            <div class="modal-content text-center">
-                <div class="modal-header">
-                    <h5 class="text-danger">Error</h5>
-                </div>
-                <div class="modal-body">
-                    <div class="alert alert-danger"> 
-                        @ViewBag.msg
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-}
+<input type="hidden" value="@ViewBag.msg" id="alertMessage"/>
 
-<form asp-controller="auth" asp-action="login" method="post" class="form-login">
+<form class="form-login" asp-controller="Auth" asp-action="Login" method="post">
     <h5>Iniciar sesión</h5>
     <img src="~/img/main-logo.jpg" alt="IT-Seekers image"/>
     <div class="login-form-content">
@@ -46,9 +25,9 @@ body{
             <span class="material-icons input-group-text" id="btn-action-pass" onclick="showHiddePass()">visibility_off</span>
         </div>
     </div>
-    <input class="btn submit" type="submit" value="Ingresar">
+    <button class="btn btn-login-portal" id="btnLoginAuth" type="submit">Ingresar</button>
 </form>
 
 @section scripts {
-    <script src="~/js/PassLogin.js" type="text/javascript"></script>
+    <script src="~/js/PassLogin.js" asp-append-version="true"></script>
 }

@@ -202,6 +202,25 @@ header .nav-bar-top {
     box-shadow: 0 0 20px #FF372D;
 }
 
+.title-table {
+    margin-top: 60px;
+    font-size: 30px;
+    font-weight: 600;
+}
+
+.dataTables_length, .dataTables_filter {
+    margin-bottom: 5px;
+}
+
+.dataTables_info, .dataTables_paginate {
+    margin-top: 10px;
+}
+
+
+#modalRegisterView, #modalRegisterProjectView {
+    margin-bottom: 15px;
+}
+
 @keyframes animateC {
     0% {
         transform: rotate(0deg);

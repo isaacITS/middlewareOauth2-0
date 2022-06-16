@@ -1,5 +1,39 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@using ITS_Middleware.Models.Entities
+@model Proyecto 
+
+<form id="registerProjectForm">
+    <input type="hidden" asp-for="Id"/>
+        <div class="mb-3">
+            <label for="nombre" class="label-form">Nombre:</label>
+            <input class="form-control" asp-for="Nombre" id="Nombre" placeholder="Nombre" />
+        </div>
+        <div class="mb-3">
+            <label for="Descripcion" class="label-form">Descripción:</label>
+            <input class="form-control" id="Descripcion" asp-for="Descripcion" placeholder="Descripcion" />
+        </div>
+        <div class="mb-3">
+            <label for="TipoCifrado" class="label-form">Tipo de cifrado:</label>
+            <select id="TipoCifrado" asp-for="TipoCifrado" class="form-select" aria-label="cifrado">
+                <option value="sha-256">SHA-256</option>
+                <option value="aes-256">AES-256</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="MetodoAutenticacion" class="label-form">Metodo de autenticación:</label>
+            <select id="MetodoAutenticacion" asp-for="MetodoAutenticacion" class="form-select" aria-label="autenticacion">
+                <option value="SSO">Cifrado de autenticación SSO</option>
+                <option value="Oauth2-0">Cifrado de autenticación Oauth2.0</option>
+                <option value="JWT">JsonWebToken</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="Usuario" class="label-form">Usuario:</label>
+            <input class="form-control" id="Usuario" asp-for="Usuario" placeholder="Usuario" />
+        </div>
+        <div class="mb-3">
+            <label for="pass" class="label-form">Contrase&ntilde;a:</label>
+            <input class="form-control" type="password" asp-for="Pass" id="Pass" placeholder="Contrase&ntilde;a" />
+        </div>
+</form>
+
+<script src="~/js/ProjectScripts.js" asp-append-version="true"></script>

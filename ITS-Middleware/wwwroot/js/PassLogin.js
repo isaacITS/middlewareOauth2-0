@@ -18,15 +18,21 @@ $('#email').change(function () {
         $('#email').css('background', 'none')
         $('#email').css('color', '#202020')
         $('small').css('display', 'none')
-        $('.submit').prop('disabled', false)
+        $('.btn-login-portal').prop('disabled', false)
         $('#icon-status-email').text('check')
         $('#icon-status-email').css('color', "#12b100")
     } else {
         $('#email').css('background-color', 'rgba(209, 0, 0, 0.26)')
         $('#email').css('color', '#911A00')
         $('small').css('display', 'block')
-        $('.submit').prop('disabled', true)
+        $('.btn-login-portal').prop('disabled', true)
         $('#icon-status-email').text('clear')
         $('#icon-status-email').css('color', "#C12300")
+    }
+})
+
+$(document).ready(() => {
+    if ($('#alertMessage').val().length > 0) {
+        ShowToastMessage('error', 'Credenciales incorrectas', $('#alertMessage').val())
     }
 })

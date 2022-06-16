@@ -14,8 +14,6 @@ namespace ITS_Middleware.Models.Entities
         public string? MetodoAutenticacion { get; set; }
         public string Pass { get; set; } = null!;
         public bool Activo { get; set; }
-        public int? IdUsuarioRegsitra { get; set; }
-
-        public virtual Usuario? IdUsuarioRegsitraNavigation { get; set; }
+        public int IdUsuarioRegsitra { get; set; }
     }
 }

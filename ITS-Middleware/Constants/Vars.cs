@@ -4,7 +4,7 @@
     {
         #region WEB APPLICATION CONFIGURATION
 
-        public static string CONNECTION_STRING;
+        public static string? CONNECTION_STRING;
 
         #endregion WEB APPLICATION CONFIGURATION
     }

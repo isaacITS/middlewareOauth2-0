@@ -2,10 +2,10 @@
 @using System.Linq.Expressions
 @model List<Proyecto>
 
-<h2 class="text-center">Proyectos</h2>
+<h2 class="title-table">Administración de Proyectos</h2>
 <hr />
-<a class="btn btn-primary" id="modalRegisterView" data-bs-toggle="modal" data-bs-target="#userModal">
-    <span class="align-middle material-icons">person_add</span>&nbsp;Agregar Usuario
+<a class="btn btn-primary" id="modalRegisterProjectView" data-bs-toggle="modal" data-bs-target="#projectModal">
+    <span class="align-middle material-icons">library_add</span>&nbsp;Agregar Proyecto
 </a>
 
 <div class="table-responsive" id="usersTableContent">
@@ -13,9 +13,11 @@
         <thead>
             <tr>
                 <th>Nombre</th>
-                <th>Correo</th>
-                <th>Puesto</th>
+                <th>Tipo de Cifrado</th>
+                <th>Método de autenticación</th>
                 <th>Fecha de Alta</th>
+                <th>Usuario</th>
+                <th>Creado por:</th>
                 <th>Acciones</th>
                 <th>Estatus</th>
             </tr>
@@ -24,15 +26,33 @@
         @foreach (Proyecto project in Model)
         {
                 <tr>
-                    <td>@project.Descripcion</td>
-                    </tr>
+                    <td>@project.Nombre</td>
+                    <td>@project.TipoCifrado</td>
+                    <td>@project.MetodoAutenticacion</td>
+                    <td>@project.FechaAlta</td>
+                    <td>@project.Usuario</td>
+                    <td>@project.IdUsuarioRegsitra</td>
+                    <td>
+                        <button class="btn btn-primary modalUpdateProjectView" data-idProject="@project.Id" data-bs-toggle="modal" data-bs-target="#projectModal" title="Editar Proyecto">
+                            <span class="material-icons">edit</span>
+                        </button> 
+                        <button class="btn btn-danger modalDeleteProjectView" data-idProject="@project.Id" data-bs-toggle="modal" data-bs-target="#projectModal" title="Eliminar proyecto">
+                            <span class="material-icons">delete</span>
+                        </button>
+                    </td>
+                    <td>
+                        <button class="btn btn-secondary modalStatusProjectView" data-idProject="@project.Id" data-bs-toggle="modal" data-bs-target="#projectModal">
+                            <span class="material-icons">@if (project.Activo){<text>clear</text>} else{<text>done</text>}</span>
+                        </button>
+                    </td>
+                </tr>
             }
         </tbody>
 </table>
 </div>
 
 <!--MODAL FOR USRE CRUD-->
-<div class="modal fade" id="userModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade" id="projectModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
      <div class="modal-dialog modal-dialog-centered">
          <div class="modal-content">
              <div class="modal-header">
@@ -45,6 +65,5 @@
      </div>
 </div>
 
-
 <script src="~/js/DataTable.js" type="text/javascript"></script>
-<script src="~/js/userScriptsGetViews.js" asp-append-version="true"></script>
+<script src="~/js/projectScriptsGetViews.js" type="text/javascript"></script>

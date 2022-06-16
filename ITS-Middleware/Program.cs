@@ -1,4 +1,4 @@
-using ITS_Middleware.Models.Context;
+using ITS_Middleware.Models;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

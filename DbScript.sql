@@ -15,14 +15,14 @@ create table usuarios(
 create table proyectos(
 	id int primary key identity(1,1),
 	nombre varchar(50) unique,
-	descripcion nvarchar,
+	descripcion varchar(max),
 	usuario varchar(50) not null,
 	fechaAlta datetime not null,
 	tipoCifrado varchar(50),
 	metodoAutenticacion varchar(50),
 	pass varchar(150) not null,
 	activo bit not null,
-	idUsuarioRegsitra int foreign key references usuarios(id)
+	idUsuarioRegsitra int not null
 );
 
 insert into usuarios values('Administrador', GETUTCDATE(), 'Admin', 'admin@admin.com', HASHBYTES('SHA2_256','admin123'), 1);
