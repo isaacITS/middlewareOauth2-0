@@ -1,14 +1,27 @@
-﻿<div class="row">
-    <div class="col-md-6 offset-3">
-        <div class="form-style">
-            <form >
-                <label>Nueva contraseña:</label>
-                <input name="email" id="email" class="form-control"/>
-                <label>Confirma la contraseña:</label>
-                <input name="email" id="email" class="form-control"/>
-                <br />
-                <buton class="btn btn-primary" type="submit">Cambiar contraseña</buton>
-            </form>
+﻿<style>
+    body{
+        background-color: #093C5D;
+    }
+</style>
+<div class="form-restore-pass">
+    <h5>Recuperar contrase&ntilde;a</h5>
+    <img src="~/img/main-logo.jpg" alt="IT-Seekers image"/>
+    <div class="restore-form-content">
+        <p>Ingresa el correo electrónico de tu cuenta para cambiar la contraseña&ntilde;a </p>
+        <label for="email" class="label-form">Correo electrónico: </label>
+        <br />
+        <small class="text-danger">Ingresa un correo válido</small>
+        <div class="input-group flex-nowrap">
+            <span class="material-icons input-group-text" id="addon-wrapping">mail_outline</span>
+            <input type="email" class="form-control" name="email" id="email"  placeholder="Correo Electrónico" required aria-label="Correo Electrónico" aria-describedby="addon-wrapping">
+            <span class="material-icons" id="icon-status-email"></span>
         </div>
     </div>
+    <button id="btnSendEmailRestorePass" class="btn btn-primary btn-send-email" disabled>Enviar correo</button>
+    <br/>
+    <a class="forgot-pass go-to-login-page" asp-controller="Auth" asp-action="Login">Iniciar sesi&oacute;n</a>
 </div>
+
+@section scripts {
+    <script src="~/js/RestorePassScripts.js" asp-append-version="true"></script>
+}

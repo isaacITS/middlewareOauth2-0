@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ITS_Middleware.Tools;
 using ITS_Middleware.Models.Entities;
 using Microsoft.EntityFrameworkCore;
+using ITS_Middleware.ExceptionsHandler;
 
 namespace ITS_Middleware.Controllers
 {
@@ -83,20 +84,29 @@ namespace ITS_Middleware.Controllers
                     ViewBag.msg = "Contraseña Incorrecta";
                     return View();
                 }
+
                 HttpContext.Session.SetString("userEmail", email);
                 HttpContext.Session.SetString("idUser", user.Id.ToString());
                 return RedirectToAction("Home", "Home");
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message.ToString().Trim());
+                List<string> errors = new List<string>();
+                var messages = ex.FromHierarchy(x => x.InnerException).Select(x => x.Message);
+                foreach (var message in messages)
+                {
+                    _logger.LogError("[ERROR MESSAGE]: " + message);
+                    Console.WriteLine(message.ToString().Trim());
+                    errors.Add(message);
+                }
+                TempData["ErrorsMessages"] = errors;
                 return Json("Error");
             }
 
         }
 
 
-        public IActionResult RestorePassBefore()
+        public IActionResult RestorePass()
         {
             try
             {
@@ -112,7 +122,7 @@ namespace ITS_Middleware.Controllers
 
         //Restore password method
         [HttpPost]
-        public IActionResult RestorePass(string email)
+        public IActionResult GenerateToken([FromBody] string email)
         {
             try
             {
@@ -121,22 +131,23 @@ namespace ITS_Middleware.Controllers
 
                 if (user != null)
                 {
+                    if (!user.Activo) return Json(new { ok = false, status = 205, msg = "El usuario se encuentra deshabilitado" });
+                    user.TokenRecovery = token;
                     var local = _context.Set<Usuario>().Local.FirstOrDefault(entry => entry.Email.Equals(user.Email));
                     if (local != null) _context.Entry(local).State = EntityState.Detached;
                     _context.Entry(user).State = EntityState.Modified;
                     _context.SaveChanges();
-                    return View("RestorePass", user);
+                    return Json(new { ok = true, status = 200, msg = $"Se ha enviado un correo a {email} para restablecer la contraseña" });
                 }
-                return Json(new { ok = false, msg = "No se encontró el correo " });
+                return Json(new { ok = false, status = 400, msg = $"No se encontró el usuario con correo {email}" });
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message.ToString());
-                return Json(new { ok = false, msg = "Error" });
+                return Json(new { ok = false, status = 500, msg = "Error" });
                 throw;
             }
         }
-
 
 
 

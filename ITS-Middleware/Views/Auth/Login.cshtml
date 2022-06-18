@@ -21,12 +21,13 @@
         <label for="pass" class="label-form">Contraseña: </label>
         <div class="input-group flex-nowrap">
             <span class="material-icons input-group-text" id="addon-wrapping">vpn_key</span>
-            <input type="password" class="form-control" name="pass" id="pass" placeholder="Contraseña" required aria-label="Contraseña" aria-describedby="addon-wrapping">
-            <span class="material-icons input-group-text" id="btn-action-pass" onclick="showHiddePass()">visibility_off</span>
+            <input type="password" class="form-control" name="pass" id="Pass" placeholder="Contraseña" required aria-label="Contraseña" aria-describedby="addon-wrapping">
+            <span class="material-icons input-group-text" id="btn-action-pass">visibility_off</span>
         </div>
     </div>
-    <button class="btn btn-login-portal" id="btnLoginAuth" type="submit">Ingresar</button>
-    <a asp-controller="Auth" asp-action="RestorePassBefore">¿Olvidaste la contraseña?</a>
+    <button class="btn btn-login-portal" id="btnLoginAuth" type="submit" disabled>Ingresar</button>
+    <br/>
+    <a class="forgot-pass" asp-controller="Auth" asp-action="RestorePass">¿Olvidaste la contraseña?</a>
 </form>
 
 @section scripts {

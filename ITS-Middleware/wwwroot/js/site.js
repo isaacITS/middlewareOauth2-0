@@ -14,6 +14,15 @@ function actionSlideMenu() {
     }
 }
 
+$('#btn-action-pass').on('click', () => {
+    if ($('#btn-action-pass').text() == 'visibility_off') {
+        $('#Pass').attr('type', 'text')
+        $('#btn-action-pass').html('visibility')
+    } else {
+        $('#Pass').attr('type', 'password')
+        $('#btn-action-pass').html('visibility_off')
+    }
+})
 
 
 
