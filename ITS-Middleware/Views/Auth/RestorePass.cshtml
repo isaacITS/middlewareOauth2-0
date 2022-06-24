@@ -1,13 +1,20 @@
 ﻿<style>
-    body{
+    body, html{
         background-color: #093C5D;
+        height: 100%;
     }
+     .spacer {
+    margin-top: 0;
+    margin-bottom: 10px;
+    height: 50px;
+}
 </style>
+<div class="spacer"></div>
 <div class="form-restore-pass">
     <h5>Recuperar contrase&ntilde;a</h5>
     <img src="~/img/main-logo.jpg" alt="IT-Seekers image"/>
     <div class="restore-form-content">
-        <p>Ingresa el correo electrónico de tu cuenta para cambiar la contraseña&ntilde;a </p>
+        <p class="text-center">Ingresa el correo electrónico de tu cuenta para cambiar la contrase&ntilde;a </p>
         <label for="email" class="label-form">Correo electrónico: </label>
         <br />
         <small class="text-danger">Ingresa un correo válido</small>
@@ -19,7 +26,7 @@
     </div>
     <button id="btnSendEmailRestorePass" class="btn btn-primary btn-send-email" disabled>Enviar correo</button>
     <br/>
-    <a class="forgot-pass go-to-login-page" asp-controller="Auth" asp-action="Login">Iniciar sesi&oacute;n</a>
+    <a class="forgot-pass go-to-login-page" asp-controller="Auth" asp-action="Login"><span class="align-middle material-icons">open_in_new</span>&nbsp;Iniciar sesi&oacute;n</a>
 </div>
 
 @section scripts {

@@ -3,24 +3,25 @@
 $(document).ready(() => {
     $('#btnSendEmailRestorePass').on('click', () => {
         if (checkDataSendEmail().ok) {
+            $('#viewsLoader').show()
             email = $('#email').val()
             $.ajax({
                 type: 'POST',
-                url: `${siteurl}Auth/GenerateToken/`,
+                url: `${siteurl}Auth/GenerateToken`,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 data: JSON.stringify(email),
                 success: function (response) {
+                    $('#viewsLoader').hide()
                     if (response.status == 500) {
                         window.location.href = '/Home/Error'
                         console.log(response)
                         return;
                     } else if (response.status == 205) {
-                        $('.go-to-login-page').click()
                         ShowToastMessage('warning', 'Usuario deshabilitado', response.msg)
                     } else if (response.status == 200) {
-                        $('.go-to-login-page').click()
                         ShowToastMessage('success', `Correo de recuperación enviado`, response.msg)
+                        redirectToLogin()
                     } else {
                         ShowToastMessage('error', `No se encontro el usuario`, response.msg)
                     }
@@ -37,6 +38,37 @@ $(document).ready(() => {
         } else {
             ShowToastMessage('error', 'Datos no válidos', checkDataSendEmail().msg)
         }
+    })
+
+    $('#btnUpdatePassword').on('click', function () {
+        $('#viewsLoader').show()
+        var formData = $('#restorePasswordForm').serialize()
+            $.ajax({
+                type: 'post',
+                url: siteurl + 'Auth/UpdatePass',
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                dataType: "json",
+                data: formData,
+                success: function (response) {
+                    $('#viewsLoader').hide()
+                    if (response.status == 500) {
+                        window.location.href = '/Home/Error'
+                        console.log(response)
+                        return;
+                    } else if (response.status == 200) {
+                        ShowToastMessage('success', 'Contraseña actualizada', response.msg)
+                        redirectToLogin()
+                    } else {
+                        ShowToastMessage('error', `Ocurrió un error con los datos`, response.msg)
+                    }
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
     })
 })
 

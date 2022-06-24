@@ -19,6 +19,7 @@
                 "next": "Siguiente",
                 "previous": "Anterior"
             }
-        }
+        },
+        "responsive": true
     });
 });

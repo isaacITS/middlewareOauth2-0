@@ -1,6 +1,9 @@
 ﻿@using ITS_Middleware.Models.Entities
 @using System.Linq.Expressions
 @model List<Proyecto>
+@{
+   IEnumerable<Usuario> usuarios = ViewData["UserList"] as IEnumerable<Usuario>;
+}
 
 <h2 class="title-table">Administración de Proyectos</h2>
 <hr />
@@ -13,11 +16,9 @@
         <thead>
             <tr>
                 <th>Nombre</th>
-                <th>Tipo de Cifrado</th>
-                <th>Método de autenticación</th>
+                <th>Métodos de autenticación</th>
                 <th>Fecha de Alta</th>
-                <th>Usuario</th>
-                <th>Creado por:</th>
+                <th>Registrado por</th>
                 <th>Acciones</th>
                 <th>Estatus</th>
             </tr>
@@ -25,13 +26,18 @@
         <tbody>
         @foreach (Proyecto project in Model)
         {
+                @foreach (Usuario usuarioLocal in usuarios)
+                {
+                    if(project.IdUsuarioRegsitra == usuarioLocal.Id)
+                    {
+                        project.IdUsuarioRegsitraNavigation = usuarioLocal;
+                    }
+                }
                 <tr>
                     <td>@project.Nombre</td>
-                    <td>@project.TipoCifrado</td>
-                    <td>@project.MetodoAutenticacion</td>
-                    <td>@project.FechaAlta</td>
-                    <td>@project.Usuario</td>
-                    <td>@project.IdUsuarioRegsitra</td>
+                    <td>@project.MetodosAutenticacion</td>
+                    <td>@project.FechaAlta.ToShortDateString()</td>
+                    <td>@project.IdUsuarioRegsitraNavigation.Nombre</td>
                     <td>
                         <button class="btn btn-primary modalUpdateProjectView" data-idProject="@project.Id" data-bs-toggle="modal" data-bs-target="#projectModal" title="Editar Proyecto">
                             <span class="material-icons">edit</span>
@@ -39,9 +45,12 @@
                         <button class="btn btn-danger modalDeleteProjectView" data-idProject="@project.Id" data-bs-toggle="modal" data-bs-target="#projectModal" title="Eliminar proyecto">
                             <span class="material-icons">delete</span>
                         </button>
+                        <button class="btn btn-dark modalReadDescription" data-description="@project.Descripcion" data-bs-toggle="modal" data-bs-target="#projectModal" title="Leer descripción">
+                            <span class="material-icons">library_books</span>
+                        </button>
                     </td>
                     <td>
-                        <button class="btn btn-secondary modalStatusProjectView" data-idProject="@project.Id" title="@if (project.Activo){<text>Desactivar</text>} else{<text>Activar</text>}</span>" data-bs-toggle="modal" data-bs-target="#projectModal">
+                        <button class="btn btn-secondary modalStatusProjectView" data-idProject="@project.Id" title="@if (project.Activo){<text>Desactivar </text>} else{<text>Activar </text>}" data-bs-toggle="modal" data-bs-target="#projectModal">
                             <span class="material-icons">@if (project.Activo){<text>clear</text>} else{<text>done</text>}</span>
                         </button>
                     </td>
@@ -65,5 +74,20 @@
      </div>
 </div>
 
+<script type="text/javascript">
+    function getDescription(description) {
+        $('.modal-dialog').fadeOut(1)
+        $('#viewsLoader').show()
+        $('.modal-title').html('Descripción del proyecto')
+        $(".modal-body").html(`<p class="text-justify">${description}</p>`)
+        $('.modal-footer').html("<button type='button' class='btn btn-outline-secondary btn-close-modal-view' data-bs-dismiss='modal'><span class='align-middle material-icons'>close</span>&nbsp;Cerrar</button>")
+        $('#viewsLoader').hide()
+        $('.modal-dialog').fadeIn()
+    }
+
+    $('.modalReadDescription').on('click', function () {
+        getDescription($(this).attr('data-description'))
+    })
+</script>
 <script src="~/js/DataTable.js" type="text/javascript"></script>
 <script src="~/js/projectScriptsGetViews.js" type="text/javascript"></script>

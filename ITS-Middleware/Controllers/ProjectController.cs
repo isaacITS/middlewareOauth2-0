@@ -1,9 +1,10 @@
 ﻿using ITS_Middleware.Models.Entities;
 using ITS_Middleware.Models;
-using ITS_Middleware.Tools;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using ITS_Middleware.Models.Context;
+using ITS_Middleware.ExceptionsHandler;
 
 namespace ITS_Middleware.Controllers
 {
@@ -23,16 +24,26 @@ namespace ITS_Middleware.Controllers
         {
             try
             {
-                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userEmail")))
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName")))
                 {
                     return RedirectToAction("Login", "Auth");
                 }
+                var metodos = _context.MetodosAuths.Where(m => m.Id > 0).ToList();
+                ViewData["MetodosAuth"] = metodos;
                 return PartialView();
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message.ToString());
-                throw;
+                List<string> errors = new List<string>();
+                var messages = ex.FromHierarchy(x => x.InnerException).Select(x => x.Message);
+                foreach (var message in messages)
+                {
+                    _logger.LogError("[ERROR MESSAGE]: " + message);
+                    Console.WriteLine(message.ToString().Trim());
+                    errors.Add(message);
+                }
+                TempData["ErrorsMessages"] = errors;
+                return Json(new { ok = false, status = 500, msg = "Error" });
             }
         }
 
@@ -44,7 +55,6 @@ namespace ITS_Middleware.Controllers
             {
                 project.Activo = true;
                 project.IdUsuarioRegsitra = int.Parse(HttpContext.Session.GetString("idUser"));
-                project.Pass = Encrypt.GetSHA256(project.Pass);
                 project.FechaAlta = DateTime.Now;
                 if (ModelState.IsValid)
                 {
@@ -57,13 +67,20 @@ namespace ITS_Middleware.Controllers
                     _context.SaveChanges();
                     return Json(new { ok = true, msg = $"El proyecto {project.Nombre} se ha registrado" });
                 }
-                return Json(new { ok = false, msg = "El modelo no es válido"});
+                return Json(new { ok = false, msg = "Información incompleta, intenta volver a iniciar sesión"});
             }
             catch (Exception ex)
             {
-                string value = ex.Message.ToString();
-                Console.Write(value);
-                return Json(new { ok = false, msg = "Error" });
+                List<string> errors = new List<string>();
+                var messages = ex.FromHierarchy(x => x.InnerException).Select(x => x.Message);
+                foreach (var message in messages)
+                {
+                    _logger.LogError("[ERROR MESSAGE]: " + message);
+                    Console.WriteLine(message.ToString().Trim());
+                    errors.Add(message);
+                }
+                TempData["ErrorsMessages"] = errors;
+                return Json(new { ok = false, status = 500, msg = "Error" });
             }
         }
 
@@ -72,7 +89,7 @@ namespace ITS_Middleware.Controllers
         {
             try
             {
-                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userEmail")))
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName")))
                 {
                     return RedirectToAction("Login", "Auth");
                 }
@@ -87,14 +104,23 @@ namespace ITS_Middleware.Controllers
                     {
                         return Json(new { ok = false, msg = "El ID no coincide con un proyecto registrado" });
                     }
+                    var metodos = _context.MetodosAuths.Where(m => m.Id > 0).ToList();
+                    ViewData["MetodosAuth"] = metodos;
                     return PartialView(project);
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message.ToString());
-                return Json(new { ok = false, msg = "Error" });
-                throw;
+                List<string> errors = new List<string>();
+                var messages = ex.FromHierarchy(x => x.InnerException).Select(x => x.Message);
+                foreach (var message in messages)
+                {
+                    _logger.LogError("[ERROR MESSAGE]: " + message);
+                    Console.WriteLine(message.ToString().Trim());
+                    errors.Add(message);
+                }
+                TempData["ErrorsMessages"] = errors;
+                return Json(new { ok = false, status = 500, msg = "Error" });
             }
         }
 
@@ -103,7 +129,6 @@ namespace ITS_Middleware.Controllers
         {
             try
             {
-                project.Pass = SetPassProject(project);
                 var local = _context.Set<Proyecto>().Local.FirstOrDefault(entry => entry.Id.Equals(project.Id));
                 if (local != null) _context.Entry(local).State = EntityState.Detached;
                 _context.Entry(project).State = EntityState.Modified;
@@ -112,9 +137,16 @@ namespace ITS_Middleware.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message.ToString());
-                return Json(new { ok = false, msg = "Error" });
-                throw;
+                List<string> errors = new List<string>();
+                var messages = ex.FromHierarchy(x => x.InnerException).Select(x => x.Message);
+                foreach (var message in messages)
+                {
+                    _logger.LogError("[ERROR MESSAGE]: " + message);
+                    Console.WriteLine(message.ToString().Trim());
+                    errors.Add(message);
+                }
+                TempData["ErrorsMessages"] = errors;
+                return Json(new { ok = false, status = 500, msg = "Error" });
             }
         }
 
@@ -124,7 +156,7 @@ namespace ITS_Middleware.Controllers
         {
             try
             {
-                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userEmail")))
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName")))
                 {
                     return RedirectToAction("Login", "Auth");
                 }
@@ -144,9 +176,16 @@ namespace ITS_Middleware.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message.ToString());
-                return Json(new { ok = false, msg = "Error" });
-                throw;
+                List<string> errors = new List<string>();
+                var messages = ex.FromHierarchy(x => x.InnerException).Select(x => x.Message);
+                foreach (var message in messages)
+                {
+                    _logger.LogError("[ERROR MESSAGE]: " + message);
+                    Console.WriteLine(message.ToString().Trim());
+                    errors.Add(message);
+                }
+                TempData["ErrorsMessages"] = errors;
+                return Json(new { ok = false, status = 500, msg = "Error" });
             }
         }
 
@@ -168,9 +207,16 @@ namespace ITS_Middleware.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message.ToString());
-                return Json(new { ok = false, msg = "Error" });
-                throw;
+                List<string> errors = new List<string>();
+                var messages = ex.FromHierarchy(x => x.InnerException).Select(x => x.Message);
+                foreach (var message in messages)
+                {
+                    _logger.LogError("[ERROR MESSAGE]: " + message);
+                    Console.WriteLine(message.ToString().Trim());
+                    errors.Add(message);
+                }
+                TempData["ErrorsMessages"] = errors;
+                return Json(new { ok = false, status = 500, msg = "Error" });
             }
         }
 
@@ -179,13 +225,13 @@ namespace ITS_Middleware.Controllers
         {
             try
             {
-                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userEmail")))
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName")))
                 {
                     return RedirectToAction("Login", "Auth");
                 }
                 else
                 {
-                    ViewBag.email = HttpContext.Session.GetString("userEmail");
+                    ViewBag.email = HttpContext.Session.GetString("userName");
                     if (id == null)
                     {
                         return Json(new { ok = false, msg = "No se ingresó un ID válido" });
@@ -200,9 +246,16 @@ namespace ITS_Middleware.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message.ToString());
-                return Json(new { ok = false, msg = "Error" });
-                throw;
+                List<string> errors = new List<string>();
+                var messages = ex.FromHierarchy(x => x.InnerException).Select(x => x.Message);
+                foreach (var message in messages)
+                {
+                    _logger.LogError("[ERROR MESSAGE]: " + message);
+                    Console.WriteLine(message.ToString().Trim());
+                    errors.Add(message);
+                }
+                TempData["ErrorsMessages"] = errors;
+                return Json(new { ok = false, status = 500, msg = "Error" });
             }
         }
 
@@ -220,22 +273,17 @@ namespace ITS_Middleware.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message.ToString());
-                return Json(new { ok = false, msg = "Error" });
-                throw;
+                List<string> errors = new List<string>();
+                var messages = ex.FromHierarchy(x => x.InnerException).Select(x => x.Message);
+                foreach (var message in messages)
+                {
+                    _logger.LogError("[ERROR MESSAGE]: " + message);
+                    Console.WriteLine(message.ToString().Trim());
+                    errors.Add(message);
+                }
+                TempData["ErrorsMessages"] = errors;
+                return Json(new { ok = false, status = 500, msg = "Error" });
             }
         }
-
-
-        private string SetPassProject(Proyecto projectModel)
-        {
-            if (string.IsNullOrEmpty(projectModel.Pass))
-            {
-                var getProjectData = _context.Proyectos.FirstOrDefault(p => p.Id == projectModel.Id);
-                if (getProjectData != null) return getProjectData.Pass;
-            }
-            return Tools.Encrypt.GetSHA256(projectModel.Pass);
-        }
-
     }
 }

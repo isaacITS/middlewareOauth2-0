@@ -3,7 +3,6 @@
     background-color: #fff;
     margin: auto;
     text-align: center;
-    margin-top: 10%;
     box-shadow: 5px 5px 10px 2px #00000073;
     padding: 20px;
     border-top: 4px solid #017bab;
@@ -48,18 +47,6 @@
     border: solid 1px #F1F1F1;
 }
 
-
-.form-login .login-form-content .input-group #btn-action-pass {
-    cursor: pointer;
-    background: none;
-    color: #093C5D;
-    transition: all .3s;
-}
-
-.form-login .login-form-content .input-group #btn-action-pass:hover {
-    background-color: #093C5D;
-    color: #f5f5f5;
-}
 
 .form-login .btn-login-portal {
     width: 95%;

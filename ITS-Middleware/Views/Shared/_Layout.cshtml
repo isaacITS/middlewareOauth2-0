@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Portal de configuración</title>
+    <title>Portal de administración OAuth</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css" />
@@ -15,23 +15,25 @@
 </head>
 <body>
     
-    @if (!string.IsNullOrEmpty(ViewBag.email))
+    @if (!string.IsNullOrEmpty(ViewBag.userName))
     {
        <header>
             <div class="nav-bar-top">
-                <h3>Portal de Configuración OAuth</h3>
-                <a id="btn-active-menu" title="Abrir Menu" onclick="actionSlideMenu()"><span id="btn-icon-menu" class="material-icons md-48">menu</span></a>
+                <h3>Portal de administración OAuth</h3>
+                <a id="btn-active-menu" title="Abrir Menu" onclick="actionSlideMenu()"><span id="btn-icon-menu" class="material-icons">menu</span></a>
             </div>
             <nav id="sidenav">
                 <div class="sidenav">
-                    <a onclick="GetProjectsList()" href="#"><span class="material-icons md-36">widgets</span>&nbsp;Proyectos</a>
-                    <a onclick="GetUsersList()" href="#"><span class="material-icons md-36">manage_accounts</span>&nbsp;Usuarios</a>
-                    <a asp-controller="Auth" asp-action="Logout"><span class="material-icons md-36">logout</span>&nbsp;Cerrar Sesión</a>
+                    <a onclick="GetProjectsList()" href="#"><span class="align-middle material-icons md-36">widgets</span>&nbsp;Proyectos</a>
+                    <a onclick="GetUsersList()" href="#"><span class="align-middle material-icons md-36">manage_accounts</span>&nbsp;Usuarios</a>
+                    <a onclick="getUserByProjectList()" href="#"><span class="align-middle material-icons md-36">switch_account</span>&nbsp;Usuarios por proyecto</a>
+                    <a href="#" class="userNameOnline"><span class="align-middle material-icons md-36">account_circle</span>&nbsp;@ViewBag.userName</a>
+                    <a asp-controller="Auth" asp-action="Logout"><span class="align-middle material-icons md-36">logout</span>&nbsp;Cerrar sesión</a>
                 </div>
             </nav>
-        </header> 
+        </header>
     }
-       
+
 
     <div class="container">
         <main role="main" class="pb-3">
@@ -56,6 +58,7 @@
         </div>
       </div>
     </div>
+
     <footer class="footer text-muted text-center">
         <div class="container">
             &copy; 2022 - IT-Seekers

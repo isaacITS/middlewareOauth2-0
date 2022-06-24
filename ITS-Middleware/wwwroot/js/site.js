@@ -14,17 +14,6 @@ function actionSlideMenu() {
     }
 }
 
-$('#btn-action-pass').on('click', () => {
-    if ($('#btn-action-pass').text() == 'visibility_off') {
-        $('#Pass').attr('type', 'text')
-        $('#btn-action-pass').html('visibility')
-    } else {
-        $('#Pass').attr('type', 'password')
-        $('#btn-action-pass').html('visibility_off')
-    }
-})
-
-
 
 //Functions get tables content and views
 function GetUsersList() {
@@ -38,8 +27,8 @@ function GetUsersList() {
         type: 'GET',
         url: siteurl + 'Home/Users',
         success: function (resp) {
-            if (resp == "Error") {
-                window.location.href = '/Home/Error';
+            if (resp.status == 500) {
+                window.location.href = '/Home/Error'
                 return;
             }
             $("#contentView").empty().append(resp).hide();
@@ -63,7 +52,32 @@ function GetProjectsList() {
         type: 'GET',
         url: siteurl + 'Home/Projects',
         success: function (resp) {
-            if (resp == "Error") {
+            if (resp.status == 500) {
+                window.location.href = '/Home/Error';
+                return;
+            }
+            $("#contentView").empty().append(resp).hide();
+            $('#viewsLoader').hide();
+            $("#contentView").fadeIn();
+        },
+        error: function (resp) {
+            console.log(resp);
+        }
+    })
+}
+
+function getUserByProjectList() {
+    $("#sidenav").css('width', "0")
+    btnIconMenu.innerHTML = 'menu'
+    btnActiveMenu.setAttribute('title', 'Abrir Menu')
+
+    $('#contentView').fadeOut(1)
+    $('#viewsLoader').show()
+    $.ajax({
+        type: 'GET',
+        url: siteurl + 'Home/UsersByProject',
+        success: function (resp) {
+            if (resp.status == 500) {
                 window.location.href = '/Home/Error';
                 return;
             }
@@ -120,3 +134,8 @@ function ShowToastMessage(type, title_short_text, body_text) {
     $('#liveToast').toast('show');
 }
 
+function redirectToLogin() {
+    window.setTimeout(() => {
+        window.location.href = '/'
+    }, 5000);
+}

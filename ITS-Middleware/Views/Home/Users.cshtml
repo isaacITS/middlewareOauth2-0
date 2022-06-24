@@ -37,11 +37,11 @@
                         </button>
                     </td>
                     <td>
-                        <button class="btn btn-secondary modalStatusView" data-idUser="@user.Id" data-bs-toggle="modal" data-bs-target="#userModal">
+                        <button class="btn btn-secondary modalStatusView" data-idUser="@user.Id" data-bs-toggle="modal" data-bs-target="#userModal" title="@if (user.Activo){<text>Desactivar</text>} else{<text>Activar </text>}">
                             <span class="material-icons">@if (user.Activo){<text>clear</text>} else{<text>done</text>}</span>
                         </button>
                      </td>
-                    </tr>
+                </tr>
             }
         </tbody>
 </table>

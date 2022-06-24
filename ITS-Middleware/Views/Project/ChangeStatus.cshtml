@@ -4,15 +4,12 @@
 <form id="updateStatusProjectForm">
         <input type="hidden" asp-for="Id" />
         <input type="hidden" asp-for="FechaAlta">
-        <input type="hidden" asp-for="Pass">
         <input type="hidden" asp-for="Activo" id="Activo">
         <input type="hidden" asp-for="Descripcion"/>
-        <input type="hidden" asp-for="Usuario"/>
         <input type="hidden" id="Nombre" asp-for="Nombre"/>
-        <input type="hidden" asp-for="TipoCifrado"/>
-        <input type="hidden" asp-for="MetodoAutenticacion"/>
+        <input type="hidden" asp-for="MetodosAutenticacion"/>
         <input type="hidden" asp-for="IdUsuarioRegsitra"/>
-
+        <input type="hidden" asp-for="Enlace"/>
         <div class="alert alert-warning alert-dismissible fade show" role="alert">
           Se <strong id="action-update"></strong> el proyecto <strong id="projectName"></strong>.
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>

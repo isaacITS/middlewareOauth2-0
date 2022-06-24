@@ -1,0 +1,63 @@
+﻿@using ITS_Middleware.Models.Entities
+@model UsuariosProyecto
+@{
+   IEnumerable<Proyecto> projects = ViewData["ProjectsList"] as IEnumerable<Proyecto>;
+}
+<form id="updateUserByProjectForm">
+    <input type="hidden" asp-for="Id"/>
+    <input type="hidden" asp-for="FechaAcceso"/>
+    <input type="hidden" asp-for="FechaCreacion"/>
+    <div class="mb-3">
+        <label for="Nombre" class="label-form">Nombre completo:</label>
+        <div class="input-group flex-nowrap">
+            <span class="material-icons input-group-text" id="addon-wrapping">person</span>
+            <input class="form-control" asp-for="NombreCompleto" id="Nombre" placeholder="Nombre" />
+        </div>
+    </div>
+    <div class="mb-3">
+        <label for="Project" class="label-form">Selecciona el proyecto:</label>
+        <select asp-for="IdProyecto" class="form-select" aria-label="Default select example">
+            @foreach (Proyecto projectLocal in projects)
+            {
+                <option value="@projectLocal.Id">@projectLocal.Nombre</option>
+            }
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="Email" class="label-form">Correo electr&oacute;nico:</label>
+        <div class="input-group flex-nowrap">
+            <span class="material-icons input-group-text" id="addon-wrapping">email</span>
+            <input class="form-control" asp-for="Email" id="Email" placeholder="Correo electr&oacute;nico" />
+        </div>
+    </div>
+    <div class="mb-3">
+        <label for="Pass" class="label-form">Contrase&ntilde;a:</label>
+        <div class="input-group flex-nowrap">
+            <span class="material-icons input-group-text" id="addon-wrapping">vpn_key</span>
+            <input class="form-control" type="password" asp-for="Pass" id="Pass" value="0000000000" placeholder="Contrase&ntilde;a" />
+            <span class="material-icons input-group-text" id="btn-action-pass">visibility_off</span>
+        </div>
+        <div class="text-center" id="warning-message" style="display: none;">
+            <br />
+            <strong id="pass-warning"></strong>
+            <br/>
+            <small id="message-password"></small>
+        </div>
+    </div>
+    <button type="button" class="btn btn-generate-pass" onClick="getPassword()">Generar contrase&ntilde;a</button>
+</form>
+
+<script type="text/javascript">
+    $('#Pass').on('change', () => {
+        if ($('#Pass').val() != '') {
+            $('#pass-warning').html('<span class="align-middle material-icons">campaign</span>&nbsp;Se cambiará la contraseña')
+            $('#message-password').html('Si no desea actualizar la contaseña, deje el campo vacío')
+            $('#warning-message').show()
+        } else {
+            $('#warning-message').hide()
+        }
+    })
+</script>
+
+<script src="~/js/userByProjectScripts.js" asp-append-version="true"></script>
+<script src="~/js/passControlScript.js" asp-append-version="true"></script>

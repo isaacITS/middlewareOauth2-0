@@ -3,7 +3,6 @@
 
 <form id="registerUserForm">
     <div class="col-md-12">
-        <input type="hidden" asp-for="Id"/>
         <div class="mb-3">
             <label for="Nombre" class="label-form">Nombre:</label>
             <div class="input-group flex-nowrap">
@@ -33,7 +32,9 @@
                 <span class="material-icons input-group-text" id="btn-action-pass">visibility_off</span>
             </div>
         </div>
+        <button type="button" class="btn btn-generate-pass" onClick="getPassword()">Generar contrase&ntilde;a</button>
     </div>
 </form>
 
 <script src="~/js/userScripts.js" asp-append-version="true"></script>
+<script src="~/js/passControlScript.js" asp-append-version="true"></script>

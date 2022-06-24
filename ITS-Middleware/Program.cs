@@ -1,5 +1,5 @@
 using ITS_Middleware.Helpers.Log;
-using ITS_Middleware.Models;
+using ITS_Middleware.Models.Context;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -38,7 +38,6 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
 
 

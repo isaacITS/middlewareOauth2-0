@@ -1,19 +1,22 @@
 ﻿var idProjectUpdate;
 var idProjectDelete;
+var methodsListLength = $('#authMethodsLength').val()
 
 $(document).ready(() => {
-    $('#btnRegisterProject').on('click', () => {
+    $('#btnRegisterProject').on('click', function () {
+        getMethodsList() 
         if (validateData().ok) {
+            $('#viewsLoader').show()
             var formData = $('#registerProjectForm').serialize()
             $.ajax({
                 type: 'POST',
                 url: siteurl + 'Project/Register',
-                content: "application/json; charset=utf-8",
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
                 dataType: "json",
-                data: JSON.stringify(formData),
+                data: formData,
                 success: function (response) {
+                    $('#viewsLoader').hide()
                     if (response.msg == "Error") {
-                        console.log(response)
                         window.location.href = '/Home/Error';
                         return;
                     } else if (response != null) {
@@ -42,15 +45,18 @@ $(document).ready(() => {
     });
 
     $('#btnUpdateProject').on('click', function () {
+        getMethodsList() 
         var formData = $('#updateProjectForm').serialize()
-        if (validUpdateDataProject().ok) {
+        $('#viewsLoader').show()
+        if (validateData().ok) {
             $.ajax({
                 type: 'post',
-                url: siteurl + 'Project/UpdateProject/',
+                url: siteurl + 'Project/UpdateProject',
                 contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
                 dataType: "json",
                 data: formData,
                 success: function (response) {
+                    $('#viewsLoader').hide()
                     if (!response.ok) {
                         window.location.href = '/Home/Error';
                         return;
@@ -74,13 +80,15 @@ $(document).ready(() => {
 
     $('#btnUpdateStatusProject').on('click', function () {
         var formData = $('#updateStatusProjectForm').serialize()
+        $('#viewsLoader').show()
         $.ajax({
             type: 'post',
-            url: siteurl + 'Project/UpdateStatus/',
+            url: siteurl + 'Project/UpdateStatus',
             contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
             dataType: "json",
             data: formData,
             success: function (response) {
+                $('#viewsLoader').hide()
                 if (!response.ok) {
                     window.location.href = '/Home/Error';
                     return;
@@ -100,6 +108,7 @@ $(document).ready(() => {
     });
 
     $('#btnDeleteProject').on('click', function () {
+        $('#viewsLoader').show()
         $.ajax({
             type: 'post',
             url: siteurl + 'Project/DeleteProject/',
@@ -107,6 +116,7 @@ $(document).ready(() => {
             dataType: "json",
             data: idProjectDelete,
             success: function (response) {
+                $('#viewsLoader').hide()
                 if (!response.ok) {
                     window.location.href = '/Home/Error';
                     return;
@@ -128,17 +138,10 @@ $(document).ready(() => {
 
 //Validation Functions
 function validateData() {
-    if ($('#Nombre').val() == '' || $('#Descripcion').val() == '' || $('#Usuario').val() == '' || $('#Pass').val() == '') {
+    if ($('#Nombre').val() == '' || $('#Descripcion').val() == '') {
         return {
             ok: false,
             msg: "Se deben llenar todos los campos"
-        }
-    }
-    if ($('#Pass').val().length < 8) {
-        $('#Pass').css('background-color', 'rgba(209, 0, 0, 0.26)')
-        return {
-            ok: false,
-            msg: "Ingresa una contraseña segura"
         }
     }
     return {
@@ -147,15 +150,17 @@ function validateData() {
     }
 }
 
-function validUpdateDataProject() {
-    if ($('#Nombre').val() == '' || $('#Descripcion').val() == '' || $('#Usuario').val() == '') {
-        return {
-            ok: false,
-            msg: "Se deben llenar todos los campos"
+
+//Getting the authentication methods ID selected
+function getMethodsList() {
+    var listMetods = ""
+    for (let i = 1; i <= methodsListLength; i++) {
+        if ($(`#${i}`).is(':checked')) {
+            listMetods += $(`#${i}`).val() + ','
         }
     }
-    return {
-        ok: true,
-        msg: "OK"
+    if (listMetods.charAt(listMetods.length - 1) == ',') {
+        listMetods = listMetods.slice(0, -1)
     }
+    $('#auth-method-list').val(listMetods)
 }

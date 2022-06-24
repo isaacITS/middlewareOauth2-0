@@ -1,14 +1,15 @@
-﻿var idUserDelete
+﻿var idUserDeleteUser
+var idUserUpdate
 
 //CRUD REQUEST
 $(document).ready(() => {
-    $('#btnRegisterUser').on('click', function() {
+    $('#btnRegisterUserByProject').on('click', function () {
         if (validateData().ok) {
             $('#viewsLoader').show()
-            var formData = $('#registerUserForm').serialize()
+            var formData = $('#registerUserByProjectForm').serialize()
             $.ajax({
                 type: 'POST',
-                url: siteurl + 'User/Register',
+                url: siteurl + 'UserByProject/Register',
                 contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
                 dataType: "json",
                 data: formData,
@@ -19,11 +20,11 @@ $(document).ready(() => {
                         return;
                     } else if (response.status == 410) {
                         closeModal()
-                        ShowToastMessage('warning', 'Usuario NO registrado', response.msg)
+                        ShowToastMessage('warning', 'Usuario no registrado', response.msg)
                     } else {
                         closeModal()
                         ShowToastMessage('success', '!Usuario registrado¡', response.msg)
-                        GetUsersList()
+                        getUserByProjectList()
                     }
                 },
                 failure: function (response) {
@@ -40,13 +41,13 @@ $(document).ready(() => {
         }
     });
 
-    $('#btnUpdateUser').on('click', function () {
-        var formData = $('#updateUserForm').serialize()
-        if (validUpdateData().ok) {
+    $('#btnUpdateUserByProject').on('click', function () {
+        var formData = $('#updateUserByProjectForm').serialize()
+        if (validateDataUpdate().ok) {
             $('#viewsLoader').show()
             $.ajax({
                 type: 'post',
-                url: siteurl + 'User/UpdateUser/',
+                url: siteurl + 'UserByProject/Update',
                 contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
                 dataType: "json",
                 data: formData,
@@ -57,8 +58,8 @@ $(document).ready(() => {
                         return;
                     } else if (response.ok) {
                         closeModal()
-                        ShowToastMessage('success', 'Usuario actualizado', response.msg);
-                        GetUsersList()
+                        ShowToastMessage('success', 'Información de usaurio actualizada', response.msg);
+                        getUserByProjectList()
                     }
                 },
                 failure: function (response) {
@@ -90,7 +91,7 @@ $(document).ready(() => {
                 } else if (response.ok) {
                     closeModal()
                     ShowToastMessage('success', 'Estatus de usaurio actualizado', response.msg)
-                    GetUsersList()
+                    getUserByProjectList()
                 }
             },
             failure: function (response) {
@@ -102,14 +103,14 @@ $(document).ready(() => {
         });
     });
 
-    $('#btnDeleteUser').on('click', function () {
+    $('#btnDeleteUserByProject').on('click', function () { 
         $('#viewsLoader').show()
         $.ajax({
             type: 'post',
-            url: siteurl + 'User/DeleteUser/',
+            url: siteurl + 'UserByProject/Delete',
             contentType: "application/json; charset=utf-8",
             dataType: "json",
-            data: idUserDelete,
+            data: idUserDeleteUser,
             success: function (response) {
                 $('#viewsLoader').hide()
                 if (response.status == 500) {
@@ -118,7 +119,7 @@ $(document).ready(() => {
                 } else if (response.ok) {
                     closeModal()
                     ShowToastMessage('success', 'Usuario eliminado', response.msg)
-                    GetUsersList()
+                    getUserByProjectList()
                 }
             },
             failure: function (response) {
@@ -135,7 +136,7 @@ $(document).ready(() => {
 //Validation Functions
 function validateData() {
     var validEmail = new RegExp("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$")
-    if ($('#Nombre').val() == '' || $('#Email').val() == '' || $('#Puesto').val() == '' || $('#Pass').val() == '') {
+    if ($('#Nombre').val() == '' || $('#Email').val() == '' || $('#Pass').val() == '') {
         return {
             ok: false,
             msg: "Se deben llenar todos los campos"
@@ -145,14 +146,14 @@ function validateData() {
         $('#Email').css('background-color', 'rgba(209, 0, 0, 0.26)')
         return {
             ok: false,
-            msg: "Ingresa un correo válido"
+            msg: "Debe ingresar un correo válido"
         }
     }
     if ($('#Pass').val().length < 8) {
         $('#Pass').css('background-color', 'rgba(209, 0, 0, 0.26)')
         return {
             ok: false,
-            msg: "Ingresa una contraseña segura"
+            msg: "Se recomienda ingresar una contraseña segura"
         }
     }
     return {
@@ -161,9 +162,9 @@ function validateData() {
     }
 }
 
-function validUpdateData() {
+function validateDataUpdate() {
     var validEmail = new RegExp("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$")
-    if ($('#Nombre').val() == '' || $('#Email').val() == '' || $('#Puesto').val() == '') {
+    if ($('#Nombre').val() == '' || $('#Email').val() == '') {
         return {
             ok: false,
             msg: "Se deben llenar todos los campos"
@@ -173,7 +174,16 @@ function validUpdateData() {
         $('#Email').css('background-color', 'rgba(209, 0, 0, 0.26)')
         return {
             ok: false,
-            msg: "Ingresa un correo válido"
+            msg: "Debe ingresar un correo válido"
+        }
+    }
+    if ($('#Pass').val() != '0000000000') {
+        if ($('#Pass').val().length < 8) {
+            $('#Pass').css('background-color', 'rgba(209, 0, 0, 0.26)')
+            return {
+                ok: false,
+                msg: "Se recomienda ingresar una contraseña segura"
+            }
         }
     }
     return {

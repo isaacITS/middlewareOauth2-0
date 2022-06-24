@@ -1,0 +1,21 @@
+﻿@using ITS_Middleware.Models.Entities
+@model UsuariosProyecto
+
+<form id="deleteUserByProjectForm">
+   <input type="hidden" asp-for="NombreCompleto" id="Nombre"/>
+   <input type="hidden" asp-for="Id" />
+    <div class="mb-3">
+        <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+            ¿Eliminar al usuario <strong id="userName"></strong>?
+            <p><span class="align-middle material-icons">report_problem</span>&nbsp;Esta accion no se puede deshacer</p>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+</form>
+
+ <script>
+     $('#userName').append($('#Nombre').val())
+ </script>
+
+ <script src="~/js/userByProjectScripts.js" asp-append-version="true"></script>
+<script src="~/js/passControlScript.js" asp-append-version="true"></script>

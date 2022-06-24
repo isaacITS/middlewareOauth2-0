@@ -1,11 +1,17 @@
 ﻿<style>
-    body{
+    body, html{
         background-color: #093C5D;
+        height: 100%;
+    }
+    .spacer {
+        margin-top: 0;
+        margin-bottom: 10px;
+        height: 50px;
     }
 </style>
 
 <input type="hidden" value="@ViewBag.msg" id="alertMessage"/>
-
+<div class="spacer"></div>
 <form class="form-login" asp-controller="Auth" asp-action="Login" method="post">
     <h5>Iniciar sesión</h5>
     <img src="~/img/main-logo.jpg" alt="IT-Seekers image"/>
@@ -32,4 +38,5 @@
 
 @section scripts {
     <script src="~/js/PassLogin.js" asp-append-version="true"></script>
+    <script src="~/js/passControlScript.js" asp-append-version="true"></script>
 }

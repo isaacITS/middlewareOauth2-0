@@ -24,7 +24,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "ITS_Middleware (Production": {
+    "ITS_Middleware (Production)": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {

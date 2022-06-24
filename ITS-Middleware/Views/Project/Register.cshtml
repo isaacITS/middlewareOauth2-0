@@ -1,8 +1,10 @@
 ﻿@using ITS_Middleware.Models.Entities
-@model Proyecto 
+@model Proyecto
+@{
+   IEnumerable<MetodosAuth> metodosAuth = ViewData["MetodosAuth"] as IEnumerable<MetodosAuth>;
+}
 
 <form id="registerProjectForm">
-    <input type="hidden" asp-for="Id"/>
         <div class="mb-3">
             <label for="nombre" class="label-form">Nombre:</label>
             <div class="input-group flex-nowrap">
@@ -11,41 +13,36 @@
             </div>
         </div>
         <div class="mb-3">
-            <label for="Descripcion" class="label-form">Descripción:</label>
-            <div class="input-group flex-nowrap">
-                <span class="material-icons input-group-text" id="addon-wrapping">assignment</span>
-                <input class="form-control" id="Descripcion" asp-for="Descripcion" placeholder="Descripcion" />
+            <div class="form-floating">
+              <textarea class="form-control" maxlength="500" placeholder="Descripción del proyecto:" asp-for="Descripcion" id="Descripcion"></textarea>
+              <label cclass="label-form" for="Descripcion" style="font-weight: 600;">Descripción: </label>
             </div>
         </div>
-        <div class="mb-3">
-            <label for="TipoCifrado" class="label-form">Tipo de cifrado:</label>
-            <select id="TipoCifrado" asp-for="TipoCifrado" class="form-select" aria-label="cifrado">
-                <option value="sha-256">SHA-256</option>
-                <option value="aes-256">AES-256</option>
-            </select>
+        <label for="MetodoAutenticacion" class="label-form">Metodos de autenticación:</label>
+        <br />
+        <div class="row">
+            @foreach (MetodosAuth metodosAuthLocal in metodosAuth)
+            {
+                <div class="col-6">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="@metodosAuthLocal.Id" value="@metodosAuthLocal.Nombre">
+                        <label class="form-check-label" for="@metodosAuthLocal.Id">@metodosAuthLocal.Nombre</label>
+                    </div>
+                </div>
+            }
         </div>
+            <input asp-for="MetodosAutenticacion" id="auth-method-list" type="hidden" />
+            <input id="authMethodsLength" type="hidden" value="@metodosAuth.Count()"/>
+            <br />
         <div class="mb-3">
-            <label for="MetodoAutenticacion" class="label-form">Metodo de autenticación:</label>
-            <select id="MetodoAutenticacion" asp-for="MetodoAutenticacion" class="form-select" aria-label="autenticacion">
-                <option value="SSO">Cifrado de autenticación SSO</option>
-                <option value="Oauth2-0">Cifrado de autenticación Oauth2.0</option>
-                <option value="JWT">JsonWebToken</option>
-            </select>
-        </div>
-        <div class="mb-3">
-            <label for="Usuario" class="label-form">Usuario:</label>
+            <label for="Enlace" class="label-form">Enlace del sitio:</label>
             <div class="input-group flex-nowrap">
-                <span class="material-icons input-group-text" id="addon-wrapping">account_circle</span>
-                <input class="form-control" id="Usuario" asp-for="Usuario" placeholder="Usuario" />
-            </div>
-        </div>
-        <div class="mb-3">
-            <label for="Pass" class="label-form">Contrase&ntilde;a:</label>
-            <div class="input-group flex-nowrap">
-                <span class="material-icons input-group-text" id="addon-wrapping">vpn_key</span>
-                <input class="form-control" type="password" id="Pass" asp-for="Pass" placeholder="Contrase&ntilde;a"/>
+                <span class="material-icons input-group-text" id="addon-wrapping">add_link</span>
+                <input type="url" class="form-control" id="Enlace" asp-for="Enlace" placeholder="Enlace del sitio" />
             </div>
         </div>
 </form>
 
+
 <script src="~/js/ProjectScripts.js" asp-append-version="true"></script>
+<script src="~/js/passControlScript.js" asp-append-version="true"></script>
