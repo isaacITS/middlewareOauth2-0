@@ -87,9 +87,8 @@ function checkDataSendEmail() {
 }
 
 
-var validEmail = new RegExp("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
-
 $('#email').change(function () {
+    const validEmail = new RegExp("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$");
     if (validEmail.test($('#email').val())) {
         $('#email').css('background', 'none')
         $('#email').css('color', '#202020')

@@ -19,7 +19,10 @@
         <select asp-for="IdProyecto" class="form-select" aria-label="Default select example">
             @foreach (Proyecto projectLocal in projects)
             {
-                <option value="@projectLocal.Id">@projectLocal.Nombre</option>
+                @if (projectLocal.Activo)
+                {
+                    <option value="@projectLocal.Id">@projectLocal.Nombre</option>
+                }
             }
         </select>
     </div>

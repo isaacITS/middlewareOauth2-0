@@ -4,10 +4,8 @@ using ITS_Middleware.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using ITS_Middleware.ExceptionsHandler;
 using ITS_Middleware.Models.Context;
-using MimeKit;
-using MimeKit.Text;
-using MailKit.Net.Smtp;
-using MailKit.Security;
+using System.Net.Mail;
+using System.Net;
 
 namespace ITS_Middleware.Controllers
 {
@@ -31,11 +29,7 @@ namespace ITS_Middleware.Controllers
             {
                 var adminEmail = "admin.its@seekers.com";
                 var checkAdmin = _context.Usuarios.FirstOrDefault(u => u.Email == adminEmail);
-                if (checkAdmin != null)
-                {
-                    Console.WriteLine("Usuario Principal y ha sido registrado");
-                }
-                else
+                if (checkAdmin == null)
                 {
                     Usuario usuario = new()
                     {
@@ -44,13 +38,11 @@ namespace ITS_Middleware.Controllers
                         FechaAlta = DateTime.Now,
                         Email = adminEmail,
                         Pass = Encrypt.sha256("admin123"),
-                        Puesto = "Administracion"
+                        Puesto = "Administrador"
                     };
                     _context.Add(usuario);
                     _context.SaveChanges();
-                    Console.WriteLine("Usaurio principal registrado");
                 }
-
                 if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName")))
                 {
                     return View();
@@ -261,25 +253,24 @@ namespace ITS_Middleware.Controllers
             }
         }
 
-        public void SendEmail(string reqEmail, string userName, string token)
+        public void SendEmail(string toEmail, string userName, string token)
         {
-            var email = new MimeMessage();
             var baseUrl = $"{this.Request.Scheme}://{this.Request.Host.Value}";
-            email.From.Add(MailboxAddress.Parse("noreply.its.portalconfig@gmail.com"));
-            email.To.Add(MailboxAddress.Parse(reqEmail));
-            email.Subject = "Recuperación de contraseña Portal de Configuración.";
-            email.Body = new TextPart(TextFormat.Html)
-            {
-                Text = System.IO.File.ReadAllText(Path.Combine(_env.ContentRootPath, @"wwwroot\htmlViews\resetPassMessage.html"))
-            .Replace("{contact-name}", userName)
-            .Replace("{link-update-pass}", $"{baseUrl}/Auth/UpdatePass?token={token}")
-            };
 
-            using var smtp = new SmtpClient();
-            smtp.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
-            smtp.Authenticate("noreply.its.portalconfig@gmail.com", "dvqxxkdwmuynsboa");
-            smtp.Send(email);
-            smtp.Disconnect(true);
+            var smtpClient = new SmtpClient("smtp.gmail.com", 587);
+            smtpClient.Credentials = new NetworkCredential("noreply.its.portalconfig@gmail.com", "dvqxxkdwmuynsboa");
+            smtpClient.EnableSsl = true;
+
+            var email = new MailMessage();
+            email.From = new MailAddress("noreply.its.portalconfig@gmail.com");
+            email.To.Add(toEmail);
+            email.Subject = "Recuperación de contraseña Portal de Configuración";
+            email.Body = System.IO.File.ReadAllText(Path.Combine(_env.ContentRootPath, @"wwwroot\htmlViews\resetPassMessage.html"))
+                .Replace("{contact-name}", userName)
+                .Replace("{link-update-pass}", $"{baseUrl}/Auth/UpdatePass?token={token}");
+            email.IsBodyHtml = true;
+
+            smtpClient.Send(email);
         }
     }
 }

@@ -135,7 +135,7 @@ $(document).ready(() => {
 
 //Validation Functions
 function validateData() {
-    var validEmail = new RegExp("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$")
+    const validEmail = new RegExp("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$");
     if ($('#Nombre').val() == '' || $('#Email').val() == '' || $('#Pass').val() == '') {
         return {
             ok: false,
@@ -163,7 +163,7 @@ function validateData() {
 }
 
 function validateDataUpdate() {
-    var validEmail = new RegExp("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$")
+    const validEmail = new RegExp("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$");
     if ($('#Nombre').val() == '' || $('#Email').val() == '') {
         return {
             ok: false,

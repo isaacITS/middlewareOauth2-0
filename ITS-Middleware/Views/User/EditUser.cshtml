@@ -35,7 +35,25 @@
             </div>
         </div>
         <button type="button" class="btn btn-generate-pass" onClick="getPassword()">Generar contrase&ntilde;a</button>
+    <div class="text-center" id="warning-message" style="display: none;">
+            <br />
+            <strong id="pass-warning"></strong>
+            <br/>
+            <small id="message-password"></small>
+        </div>
 </form>
+
+<script type="text/javascript">
+    $('#Pass').on('change', () => {
+        if ($('#Pass').val() != '') {
+            $('#pass-warning').html('<span class="align-middle material-icons">campaign</span>&nbsp;Se cambiará la contraseña')
+            $('#message-password').html('Si no desea actualizar la contaseña, deje el campo vacío')
+            $('#warning-message').show()
+        } else {
+            $('#warning-message').hide()
+        }
+    })
+</script>
 
 <script src="~/js/userScripts.js" asp-append-version="true"></script>
 <script src="~/js/passControlScript.js" asp-append-version="true"></script>

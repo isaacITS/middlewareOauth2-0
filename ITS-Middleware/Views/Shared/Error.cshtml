@@ -1,7 +1,6 @@
 ﻿@model ErrorViewModel
 
 @{
-    ViewData["Title"] = "Error";
     Layout = null;
     int errorCounter = 1;
 }
@@ -11,63 +10,51 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Error - Portal de Configuración</title>
+    <title>Error</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/ErrorStyle.css" asp-append-version="true" />
     <link rel="shortcut icon" href="~/icon-page.png" type="image/x-icon">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-
 </head>
-<style>
-*{
-    transition: all 0.6s;
-}
 
-html {
-    height: 100%;
-}
+<body class="loading">
+  <h1 class="text-danger">Error</h1>
+  <h2><span class="align-middle material-icons">mood_bad</span>&nbsp;Ha ocurrido un error mientras se procesaba la solicitud</h2>
+    @foreach(string errorMsg in (IEnumerable<string>)TempData["ErrorsMessages"])
+    {
+        <p class="text-center text-bg-danger">
+            <strong>Error #@errorCounter :&nbsp;</strong> <code>@errorMsg</code>
+        </p>
+        errorCounter++;
+    }
+  <div class="gears">
+    <div class="gear one">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+    <div class="gear two">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+    <div class="gear three">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+  </div>
 
-body{
-    font-family: 'Lato', sans-serif;
-    margin: 0;
-}
-
-#main{
-    display: table;
-    width: 100%;
-    height: 100vh;
-    text-align: center;
-}
-
-.fof{
-	  display: table-cell;
-	  vertical-align: middle;
-}
-
-.fof h1{
-	  font-size: 50px;
-	  display: inline-block;
-	  padding-right: 12px;
-	  animation: type .5s alternate infinite;
-}
-
-@@keyframes type{
-	  from{box-shadow: inset -3px 0px 0px #888;}
-	  to{box-shadow: inset -3px 0px 0px transparent;}
-}
-</style>
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons"  rel="stylesheet">
-<style src=""></style>
-
-<div id="main">
-    	<div class="fof">
-<h1 class="text-danger"><span class="material-icons align-middle" style="font-size:48px;">error</span>&nbsp;Error.</h1>
-<h2 class="text-danger">Un error ha ocurrido mientras se procesaba la solicitud</h2>
-<br/>
-<h2>El(los) siguiente(s) error(es) surgieron en la aplicaci&oacute;n:</h2>
-<br/> 	
-</div>
-</div>
+  <script type="text/javascript">
+    $(function() {
+        setTimeout(function() {
+            $('body').removeClass('loading');
+        }, 1000);
+    });
+</script>
+</body>
+</html>
