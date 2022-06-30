@@ -26,7 +26,7 @@ namespace OauthAPI.Models.Context
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=it-seekersdev.ddns.net,65535; Database=ITS_OAuth; Uid=its-academy;  Pwd=Infinity01?; Encrypt=no;Connection Timeout=120; TrustServerCertificate=True;");
+                optionsBuilder.UseSqlServer(Constants.Vars.CONNECTION_STRING);
             }
         }
 

@@ -15,22 +15,14 @@ namespace OauthAPI.Tools
         internal static dynamic GetUserByEmail(string email)
         {
             var getUser = _context.Usuarios.FirstOrDefault(u => u.Email == email);
-            if (getUser != null)
-            {
-                return getUser;
-            }
-            return 0;
+            return getUser;
         }
 
         /*=> GET USER BY ID*/
         public static dynamic GetUserById(int id)
         {
-            var user = _context.Usuarios.FirstOrDefault(u => u.Id == id);
-            if (user != null)
-            {
-                return user;
-            }
-            return 0;
+            var user = _context.Usuarios.Where(u => u.Id == id).FirstOrDefault();
+            return user;
         }
 
         /*=> CHECK IF THE EMAIL IS ALREADY REGISTERED*/
@@ -59,12 +51,19 @@ namespace OauthAPI.Tools
         /*=> UPDATE USER*/
         public static bool UpdateUser(Usuario userModel)
         {
-            userModel.Pass = setPassword(userModel);
-            var local = _context.Set<Usuario>().Local.FirstOrDefault(entry => entry.Id.Equals(userModel.Id));
-            if (local != null) _context.Entry(local).State = EntityState.Detached;
-            _context.Entry(userModel).State = EntityState.Modified;
-            _context.SaveChanges();
-            return true;
+            if (userModel.Id > 1)
+            {
+                var userSaved = GetUserById(userModel.Id);
+                userModel.Pass = setPassword(userModel);
+                userModel.FechaAlta = userSaved.FechaAlta;
+
+                var local = _context.Set<Usuario>().Local.FirstOrDefault(entry => entry.Id.Equals(userModel.Id));
+                if (local != null) _context.Entry(local).State = EntityState.Detached;
+                _context.Entry(userModel).State = EntityState.Modified;
+                _context.SaveChanges();
+                return true;
+            }
+            return false;
         }
 
         // => UPDATE USER STATUS
@@ -73,7 +72,7 @@ namespace OauthAPI.Tools
             if (id > 1)
             {
                 var user = GetUserById(id);
-                if (user != 0)
+                if (user != null)
                 {
                     user.Activo = !user.Activo;
                     var local = _context.Set<Usuario>().Local.FirstOrDefault(entry => entry.Id.Equals(user.Id));
@@ -83,7 +82,7 @@ namespace OauthAPI.Tools
                     return user;
                 }
             }
-            return 0;
+            return null;
         }
 
         //=> DELETE USER

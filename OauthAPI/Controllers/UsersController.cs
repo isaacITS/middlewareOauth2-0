@@ -26,11 +26,7 @@ namespace OauthAPI.Controllers
                 user.Pass = Encrypt.sha256(user.Pass);
                 if (ModelState.IsValid)
                 {
-                    var registerUser = DbHelper.RegisterUser(user);
-                    if (registerUser)
-                    {
-                        return Ok(new { msg = $"Se ha registrado el usuario {user.Nombre}" });
-                    }
+                    if (DbHelper.RegisterUser(user)) return Ok(new { msg = $"Se ha registrado el usuario {user.Nombre}" });
                     return Unauthorized(new { msg = $"El correo {user.Nombre} ya está registrado" });
                 }
                 return Unauthorized(new { msg = "Model is invalid"});
@@ -46,8 +42,8 @@ namespace OauthAPI.Controllers
         {
             try
             {
-                DbHelper.UpdateUser(user);
-                return Ok(new { msg = $"Se ha actualizado el usuario {user.Nombre}" });
+                if (DbHelper.UpdateUser(user)) return Ok(new { msg = $"Se ha actualizado el usuario {user.Nombre}" });
+                return Unauthorized(new { msg = "No se peude eliminar el usaurio" });
             }
             catch (Exception ex)
             {
@@ -60,8 +56,7 @@ namespace OauthAPI.Controllers
         {
             try
             {
-                var userUpdateResult = DbHelper.UpdateUserStatus(id);
-                if (userUpdateResult != 0) return Ok(new { msg = "Estatus de usuario actualizado" });
+                if (DbHelper.UpdateUserStatus(id) != null) return Ok(new { msg = "Estatus de usuario actualizado" });
                 return Unauthorized(new { msg = "No se encontró al usuario" });
             }
             catch (Exception ex)
