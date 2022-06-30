@@ -149,7 +149,11 @@ namespace ITS_Middleware.Controllers
                     if (local != null) _context.Entry(local).State = EntityState.Detached;
                     _context.Entry(user).State = EntityState.Modified;
                     _context.SaveChanges();
-                    SendEmail(email, user.Nombre, token);
+                    var baseUrl = $"{this.Request.Scheme}://{this.Request.Host.Value}";
+                    var bodyEmail = System.IO.File.ReadAllText(Path.Combine(_env.ContentRootPath, @"wwwroot\htmlViews\resetPassMessage.html"))
+                        .Replace("{contact-name}", user.Nombre)
+                        .Replace("{link-update-pass}", $"{baseUrl}/Auth/UpdatePass?token={token}");
+                    SendEmail(email, bodyEmail, "Recuperación de contraseña Portal de Configuración");
                     return Json(new { ok = true, status = 200, msg = $"Se ha enviado un correo a {email} para restablecer la contraseña" });
                 }
                 return Json(new { ok = false, status = 400, msg = $"No se encontró el usuario con correo {email}" });
@@ -253,7 +257,9 @@ namespace ITS_Middleware.Controllers
             }
         }
 
-        public void SendEmail(string toEmail, string userName, string token)
+
+
+        public void SendEmail(string toEmail, string body, string subject)
         {
             var baseUrl = $"{this.Request.Scheme}://{this.Request.Host.Value}";
 
@@ -264,10 +270,8 @@ namespace ITS_Middleware.Controllers
             var email = new MailMessage();
             email.From = new MailAddress("noreply.its.portalconfig@gmail.com");
             email.To.Add(toEmail);
-            email.Subject = "Recuperación de contraseña Portal de Configuración";
-            email.Body = System.IO.File.ReadAllText(Path.Combine(_env.ContentRootPath, @"wwwroot\htmlViews\resetPassMessage.html"))
-                .Replace("{contact-name}", userName)
-                .Replace("{link-update-pass}", $"{baseUrl}/Auth/UpdatePass?token={token}");
+            email.Subject = subject;
+            email.Body = body;
             email.IsBodyHtml = true;
 
             smtpClient.Send(email);

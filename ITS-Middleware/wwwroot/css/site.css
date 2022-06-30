@@ -32,6 +32,8 @@ body {
 
 body .table {
     text-align: center;
+    border-radius: 5px;
+    overflow: hidden;
 }
 
 body .table .btn {
@@ -54,7 +56,7 @@ body .table thead {
 }
 
 body .table tbody tr td {
-    background-color: #f2f2f2;
+    background-color: #fafafa;
     color: #191919;
     vertical-align: middle;
     font-size: 15px;
@@ -120,12 +122,37 @@ header .nav-bar-top {
     height: 50px;
     z-index: 2;
     padding: 10px;
+    box-shadow: 1px 7px 3px 2px #00000014;
 }
 
-    header .nav-bar-top h3 {
-        text-align: center;
-        color: #e7e7e7;
-    }
+header .nav-bar-top h3 {
+    text-align: left;
+    color: #e7e7e7;
+    margin-left: 50px;
+    font-size: 20px;
+    line-height: 27px;
+    font-weight: 600;
+}
+
+header .nav-bar-top .pc-width {
+    position: absolute;
+    right: 25px;
+    top: 5px;
+    text-decoration: none;
+    font-size: 20px;
+    background-color: #df1847;
+    padding: 6px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    text-align: center;
+}
+
+header .nav-bar-top .pc-width .icon-user-online {
+    margin-right: 5px;
+    font-weight: bold;
+    color: #fafafa;
+}
 
 #btn-active-menu {
     margin: 5px;
@@ -248,10 +275,20 @@ header .nav-bar-top {
     box-shadow: 0 0 20px #FF372D;
 }
 
-.title-table {
+.content-header-table {
     margin-top: 60px;
-    font-size: 30px;
+    margin-bottom: 10px;
+}
+
+.content-header-table .title-table {
+    font-size: 22px;
     font-weight: 600;
+    margin-bottom: 10px;
+    background-color: #093C5D;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    padding: 10px;
+    color: #fafafa;
 }
 
 .dataTables_length, .dataTables_filter {
@@ -264,7 +301,14 @@ header .nav-bar-top {
 
 
 #modalRegisterView, #modalRegisterProjectView, #modalRegisterUserView {
-    margin-bottom: 15px;
+    background-color: #022338;
+    border: solid 1px #022338;
+    transition: ease-out .3s;
+}
+
+#modalRegisterView:hover, #modalRegisterProjectView:hover, #modalRegisterUserView:hover {
+    background-color: #df1847;
+    border: solid 1px #df1847;
 }
 
 footer {
@@ -311,10 +355,15 @@ footer {
         font-size: 16px;
     }
     .nav-bar-top h3 {
-        font-size: 14pt;
+        font-size: 14px;
     }
     .container .title-table {
-        font-size: 14pt;
-        text-align: center;
+        font-size: 15pt;
+    }
+}
+
+@media screen and (max-width: 410px) {
+    header .nav-bar-top .pc-width {
+        display: none;
     }
 }

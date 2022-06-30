@@ -17,16 +17,33 @@
     
     @if (!string.IsNullOrEmpty(ViewBag.userName))
     {
-       <header>
+        <header>
             <div class="nav-bar-top">
                 <h3>Portal de administración OAuth</h3>
                 <a id="btn-active-menu" title="Abrir Menu" onclick="actionSlideMenu()"><span id="btn-icon-menu" class="material-icons">menu</span></a>
+                <a href="#" class="userNameOnline pc-width" title="@ViewBag.userName">
+                    <span class="icon-user-online">
+                    @{
+                        string lettShow;
+                        string userName = ViewBag.userName;
+                        string[] arrUName = userName.Split(" ");
+                        if (arrUName.Length == 1)
+                        {
+                            lettShow = arrUName[0].Substring(0, 1);
+                        } else
+                        {
+                            lettShow = arrUName[0].Substring(0, 1) + arrUName[1].Substring(0, 1);
+                        }
+                    }
+                    &nbsp;@lettShow
+                    </span>
+                </a>
             </div>
             <nav id="sidenav">
                 <div class="sidenav">
-                    <a onclick="GetProjectsList()" href="#"><span class="align-middle material-icons md-36">widgets</span>&nbsp;Proyectos</a>
-                    <a onclick="GetUsersList()" href="#"><span class="align-middle material-icons md-36">manage_accounts</span>&nbsp;Usuarios</a>
-                    <a onclick="getUserByProjectList()" href="#"><span class="align-middle material-icons md-36">switch_account</span>&nbsp;Usuarios por proyecto</a>
+                    <a class="admin-projects" onclick="GetProjectsList()" href="#"><span class="align-middle material-icons md-36">widgets</span>&nbsp;Proyectos</a>
+                    <a class="admin-users" onclick="GetUsersList()" href="#"><span class="align-middle material-icons md-36">manage_accounts</span>&nbsp;Usuarios</a>
+                    <a class="admin-users-by-project" onclick="getUserByProjectList()" href="#"><span class="align-middle material-icons md-36">switch_account</span>&nbsp;Usuarios por proyecto</a>
                     <a href="#" class="userNameOnline"><span class="align-middle material-icons md-36">account_circle</span>&nbsp;@ViewBag.userName</a>
                     <a asp-controller="Auth" asp-action="Logout"><span class="align-middle material-icons md-36">logout</span>&nbsp;Cerrar sesión</a>
                 </div>
