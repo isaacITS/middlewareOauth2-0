@@ -1,21 +1,17 @@
-﻿using System.Data.Entity.Infrastructure;
-using ITS_Middleware.Models;
+﻿using ITS_Middleware.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Reflection;
-using ITS_Middleware.Models.Context;
 using ITS_Middleware.ExceptionsHandler;
+using ITS_Middleware.Helpers;
 
 namespace ITS_Middleware.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        public middlewareITSContext _context;
+        RequestHelper requestHelper = new();
 
-        public HomeController(middlewareITSContext master, ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger)
         {
-            _context = master;
             _logger = logger;
         }
 
@@ -45,7 +41,7 @@ namespace ITS_Middleware.Controllers
             }
         }
 
-        [HttpGet] //Get all projects
+        //Get all projects
         public IActionResult Projects()
         {
             try
@@ -54,8 +50,8 @@ namespace ITS_Middleware.Controllers
                 {
                     return RedirectToAction("Login", "Auth");
                 }
-                var projects = _context.Proyectos.Where(p => p.Id > 0).ToList();
-                var users = _context.Usuarios.Where(u => u.Id > 0).ToList();
+                var projects = requestHelper.GetAllProjects();
+                var users = requestHelper.GetAllUsers(true);
                 ViewData["UserList"] = users;
                 return PartialView(projects);
             }
@@ -75,7 +71,7 @@ namespace ITS_Middleware.Controllers
         }
 
 
-        [HttpGet] //Get all Users
+        //Get all Users
         public IActionResult Users()
         {
             try
@@ -84,8 +80,8 @@ namespace ITS_Middleware.Controllers
                 {
                     return RedirectToAction("Login", "Auth");
                 }
-                var data = _context.Usuarios.Where(u => u.Id >= 2).ToList();
-                return PartialView(data);
+                var users = requestHelper.GetAllUsers(false);
+                return PartialView(users);
             }
             catch (Exception ex)
             {
@@ -104,7 +100,6 @@ namespace ITS_Middleware.Controllers
 
 
         //Get and return view usersByProject with all data registered in DB
-        [HttpGet]
         public IActionResult UsersByProject()
         {
             try
@@ -113,8 +108,8 @@ namespace ITS_Middleware.Controllers
                 {
                     return RedirectToAction("Login", "Auth");
                 }
-                var usersByProject = _context.UsuariosProyectos.Where(u => u.Id > 0).ToList();
-                var projects = _context.Proyectos.Where(p => p.Id > 0).ToList();
+                var usersByProject = requestHelper.GetAllUsersByProject();
+                var projects = requestHelper.GetAllProjects();
                 ViewData["ProjectsList"] = projects;
                 return PartialView(usersByProject);
             }

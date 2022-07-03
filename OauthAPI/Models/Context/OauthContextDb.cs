@@ -79,11 +79,6 @@ namespace OauthAPI.Models.Context
                     .HasMaxLength(200)
                     .IsUnicode(false)
                     .HasColumnName("enlace");
-
-                entity.HasOne(d => d.IdUsuarioRegsitraNavigation)
-                    .WithMany(p => p.Proyectos)
-                    .HasForeignKey(d => d.IdUsuarioRegsitra)
-                    .HasConstraintName("FK__proyectos__idUsu__06CD04F7");
             });
 
             modelBuilder.Entity<Usuario>(entity =>
@@ -146,6 +141,8 @@ namespace OauthAPI.Models.Context
                     .HasColumnType("datetime")
                     .HasColumnName("fechaCreacion");
 
+                entity.Property(e => e.Activo).HasColumnName("activo");
+
                 entity.Property(e => e.IdProyecto).HasColumnName("idProyecto");
 
                 entity.Property(e => e.NombreCompleto)
@@ -157,11 +154,6 @@ namespace OauthAPI.Models.Context
                     .HasMaxLength(200)
                     .IsUnicode(false)
                     .HasColumnName("pass");
-
-                entity.HasOne(d => d.IdProyectoNavigation)
-                    .WithMany(p => p.UsuariosProyectos)
-                    .HasForeignKey(d => d.IdProyecto)
-                    .HasConstraintName("FK__usuariosP__idPro__09A971A2");
             });
 
             OnModelCreatingPartial(modelBuilder);

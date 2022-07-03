@@ -28,6 +28,7 @@
                 <th>Fecha de alta</th>
                 <th>Fecha acceso</th>
                 <th>Acciones</th>
+                <th>Estatus</th>
             </tr>
         </thead>
         <tbody>
@@ -59,6 +60,11 @@
                             <span class="material-icons">delete</span>
                         </button>
                     </td>
+                    <td>
+                        <button class="btn btn-secondary modalStatusUserView" data-idUser="@user.Id" data-bs-toggle="modal" data-bs-target="#userByProjectModal" title="@if (user.Activo){<text>Desactivar</text>} else{<text>Activar </text>}">
+                            <span class="material-icons">@if (user.Activo){<text>clear</text>} else{<text>done</text>}</span>
+                        </button>
+                    </td>
                 </tr>
             }
         </tbody>
@@ -80,4 +86,4 @@
 </div>
 
 <script src="~/js/DataTable.js" type="text/javascript"></script>
-<script src="~/js/userByProjectScriptsGetViews.js" type="text/javascript"></script>
+<script src="~/js/userByProjectScriptsGetViews.js" asp-append-version="true"></script>

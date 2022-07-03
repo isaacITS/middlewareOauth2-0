@@ -1,0 +1,22 @@
+﻿@using ITS_Middleware.Models.Entities
+@model UsuariosProyecto
+
+<form id="updateStatusUserForm">
+        <input type="hidden" asp-for="Activo" id="Activo">
+        <input type="hidden" id="Nombre" asp-for="NombreCompleto"/>
+        <div class="align-middle alert alert-warning alert-dismissible fade show" role="alert">
+          Se <strong id="action-update"></strong> el usuario <strong id="userName"></strong>.
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+ </form>
+
+<script type="text/javascript">
+    $('#userName').append($('#Nombre').val())
+    if ($('#Activo').val() == "True") {
+        $('#action-update').append("Desactivará")
+    } else {
+        $('#action-update').append("Activará")
+    }
+</script>
+
+<script src="~/js/userByProjectScripts.js" asp-append-version="true"></script>

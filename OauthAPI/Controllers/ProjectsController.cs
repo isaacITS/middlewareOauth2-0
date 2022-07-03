@@ -1,82 +1,100 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using OauthAPI.Models.Entities;
+using OauthAPI.Tools;
 
 namespace OauthAPI.Controllers
 {
-    public class ProjectsController : Controller
+    [ApiController]
+    [Route("api/[controller]/[action]")]
+    public class ProjectsController : ControllerBase
     {
-        // GET: ProjectsController
-        public ActionResult Index()
+        private readonly ILogger<ProjectsController> _logger;
+
+        public ProjectsController(ILogger<ProjectsController> logger)
         {
-            return View();
+            _logger = logger;
         }
 
-        // GET: ProjectsController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: ProjectsController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: ProjectsController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        [HttpGet]
+        public IActionResult GetAll()
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                return Ok(DbHelper.GetAllProjects());
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                return Unauthorized(new { ok = false, msg = ex.Message.ToString() });
             }
         }
 
-        // GET: ProjectsController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: ProjectsController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        [HttpGet]
+        public IActionResult GetById(int id)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                return Ok(DbHelper.GetProjectById(id));
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                return Unauthorized(new { ok = false, msg = ex.Message.ToString() });
             }
         }
 
-        // GET: ProjectsController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: ProjectsController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        [HttpPost] /*<ENDPOINT REGISTER NEW PROJECT (ADMIN PORTAL)>*/
+        public IActionResult Register(Proyecto project)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                if (DbHelper.RegisterProject(project)) return Ok(new { ok = true, msg = $"Se ha registrado el proyecto {project.Nombre}" });
+                return Unauthorized(new { ok = false, msg = $"El proyecto {project.Nombre} ya está registrado" });
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                return Unauthorized(new { ok = false, msg = ex.Message.ToString() });
+            }
+        }
+
+        [HttpPut]
+        public IActionResult Update(Proyecto project)
+        {
+            try
+            {
+                if (DbHelper.UpdateProject(project)) return Ok(new { ok = true, msg = $"Se ha actualizado el proyecto {project.Nombre}" });
+                return Unauthorized(new { ok = false, msg = "No se puede actualizar este proyecto" });
+            }
+            catch (Exception ex)
+            {
+                return Unauthorized(new { ok = false, msg = ex.Message.ToString() });
+            }
+        }
+
+        [HttpPut]
+        public IActionResult UpdateStatus(int id)
+        {
+            try
+            {
+                if (DbHelper.UpdateProjectStatus(id) != null) return Ok(new { ok = true, msg = "Estatus del proyecto actualizado" });
+                return Unauthorized(new { ok = false, msg = "No se encontró el proyecto" });
+            }
+            catch (Exception ex)
+            {
+                return Unauthorized(new { ok = false, msg = ex.Message.ToString() });
+            }
+        }
+
+        [HttpDelete]
+        public IActionResult Delete(int id)
+        {
+            try
+            {
+                if (DbHelper.DeleteProject(id)) return Ok(new { ok = true, msg = "El proyecto ha sido eliminado" });
+                return Unauthorized(new { ok = false, msg = "No se encontró el proyecto" });
+            }
+            catch (Exception ex)
+            {
+                return Unauthorized(new { ok = false, msg = ex.Message.ToString() });
             }
         }
     }

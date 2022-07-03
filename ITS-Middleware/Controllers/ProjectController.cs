@@ -1,10 +1,12 @@
 ﻿using ITS_Middleware.Models.Entities;
-using ITS_Middleware.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using ITS_Middleware.Models.Context;
 using ITS_Middleware.ExceptionsHandler;
+using ITS_Middleware.Constants;
+using Newtonsoft.Json;
+using ITS_Middleware.Helpers;
 
 namespace ITS_Middleware.Controllers
 {
@@ -12,6 +14,7 @@ namespace ITS_Middleware.Controllers
     {
         private readonly ILogger<ProjectController> _logger;
         public middlewareITSContext _context;
+        RequestHelper requestHelper = new();
 
         public ProjectController(middlewareITSContext master, ILogger<ProjectController> logger)
         {
@@ -28,8 +31,8 @@ namespace ITS_Middleware.Controllers
                 {
                     return RedirectToAction("Login", "Auth");
                 }
-                var metodos = _context.MetodosAuths.Where(m => m.Id > 0).ToList();
-                ViewData["MetodosAuth"] = metodos;
+                var methods = requestHelper.GetAllAuthMethods();
+                ViewData["MetodosAuth"] = methods;
                 return PartialView();
             }
             catch (Exception ex)

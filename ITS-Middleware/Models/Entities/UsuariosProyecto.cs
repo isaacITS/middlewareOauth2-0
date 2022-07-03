@@ -11,6 +11,7 @@ namespace ITS_Middleware.Models.Entities
         public string Pass { get; set; } = null!;
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaAcceso { get; set; }
+        public bool Activo { get; set; }
         public int? IdProyecto { get; set; }
 
         public virtual Proyecto? IdProyectoNavigation { get; set; }

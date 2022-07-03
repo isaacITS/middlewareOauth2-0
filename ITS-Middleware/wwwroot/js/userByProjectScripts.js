@@ -1,5 +1,6 @@
 ﻿var idUserDeleteUser
 var idUserUpdate
+var idUserUpdateStatus
 
 //CRUD REQUEST
 $(document).ready(() => {
@@ -60,6 +61,10 @@ $(document).ready(() => {
                         closeModal()
                         ShowToastMessage('success', 'Información de usaurio actualizada', response.msg);
                         getUserByProjectList()
+                    } else {
+                        closeModal()
+                        ShowToastMessage('error', 'No se actualizó el usuario', response.msg)
+                        getUserByProjectList()
                     }
                 },
                 failure: function (response) {
@@ -74,15 +79,15 @@ $(document).ready(() => {
         }
     });
 
-    $('#btnUpdateStatusUser').on('click', function () {
-        var formData = $('#updateStatusUserForm').serialize()
+    $('#btnUpdateStatusUserByProject').on('click', function () {
         $('#viewsLoader').show()
+        console.log("USER ID => ", idUserUpdateStatus)
         $.ajax({
             type: 'post',
-            url: siteurl + 'User/UpdateStatus/',
-            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            url: siteurl + 'UserByProject/UpdateStatus',
+            contentType: "application/json; charset=utf-8",
             dataType: "json",
-            data: formData,
+            data: idUserUpdateStatus,
             success: function (response) {
                 $('#viewsLoader').hide()
                 if (response.status == 500) {
@@ -91,6 +96,10 @@ $(document).ready(() => {
                 } else if (response.ok) {
                     closeModal()
                     ShowToastMessage('success', 'Estatus de usaurio actualizado', response.msg)
+                    getUserByProjectList()
+                } else {
+                    closeModal()
+                    ShowToastMessage('error', 'No se actualizó el estatus de usuario', response.msg)
                     getUserByProjectList()
                 }
             },
@@ -107,7 +116,7 @@ $(document).ready(() => {
         $('#viewsLoader').show()
         $.ajax({
             type: 'post',
-            url: siteurl + 'UserByProject/Delete',
+            url: siteurl + 'UserByProject/DeletePost',
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             data: idUserDeleteUser,
@@ -119,6 +128,10 @@ $(document).ready(() => {
                 } else if (response.ok) {
                     closeModal()
                     ShowToastMessage('success', 'Usuario eliminado', response.msg)
+                    getUserByProjectList()
+                } else {
+                    closeModal()
+                    ShowToastMessage('error', 'No se eliminó el usuario', response.msg)
                     getUserByProjectList()
                 }
             },

@@ -133,6 +133,8 @@ namespace ITS_Middleware.Models.Context
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
+                entity.Property(e => e.Activo).HasColumnName("activo");
+
                 entity.Property(e => e.Email)
                     .HasMaxLength(50)
                     .IsUnicode(false)

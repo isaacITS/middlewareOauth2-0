@@ -10,11 +10,13 @@ IWebHostEnvironment _env = builder.Environment;
 builder.Services.AddControllersWithViews();
 builder.Services.AddControllers();
 builder.Services.AddSession();
+builder.Services.AddHttpClient();
 builder.Services.AddSingleton<ILoggerManager, LoggerManager>();
 builder.Services.AddLogging(config => config.AddLog4Net("log4net.config", true));
 
 builder.Configuration.AddJsonFile($"appsettings.{_env.EnvironmentName}.json", optional: true, reloadOnChange: true);
 ITS_Middleware.Constants.Vars.CONNECTION_STRING = builder.Configuration.GetSection("ApplicationSettings:ConnectionStrings:DefaultConnection").Value.ToString();
+ITS_Middleware.Constants.Vars.API_URI = builder.Configuration.GetSection("ApplicationSettings:ApiSettings:DefaultUri").Value.ToString();
 
 builder.Services.AddDbContext<middlewareITSContext>(options =>
 {

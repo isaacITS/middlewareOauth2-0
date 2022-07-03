@@ -20,17 +20,17 @@ namespace OauthAPI.Controllers
             var user = DbHelper.GetUserByEmail(email);
             if (user == 0)
             {
-                return Unauthorized(new { msg = "Usuario no registrado" });
+                return Unauthorized(new { ok = false, msg = "Usuario no registrado" });
             }
             if (!user.Activo)
             {
-                return Unauthorized(new { msg = "El usuario esta deshabilitado" });
+                return Unauthorized(new { ok = false, msg = "El usuario esta deshabilitado" });
             }
             if (user.Pass != Encrypt.sha256(pass))
             {
-                return Unauthorized(new { msg = "Contraseña Incorrecta" });
+                return Unauthorized(new { ok = false, msg = "Contraseña Incorrecta" });
             }
-            return Ok(new { msg = "Ok", token = "tokenSecret" });
+            return Ok(new { ok = true, msg = "Ok", token = "tokenSecret" });
         }
     }
 }

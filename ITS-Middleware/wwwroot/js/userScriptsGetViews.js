@@ -93,7 +93,7 @@ function getUpdateStatusUserView(id) {
     $('.modal-footer').html("<button type='button' class='btn btn-outline-secondary btn-close-modal-view' data-bs-dismiss='modal'><span class='align-middle material-icons'>close</span>&nbsp;Cancelar</button><button class='btn btn-success' id='btnUpdateStatusUser' type='button'><span class='align-middle material-icons'>update</span>&nbsp;Actualizar</button>")
     $.ajax({
         type: 'GET',
-        url: siteurl + `User/UpdateStatus/${id}`,
+        url: siteurl + `User/ChangeStatus/${id}`,
         success: function (resp) {
             if (resp == "Error") {
                 window.location.href = '/Home/Error'

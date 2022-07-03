@@ -6,11 +6,11 @@ namespace OauthAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
-    public class UsersController : ControllerBase
+    public class UsersByProjectController : ControllerBase
     {
-        private readonly ILogger<UsersController> _logger;
+        private readonly ILogger<UsersByProjectController> _logger;
 
-        public UsersController(ILogger<UsersController> logger)
+        public UsersByProjectController(ILogger<UsersByProjectController> logger)
         {
             _logger = logger;
         }
@@ -20,7 +20,7 @@ namespace OauthAPI.Controllers
         {
             try
             {
-                return Ok(DbHelper.GetAllUsers());
+                return Ok(DbHelper.GetAllUsersByProject());
             }
             catch (Exception ex)
             {
@@ -33,7 +33,7 @@ namespace OauthAPI.Controllers
         {
             try
             {
-                return Ok(DbHelper.GetUserById(id));
+                return Ok(DbHelper.GetUserByProjectById(id));
             }
             catch (Exception ex)
             {
@@ -42,27 +42,27 @@ namespace OauthAPI.Controllers
         }
 
 
-        [HttpPost] /*<ENDPOINT REGISTER NEW USER (ADMIN PORTAL)>*/
-        public IActionResult Register(Usuario user)
+        [HttpPost] /*<ENDPOINT REGISTER NEW USER BY PROJECCT>*/
+        public IActionResult Register(UsuariosProyecto userModel)
         {
             try
             {
-                if (DbHelper.RegisterUser(user)) return Ok(new { ok = true, msg = $"Se ha registrado el usuario {user.Nombre}" });
-                return Unauthorized(new { ok = false, msg = $"El correo {user.Email} ya está registrado" });
+                if (DbHelper.RegisterUSerByProject(userModel)) return Ok(new { ok = true, msg = $"Se ha registrado el usuario {userModel.NombreCompleto}" });
+                return Unauthorized(new { ok = false, msg = $"El correo {userModel.Email} ya está registrado" });
             }
             catch (Exception ex)
             {
-                return Unauthorized(new { ok = false, msg = ex.Message.ToString() });
+                return Unauthorized(new { msg = ex.Message.ToString() });
             }
         }
 
         [HttpPut]
-        public IActionResult Update(Usuario user)
+        public IActionResult Update(UsuariosProyecto userModel)
         {
             try
             {
-                if (DbHelper.UpdateUser(user)) return Ok(new { ok = true, msg = $"Se ha actualizado el usuario {user.Nombre}" });
-                return Unauthorized(new { ok = false, msg = "No se pudó encontrar el usaurio" });
+                if (DbHelper.UpdateUserByProject(userModel)) return Ok(new { ok = true, msg = $"Se ha actualizado el usuario {userModel.NombreCompleto}" });
+                return Unauthorized(new { ok = false, msg = "No se pudó encontrar el usuario" });
             }
             catch (Exception ex)
             {
@@ -75,7 +75,7 @@ namespace OauthAPI.Controllers
         {
             try
             {
-                if (DbHelper.UpdateUserStatus(id) != null) return Ok(new { ok = true, msg = "Estatus de usuario actualizado" });
+                if (DbHelper.UpdateUserByProjectStatus(id) != null) return Ok(new { ok = true, msg = "Estatus de usuario actualizado" });
                 return Unauthorized(new { ok = false, msg = "No se encontró al usuario" });
             }
             catch (Exception ex)
@@ -89,12 +89,12 @@ namespace OauthAPI.Controllers
         {
             try
             {
-                if (DbHelper.DeleteUser(id)) return Ok(new { ok = true, msg = "Usuario eliminado con éxito" });
+                if (DbHelper.DeleteUserByProject(id)) return Ok(new { ok = true, msg = "Se ha eliminado el usuario" });
                 return Unauthorized(new { ok = false, msg = "No se encontró al usuario" });
             }
             catch (Exception ex)
             {
-                return Unauthorized(new { msg = ex.Message.ToString() });
+                return Unauthorized(new { ok = false, msg = ex.Message.ToString() });
             }
         }
     }

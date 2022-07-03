@@ -59,6 +59,10 @@ $(document).ready(() => {
                         closeModal()
                         ShowToastMessage('success', 'Usuario actualizado', response.msg);
                         GetUsersList()
+                    } else {
+                        closeModal()
+                        ShowToastMessage('error', 'No se actualizó el usuario', response.msg);
+                        GetUsersList()
                     }
                 },
                 failure: function (response) {
@@ -91,6 +95,10 @@ $(document).ready(() => {
                     closeModal()
                     ShowToastMessage('success', 'Estatus de usaurio actualizado', response.msg)
                     GetUsersList()
+                } else {
+                    closeModal()
+                    ShowToastMessage('error', 'No se actualizó el estatus', response.msg)
+                    GetUsersList()
                 }
             },
             failure: function (response) {
@@ -106,7 +114,7 @@ $(document).ready(() => {
         $('#viewsLoader').show()
         $.ajax({
             type: 'post',
-            url: siteurl + 'User/DeleteUser/',
+            url: siteurl + 'User/DeleteUserPost/',
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             data: idUserDelete,
@@ -118,6 +126,10 @@ $(document).ready(() => {
                 } else if (response.ok) {
                     closeModal()
                     ShowToastMessage('success', 'Usuario eliminado', response.msg)
+                    GetUsersList()
+                } else {
+                    closeModal()
+                    ShowToastMessage('error', 'No se eliminó el usuario', response.msg)
                     GetUsersList()
                 }
             },

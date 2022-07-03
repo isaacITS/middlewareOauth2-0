@@ -28,9 +28,14 @@ $('.modalUpdateUserView').on('click', function () {
     getUpdateUserView(idUserUpdate)
 })
 
+$('.modalStatusUserView').on('click', function () {
+    idUserUpdateStatus = $(this).attr('data-idUser')
+    getUpdateStatusUserView($(this).attr('data-idUser'))
+})
+
 $('.modalDeleteUserView').on('click', function () {
-    getDeleteUserView($(this).attr('data-idUser'))
     idUserDeleteUser = $(this).attr('data-idUser')
+    getDeleteUserView($(this).attr('data-idUser'))
 })
 
 
@@ -70,6 +75,30 @@ function getDeleteUserView(id) {
             if (resp == "Error") {
                 window.location.href = '/Home/Error'
                 console.log("Error al obtener vista eliminar usuario")
+                return;
+            }
+            $(".modal-body").empty().append(resp)
+            $('#viewsLoader').hide()
+            $('.modal-dialog').fadeIn()
+        },
+        error: function (resp) {
+            console.log(resp)
+        }
+    })
+}
+
+function getUpdateStatusUserView(id) {
+    $('.modal-dialog').fadeOut(1)
+    $('#viewsLoader').show()
+    $('.modal-title').html('¿Actualizar estatus de usuario?')
+    $('.modal-footer').html("<button type='button' class='btn btn-outline-secondary btn-close-modal-view' data-bs-dismiss='modal'><span class='align-middle material-icons'>close</span>&nbsp;Cancelar</button><button class='btn btn-success' id='btnUpdateStatusUserByProject' type='button'><span class='align-middle material-icons'>update</span>&nbsp;Actualizar</button>")
+    $.ajax({
+        type: 'GET',
+        url: siteurl + `UserByProject/ChangeStatus/${id}`,
+        success: function (resp) {
+            if (resp == "Error") {
+                window.location.href = '/Home/Error'
+                console.log("Error al obtener vista cambiar estatus de usuario")
                 return;
             }
             $(".modal-body").empty().append(resp)
