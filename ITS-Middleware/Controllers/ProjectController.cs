@@ -1,11 +1,6 @@
 ﻿using ITS_Middleware.Models.Entities;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Reflection;
-using ITS_Middleware.Models.Context;
 using ITS_Middleware.ExceptionsHandler;
-using ITS_Middleware.Constants;
-using Newtonsoft.Json;
 using ITS_Middleware.Helpers;
 
 namespace ITS_Middleware.Controllers
@@ -13,12 +8,10 @@ namespace ITS_Middleware.Controllers
     public class ProjectController : Controller
     {
         private readonly ILogger<ProjectController> _logger;
-        public middlewareITSContext _context;
         RequestHelper requestHelper = new();
 
-        public ProjectController(middlewareITSContext master, ILogger<ProjectController> logger)
+        public ProjectController(ILogger<ProjectController> logger)
         {
-            _context = master;
             _logger = logger;
         }
 
@@ -61,13 +54,11 @@ namespace ITS_Middleware.Controllers
                 project.FechaAlta = DateTime.Now;
                 if (ModelState.IsValid)
                 {
-                    var getName = _context.Proyectos.Where(p => p.Nombre == project.Nombre).FirstOrDefault();
-                    if (getName != null)
+                    var request = requestHelper.RegisterProject(project);
+                    if (!request.Ok)
                     {
                         return Json(new { ok = false, msg = $"El proyecto {project.Nombre} ya esta registrado" });
                     }
-                    _context.Add(project);
-                    _context.SaveChanges();
                     return Json(new { ok = true, msg = $"El proyecto {project.Nombre} se ha registrado" });
                 }
                 return Json(new { ok = false, msg = "Información incompleta, intenta volver a iniciar sesión"});
@@ -88,7 +79,7 @@ namespace ITS_Middleware.Controllers
         }
 
         //Editar proyecto
-        public IActionResult EditProject(int? id)
+        public IActionResult EditProject(int id)
         {
             try
             {
@@ -102,12 +93,12 @@ namespace ITS_Middleware.Controllers
                     {
                         return Json(new { ok = false, msg = "No se ingresó un ID válido" });
                     }
-                    var project = _context.Proyectos.Find(id);
+                    var project = requestHelper.GetProjectById(id);
                     if (project == null)
                     {
                         return Json(new { ok = false, msg = "El ID no coincide con un proyecto registrado" });
                     }
-                    var metodos = _context.MetodosAuths.Where(m => m.Id > 0).ToList();
+                    var metodos = requestHelper.GetAllAuthMethods();
                     ViewData["MetodosAuth"] = metodos;
                     return PartialView(project);
                 }
@@ -132,11 +123,12 @@ namespace ITS_Middleware.Controllers
         {
             try
             {
-                var local = _context.Set<Proyecto>().Local.FirstOrDefault(entry => entry.Id.Equals(project.Id));
-                if (local != null) _context.Entry(local).State = EntityState.Detached;
-                _context.Entry(project).State = EntityState.Modified;
-                _context.SaveChanges();
-                return Json(new { ok = true, msg = "Información de Proyecto Actualizada" });
+                var response = requestHelper.UpdateProject(project);
+                if (response.Ok)
+                {
+                    return Json(new { ok = true, msg = response.Msg });
+                }
+                return Json(new { ok = true, msg = response.Msg });
             }
             catch (Exception ex)
             {
@@ -155,7 +147,7 @@ namespace ITS_Middleware.Controllers
 
 
         //Eliminar proyecto
-        public IActionResult DeleteProject(int? id)
+        public IActionResult DeleteProject(int id)
         {
             try
             {
@@ -169,12 +161,12 @@ namespace ITS_Middleware.Controllers
                     {
                         return Json(new { ok = false, msg = "No se ingresó un ID válido" });
                     }
-                    var usuario = _context.Proyectos.Find(id);
-                    if (usuario == null)
+                    var project = requestHelper.GetProjectById(id);
+                    if (project == null)
                     {
-                        return Json(new { ok = false, msg = "El ID No coincide con un proyecto registrad" });
+                        return Json(new { ok = false, msg = "No se encontró un proyecto registrado" });
                     }
-                    return PartialView(usuario);
+                    return PartialView(project);
                 }
             }
             catch (Exception ex)
@@ -195,18 +187,16 @@ namespace ITS_Middleware.Controllers
 
 
         [HttpPost]
-        public IActionResult DeleteProject([FromBody] int id)
+        public IActionResult DeleteProjectPost([FromBody] int id)
         {
             try
             {
-                var project = _context.Proyectos.Find(id);
-                if (project != null)
+                var response = requestHelper.DeleteProject(id);
+                if (response.Ok)
                 {
-                    _context.Proyectos.Remove(project);
-                    _context.SaveChanges();
-                    return Json(new { ok = true, msg = "Proyecto eliminado con éxito" });
-                }
-                return Json(new { ok = false, msg = "No se encontró un proyecto" });
+                    return Json(new { ok = true, msg = response.Msg });
+                } 
+                return Json(new { ok = false, msg = "No se eliminó el proyecto. No se encontró el proyecto" });
             }
             catch (Exception ex)
             {
@@ -224,7 +214,7 @@ namespace ITS_Middleware.Controllers
         }
 
         //Estatus activo/desactivo proyectos
-        public IActionResult UpdateStatus(int? id)
+        public IActionResult UpdateStatus(int id)
         {
             try
             {
@@ -234,12 +224,11 @@ namespace ITS_Middleware.Controllers
                 }
                 else
                 {
-                    ViewBag.email = HttpContext.Session.GetString("userName");
                     if (id == null)
                     {
                         return Json(new { ok = false, msg = "No se ingresó un ID válido" });
                     }
-                    var project = _context.Proyectos.Find(id);
+                    var project = requestHelper.GetProjectById(id);
                     if (project == null)
                     {
                         return Json(new { ok = false, msg = "El ID no coincide con un usuario registrado" });
@@ -263,16 +252,16 @@ namespace ITS_Middleware.Controllers
         }
 
         [HttpPost]
-        public IActionResult UpdateStatus(Proyecto project)
+        public IActionResult UpdateStatusPost(int id)
         {
             try
             {
-                project.Activo = !project.Activo;
-                var local = _context.Set<Proyecto>().Local.FirstOrDefault(entry => entry.Id.Equals(project.Id));
-                if (local != null) _context.Entry(local).State = EntityState.Detached;
-                _context.Entry(project).State = EntityState.Modified;
-                _context.SaveChanges();
-                return Json(new { ok = true, msg = "Estatus de proyecto Actualizado" });
+                var response = requestHelper.UpdateProjectStatus(id);
+                if (response.Ok)
+                {
+                    return Json(new { ok = true, msg = response.Msg });
+                }
+                return Json(new { ok = false, msg = response.Msg });
             }
             catch (Exception ex)
             {

@@ -117,7 +117,7 @@ namespace OauthAPI.Models.Context
                     .HasColumnName("puesto");
 
                 entity.Property(e => e.TokenRecovery)
-                    .HasMaxLength(200)
+                    .HasMaxLength(350)
                     .IsUnicode(false)
                     .HasColumnName("tokenRecovery");
             });

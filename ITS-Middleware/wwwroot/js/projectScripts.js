@@ -3,6 +3,10 @@ var idProjectDelete;
 var methodsListLength = $('#authMethodsLength').val()
 
 $(document).ready(() => {
+    $('#1').prop('checked', true)
+    $("#1").attr('disabled', 'disabled')
+    $("#1").attr('readonly', 'readonly')
+
     $('#btnRegisterProject').on('click', function () {
         getMethodsList() 
         if (validateData().ok) {
@@ -83,7 +87,7 @@ $(document).ready(() => {
         $('#viewsLoader').show()
         $.ajax({
             type: 'post',
-            url: siteurl + 'Project/UpdateStatus',
+            url: siteurl + 'Project/UpdateStatusPost',
             contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
             dataType: "json",
             data: formData,
@@ -111,7 +115,7 @@ $(document).ready(() => {
         $('#viewsLoader').show()
         $.ajax({
             type: 'post',
-            url: siteurl + 'Project/DeleteProject/',
+            url: siteurl + 'Project/DeleteProjectPost/',
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             data: idProjectDelete,

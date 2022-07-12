@@ -1,23 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ITS_Middleware.Tools;
 using ITS_Middleware.Models.Entities;
-using Microsoft.EntityFrameworkCore;
 using ITS_Middleware.ExceptionsHandler;
-using ITS_Middleware.Models.Context;
 using System.Net.Mail;
 using System.Net;
+using ITS_Middleware.Helpers;
 
 namespace ITS_Middleware.Controllers
 {
     public class AuthController : Controller
     {
         private readonly ILogger<AuthController> _logger;
-        public middlewareITSContext _context;
+        TokenJwt tokenJwt = new();
+        RequestHelper requestHelper = new();
         private readonly IHostEnvironment _env;
 
-        public AuthController(middlewareITSContext master, ILogger<AuthController> logger, IHostEnvironment env)
+        public AuthController(ILogger<AuthController> logger, IHostEnvironment env)
         {
-            _context = master;
             _logger = logger;
             _env = env;
         }
@@ -27,22 +26,17 @@ namespace ITS_Middleware.Controllers
         {
             try
             {
-                var adminEmail = "admin.its@seekers.com";
-                var checkAdmin = _context.Usuarios.FirstOrDefault(u => u.Email == adminEmail);
-                if (checkAdmin == null)
+                Usuario usuario = new()
                 {
-                    Usuario usuario = new()
-                    {
-                        Activo = true,
-                        Nombre = "Administrador",
-                        FechaAlta = DateTime.Now,
-                        Email = adminEmail,
-                        Pass = Encrypt.sha256("admin123"),
-                        Puesto = "Administrador"
-                    };
-                    _context.Add(usuario);
-                    _context.SaveChanges();
-                }
+                    Activo = true,
+                    Nombre = "Administrador",
+                    FechaAlta = DateTime.Now,
+                    Email = "admin.its@seekers.com",
+                    Pass = Encrypt.sha256("admin123"),
+                    Puesto = "Administrador"
+                };
+                var response = requestHelper.RegisterUser(usuario);
+                Console.WriteLine(response.Msg);
                 if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName")))
                 {
                     return View();
@@ -61,7 +55,7 @@ namespace ITS_Middleware.Controllers
                     errors.Add(message);
                 }
                 TempData["ErrorsMessages"] = errors;
-                return Json(new { ok = false, status = 500, msg = "Error" });
+                return View("Error");
             }
         }
 
@@ -74,26 +68,17 @@ namespace ITS_Middleware.Controllers
         {
             try
             {
-                var user = _context.Usuarios.Where(u => u.Email == email).FirstOrDefault();
-                if (user == null)
+                var response = requestHelper.SignIn(email, Encrypt.sha256(pass));
+                if (response.Ok == true)
                 {
-                    ViewBag.msg = "Usuario no registrado";
-                    return View();
+                    string id = response.MsgHeader;
+                    string nombre = response.Msg;
+                    HttpContext.Session.SetString("userName", nombre);
+                    HttpContext.Session.SetString("idUser", id);
+                    return RedirectToAction("Home", "Home");
                 }
-                if (!user.Activo)
-                {
-                    ViewBag.msg = "El usuario esta deshabilitado";
-                    return View();
-                }
-                if (user.Pass != Encrypt.sha256(pass))
-                {
-                    ViewBag.msg = "Contraseña Incorrecta";
-                    return View();
-                }
-
-                HttpContext.Session.SetString("userName", user.Nombre);
-                HttpContext.Session.SetString("idUser", user.Id.ToString());
-                return RedirectToAction("Home", "Home");
+                ViewBag.msg = response.Msg;
+                return View();
             }
             catch (Exception ex)
             {
@@ -106,7 +91,7 @@ namespace ITS_Middleware.Controllers
                     errors.Add(message);
                 }
                 TempData["ErrorsMessages"] = errors;
-                return Json(new { ok = false, status = 500, msg = "Error" });
+                return View("Error");
             }
         }
 
@@ -128,7 +113,7 @@ namespace ITS_Middleware.Controllers
                     errors.Add(message);
                 }
                 TempData["ErrorsMessages"] = errors;
-                return Json(new { ok = false, status = 500, msg = "Error" });
+                return View("Error");
             }
         }
 
@@ -138,23 +123,22 @@ namespace ITS_Middleware.Controllers
         {
             try
             {
-                var token = Encrypt.sha256(email);
-                var user = _context.Usuarios.Where(u => u.Email == email).FirstOrDefault();
-
+                var user = requestHelper.GetUserByEmail(email);
                 if (user != null)
                 {
                     if (!user.Activo) return Json(new { ok = false, status = 205, msg = "El usuario se encuentra deshabilitado" });
-                    user.TokenRecovery = token;
-                    var local = _context.Set<Usuario>().Local.FirstOrDefault(entry => entry.Email.Equals(user.Email));
-                    if (local != null) _context.Entry(local).State = EntityState.Detached;
-                    _context.Entry(user).State = EntityState.Modified;
-                    _context.SaveChanges();
-                    var baseUrl = $"{this.Request.Scheme}://{this.Request.Host.Value}";
-                    var bodyEmail = System.IO.File.ReadAllText(Path.Combine(_env.ContentRootPath, @"wwwroot\htmlViews\resetPassMessage.html"))
-                        .Replace("{contact-name}", user.Nombre)
-                        .Replace("{link-update-pass}", $"{baseUrl}/Auth/UpdatePass?token={token}");
-                    SendEmail(email, bodyEmail, "Recuperación de contraseña Portal de Configuración");
-                    return Json(new { ok = true, status = 200, msg = $"Se ha enviado un correo a {email} para restablecer la contraseña" });
+                    var token = tokenJwt.CreateToken(user.Id);
+                    var response = requestHelper.UpdateUserTokenRecovery(email, token);
+                    if (response.Ok)
+                    {
+                        var baseUrl = $"{this.Request.Scheme}://{this.Request.Host.Value}";
+                        var bodyEmail = System.IO.File.ReadAllText(Path.Combine(_env.ContentRootPath, @"wwwroot\htmlViews\resetPassMessage.html"))
+                            .Replace("{contact-name}", user.Nombre)
+                            .Replace("{link-update-pass}", $"{baseUrl}/Auth/UpdatePass?token={token}");
+                        SendEmail(email, bodyEmail, "Recuperación de contraseña, portal de administración");
+                        return Json(new { ok = true, status = 200, msg = $"Se ha enviado un correo a {email} para restablecer la contraseña" });
+                    }
+                    return Json(new { ok = false, status = 400, msg = response.Msg });
                 }
                 return Json(new { ok = false, status = 400, msg = $"No se encontró el usuario con correo {email}" });
             }
@@ -169,7 +153,7 @@ namespace ITS_Middleware.Controllers
                     errors.Add(message);
                 }
                 TempData["ErrorsMessages"] = errors;
-                return Json(new { ok = false, status = 500, msg = "Error" });
+                return View("Error");
             }
         }
 
@@ -177,13 +161,20 @@ namespace ITS_Middleware.Controllers
         {
             try
             {
-                var getUser = _context.Usuarios.Where(u => u.TokenRecovery == token).FirstOrDefault();
-                if (getUser != null)
+                if (tokenJwt.TokenIsValid(token))
                 {
-                    return View("UpdatePassword", getUser);
+                    string[] dataToken = Encrypt.DecryptString(token).Split("$");
+                    int id = int.Parse(dataToken[0]);
+                    var user = requestHelper.GetUserById(id);
+                    if (user != null)
+                    {
+                        if (user.TokenRecovery == token) return View("UpdatePassword", user);
+                    }
                 }
-                return Json(new { ok = false, status = 400, msg = "El token ha expirado o no es válido" });
+                ViewBag.msg = "El enlace para recuperar contraseña ha expirado o no es válido";
+                return View("Login");
             }
+            
             catch (Exception ex)
             {
                 List<string> errors = new List<string>();
@@ -195,7 +186,7 @@ namespace ITS_Middleware.Controllers
                     errors.Add(message);
                 }
                 TempData["ErrorsMessages"] = errors;
-                return Json("Error");
+                return Json(new { ok = false, status = 500, msg = "Internal Server Error" });
             }
         }
 
@@ -206,15 +197,12 @@ namespace ITS_Middleware.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var local = _context.Set<Usuario>().Local.FirstOrDefault(entry => entry.Id.Equals(userModel.Id));
-                    if (local != null) _context.Entry(local).State = EntityState.Detached;
-                    userModel.TokenRecovery = null;
                     userModel.Pass = Encrypt.sha256(userModel.Pass);
-                    _context.Entry(userModel).State = EntityState.Modified;
-                    _context.SaveChangesAsync();
-                    return Json(new { ok = true, status = 200, msg = "Se ha actualizado la contraseña" });
+                    var response = requestHelper.UpdateUserPassword(userModel);
+                    if(response.Ok) return Json(new { ok = true, status = 200, msg = response.Msg, MsgHeader = response.MsgHeader });
+                    return Json(new { ok = false, status = 400, msg = response.Msg, MsgHeader = response.MsgHeader });
                 }
-                return Json(new { ok = false, status = 400, msg = "No se recibió un modelo válido" });
+                return Json(new { ok = false, status = 400, msg = "Los datos recibidos no son válidos o están incompletos", MsgHeader = "Información no válida"});
             }
             catch (Exception ex)
             {
@@ -261,8 +249,6 @@ namespace ITS_Middleware.Controllers
 
         public void SendEmail(string toEmail, string body, string subject)
         {
-            var baseUrl = $"{this.Request.Scheme}://{this.Request.Host.Value}";
-
             var smtpClient = new SmtpClient("smtp.gmail.com", 587);
             smtpClient.Credentials = new NetworkCredential("noreply.its.portalconfig@gmail.com", "dvqxxkdwmuynsboa");
             smtpClient.EnableSsl = true;

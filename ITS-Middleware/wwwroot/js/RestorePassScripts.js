@@ -4,6 +4,7 @@ $(document).ready(() => {
     $('#btnSendEmailRestorePass').on('click', () => {
         if (checkDataSendEmail().ok) {
             $('#viewsLoader').show()
+            $('.form-restore-pass').hide()
             email = $('#email').val()
             $.ajax({
                 type: 'POST',
@@ -13,6 +14,7 @@ $(document).ready(() => {
                 data: JSON.stringify(email),
                 success: function (response) {
                     $('#viewsLoader').hide()
+                    $('.form-restore-pass').show()
                     if (response.status == 500) {
                         window.location.href = '/Home/Error'
                         console.log(response)
@@ -41,6 +43,7 @@ $(document).ready(() => {
     })
 
     $('#btnUpdatePassword').on('click', function () {
+        $('.update-password-form').hide()
         $('#viewsLoader').show()
         var formData = $('#restorePasswordForm').serialize()
             $.ajax({
@@ -51,6 +54,7 @@ $(document).ready(() => {
                 data: formData,
                 success: function (response) {
                     $('#viewsLoader').hide()
+                    $('.update-password-form').show()
                     if (response.status == 500) {
                         window.location.href = '/Home/Error'
                         console.log(response)

@@ -1,8 +1,6 @@
 ﻿using ITS_Middleware.ExceptionsHandler;
 using ITS_Middleware.Helpers;
 using ITS_Middleware.Models.Entities;
-using ITS_Middleware.Tools;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ITS_Middleware.Controllers

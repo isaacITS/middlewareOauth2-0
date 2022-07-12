@@ -42,6 +42,19 @@ namespace OauthAPI.Controllers
             }
         }
 
+        [HttpGet]
+        public IActionResult GetByName(string project)
+        {
+            try
+            {
+                return Ok(DbHelper.GetProjectByName(project));
+            }
+            catch (Exception ex)
+            {
+                return Unauthorized(new { ok = false, msg = ex.Message.ToString() });
+            }
+        }
+
         [HttpPost] /*<ENDPOINT REGISTER NEW PROJECT (ADMIN PORTAL)>*/
         public IActionResult Register(Proyecto project)
         {

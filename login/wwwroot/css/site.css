@@ -1,0 +1,175 @@
+@import url('https://fonts.googleapis.com/css2?family=Merriweather+Sans&display=swap');
+
+html,
+body {
+    background-color: #272727;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Merriweather Sans', sans-serif;
+}
+
+    body .content-form {
+        position: relative;
+        padding: 30px;
+    }
+
+.content-form form {
+    background-color: #fff;
+    width: 450px;
+    border-radius: 10px;
+    padding: 25px;
+    position: absolute;
+    text-align: center;
+    color: #3b3b3b;
+}
+
+    .content-form form h1 {
+        font-size: 25px;
+        font-weight: bold;
+        text-transform: uppercase;
+        margin-bottom: 15px;
+    }
+
+    .content-form form .mb-3 {
+        text-align: left;
+    }
+
+        .content-form form .mb-3 .form-control {
+            border: none;
+            border-radius: 0;
+            border-bottom: solid 2px #3b3b3b;
+        }
+
+            .content-form form .mb-3 .form-control:focus {
+                box-shadow: 0 1px 1px #3b3b3b inset, 0 0 8px #3b3b3b;
+            }
+
+        .content-form form .mb-3 label {
+            font-size: 14px;
+            transition: all 0.2s ease-in-out;
+        }
+
+    .content-form form .sign-in {
+        background-color: #3b3b3b;
+        color: #fff;
+        border: solid 1px #3b3b3b;
+        transition: all .3s;
+    }
+
+        .content-form form .sign-in:hover {
+            background-color: #000000;
+        }
+
+body .content-form form .oauth-services {
+    width: 80%;
+    margin: auto;
+    margin-top: 10px;
+}
+
+.content-form form .oauth-services .divisor {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+    .content-form form .oauth-services .divisor p {
+        margin: 10px;
+    }
+
+    .content-form form .oauth-services .divisor hr {
+        width: 150px;
+    }
+
+.content-form form .oauth-services .row {
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+
+    .content-form form .oauth-services .row .col button {
+        font-size: 16pt;
+        width: 45px;
+        height: 45px;
+        text-align: center;
+        border-radius: 25px;
+        transition: all .2s ease-in;
+        color: #fff;
+    }
+
+.content-form form .oauth-services .row .col button:hover {
+    transform: scale(2);
+}
+
+    .content-form form .oauth-services .row .col {
+        margin: 5px;
+    }
+
+    .content-form form .oauth-services .row #Facebook {
+        background-color: #005b97;
+    }
+    .content-form form .oauth-services .row #Facebook:hover {
+        background: none;
+        color: #005b97;
+    }
+
+    .content-form form .oauth-services .row #Twitter {
+        background-color: #0078c9;
+    }
+    .content-form form .oauth-services .row #Twitter:hover {
+        background: none;
+        color: #0078c9;
+    }
+
+    .content-form form .oauth-services .row #Google {
+        background-color: #ca0000;
+    }
+    .content-form form .oauth-services .row #Google:hover {
+        background: none;
+        color: #ca0000;
+    } 
+
+    .content-form form .oauth-services .row #Github {
+        background-color: #292929;
+    }
+    .content-form form .oauth-services .row #Github:hover {
+        background: none;
+        color: #292929;
+    }
+
+    .content-form form .oauth-services .row #Microsoft {
+        background-color: #008829;
+    }
+    .content-form form .oauth-services .row #Microsoft:hover {
+        background: none;
+        color: #008829;
+    }
+
+    .content-form form .oauth-services .row #Yahoo {
+        background-color: #390096;
+    }
+    .content-form form .oauth-services .row #Yahoo:hover {
+        background: none;
+        color: #390096;
+    }
+    .content-form form .oauth-services .row #Apple {
+        background-color: #5e5e5e;
+    }
+    .content-form form .oauth-services .row #Apple:hover {
+        background: none;
+        color: #5e5e5e;
+    }
+
+@media screen and (max-width: 500px) {
+    body .content-form {
+        padding: 10px;
+    }
+
+    .content-form form {
+        width: 100%;
+        margin: auto;
+        position: relative;
+    }
+}

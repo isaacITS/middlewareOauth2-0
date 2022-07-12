@@ -1,0 +1,111 @@
+﻿<!DOCTYPE html>
+<html lang="es-mx">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@500&display=swap');
+
+        body {
+            background-color: #fff;
+            font-family: 'Rubik', sans-serif;
+            text-align: center;
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+        }
+
+        .container img {
+            margin-bottom: 20px;
+            margin-top: 20px;
+        }
+
+        p {
+            font-weight: 100;
+            color: #666666;
+        }
+
+        .container .card {
+            width: 85%;
+            margin: auto;
+            padding: 20px;
+            color: #2e2e2e;
+            background-color: #fafafa;
+            border-radius: 10px;
+        }
+
+            .container .card h3 {
+                margin-top: 0;
+                margin-bottom: 0;
+            }
+
+            .container .card .btn-restore-pass {
+                background-color: #ff2929;
+                border: none;
+                padding: 15px;
+                border-radius: 25px;
+                color: #fafafa;
+                font-size: 12pt;
+                font-weight: 500;
+                text-decoration: none;
+            }
+
+            .container .card .link-update-pass {
+                color: #0f3f75;
+                text-decoration: none;
+                font-weight: 100;
+                font-size: 10pt;
+            }
+
+            .container .card .footer-card {
+                font-size: 10pt;
+                text-align: left;
+                margin-top: 10px;
+            }
+
+        .container .footer-content {
+            background-color: #0b2e57;
+            height: 200px;
+            width: 100%;
+            position: absolute;
+            z-index: -1;
+            bottom: 0;
+        }
+
+        .advice-msg {
+            font-size: 10pt;
+            color: #424242;
+        }
+
+        .message-info-email {
+            font-size: 10pt;
+            color: #cccccc;
+        }
+    </style>
+    <div class="container">
+        <img width="300" src="https://sp-ao.shortpixel.ai/client/to_webp,q_glossy,ret_img/https://www.it-seekers.com/wp-content/uploads/2021/07/itsLogoConfondo-scaled-1.jpg" alt="its-logo">
+        <div class="card">
+            <h1>¡Hola!</h1>
+            <h3>{contact-name}</h3>
+            <br><br>
+            <h3>¡Tu cuenta para esta lista!</h3>
+            <p>Se ha creado tu cuenta para el portal de administración OAuth</p>
+            <br>
+            <a href="{link-update-pass}" class="btn-restore-pass">Ingresar al portal</a>
+            <br> <br>
+            <p>Usuario(correo): {user-email}</p>
+            <p>Contraseña: {user-pass}</p>
+            <p class="advice-msg">Puedes modificar tus datos en el portal</p>
+            <br>
+            <p class="footer-card">Saludos,<br>Equipo de IT-Seekers</p>
+        </div>
+        <div class="footer-content"></div>
+    </div>
+</body>
+
+</html>

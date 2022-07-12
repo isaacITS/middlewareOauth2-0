@@ -5,19 +5,6 @@ namespace ITS_Middleware.Tools
 {
     public class Encrypt
     {
-        //Encriptar contraseña
-        /*
-        public static string GetSHA256(string str)
-        {
-            SHA256 sha256 = SHA256.Create();
-            ASCIIEncoding encoding = new ASCIIEncoding();
-            byte[] stream = null;
-            StringBuilder sb = new StringBuilder();
-            stream = sha256.ComputeHash(encoding.GetBytes(str));
-            for (int i = 0; i < stream.Length; i++) sb.AppendFormat("{0:x2}", stream[i]);
-            return sb.ToString();
-        }
-        */
         public static string sha256(string str)
         {
             SHA256 sha256 = SHA256.Create();
@@ -28,6 +15,18 @@ namespace ITS_Middleware.Tools
                 hash.Append(theByte.ToString("x2"));
             }
             return hash.ToString();
+        }
+
+        //Encriptation for token
+        public static string EncryptString(string plainText)
+        {
+            var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
+            return Convert.ToBase64String(plainTextBytes);
+        }
+        public static string DecryptString(string base64EncodedData)
+        {
+            var base64EncodedBytes = Convert.FromBase64String(base64EncodedData);
+            return Encoding.UTF8.GetString(base64EncodedBytes);
         }
     }
 }

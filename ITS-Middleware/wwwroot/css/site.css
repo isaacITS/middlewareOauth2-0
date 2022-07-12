@@ -34,6 +34,7 @@ body .table {
     text-align: center;
     border-radius: 5px;
     overflow: hidden;
+    box-shadow: 2px 3px 6px 1px #00000057;
 }
 
 body .table .btn {
@@ -48,6 +49,7 @@ body .table .btn span {
 
 body .table thead tr th {
     text-align: center;
+    border: none;
 }
 
 body .table thead {
@@ -56,11 +58,37 @@ body .table thead {
 }
 
 body .table tbody tr td {
-    background-color: #fafafa;
+    background-color: #fefefe;
     color: #191919;
     vertical-align: middle;
     font-size: 15px;
     font-weight: 600;
+    border: none;
+}
+
+body .table tbody tr td .dropend button {
+    width: 100%;
+    font-weight: 600;
+    font-size: 11pt;
+}
+
+body .table tbody tr td .dropend button:focus {
+    box-shadow: 0px 0px 5px 1px #022338;
+}
+
+body .table tbody tr td .dropend .dropdown-menu {
+    background-color: #093C5d;
+    transition: all .3s;
+}
+
+body .table tbody tr td .dropend .dropdown-menu li {
+    color: #fff;
+    font-weight: 600;
+}
+
+body .table tbody tr td .dropend .dropdown-menu li:hover {
+    background-color: #093C5D;
+    box-shadow: none;
 }
 
 header nav {
@@ -278,17 +306,22 @@ header .nav-bar-top .pc-width .icon-user-online {
 .content-header-table {
     margin-top: 60px;
     margin-bottom: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .content-header-table .title-table {
     font-size: 22px;
-    font-weight: 600;
-    margin-bottom: 10px;
-    background-color: #093C5D;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    padding: 10px;
-    color: #fafafa;
+    font-weight: bold;
+    color: #1d1d1d;
+    margin-top: 10px;
+    border-left: solid 5px #022338;
+    padding: 3px;
+    padding-left: 10px;
+    border-radius: 5px;
+    color: #151515ff;
 }
 
 .dataTables_length, .dataTables_filter {
@@ -304,6 +337,7 @@ header .nav-bar-top .pc-width .icon-user-online {
     background-color: #022338;
     border: solid 1px #022338;
     transition: ease-out .3s;
+    font-weight: 600;
 }
 
 #modalRegisterView:hover, #modalRegisterProjectView:hover, #modalRegisterUserView:hover {
@@ -346,6 +380,15 @@ footer {
     }
 }
 
+@media screen and (max-width: 500px) {
+    .content-header-table {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .content-header-table .title-table {
+        margin-bottom: 10px;
+    }
+}
 
 @media screen and (max-width: 450px) {
     .sidenav {

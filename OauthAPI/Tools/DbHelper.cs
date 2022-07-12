@@ -11,23 +11,21 @@ namespace OauthAPI.Tools
 
         /* ====================> DATABASE USERS HELPERS <==========================*/
         //=> GET ALL USERS
-        internal static dynamic GetAllUsers()
+        internal static List<Usuario> GetAllUsers()
         {
             return _context.Usuarios.Where(u => u.Id > 0).ToList();
         }
 
         /*=> GET USER BY EMAIL*/
-        internal static dynamic GetUserByEmail(string email)
+        internal static Usuario GetUserByEmail(string email)
         {
-            var getUser = _context.Usuarios.FirstOrDefault(u => u.Email == email);
-            return getUser;
+            return _context.Usuarios.FirstOrDefault(u => u.Email == email);
         }
 
         /*=> GET USER BY ID*/
-        public static dynamic GetUserById(int id)
+        public static Usuario GetUserById(int id)
         {
-            var user = _context.Usuarios.Where(u => u.Id == id).FirstOrDefault();
-            return user;
+            return _context.Usuarios.Where(u => u.Id == id).FirstOrDefault();
         }
 
         /*=> CHECK IF THE EMAIL IS ALREADY REGISTERED*/
@@ -73,7 +71,7 @@ namespace OauthAPI.Tools
         }
 
         // => UPDATE USER STATUS
-        public static dynamic UpdateUserStatus(int id)
+        public static Usuario UpdateUserStatus(int id)
         {
             if (id > 1)
             {
@@ -89,6 +87,36 @@ namespace OauthAPI.Tools
                 }
             }
             return null;
+        }
+
+        //==> UPDATE USER TOKEN RECOVERY
+        public static bool UpdateTokenUser(string email, string token)
+        {
+            var getUser = GetUserByEmail(email);
+            if (getUser == null)
+            {
+                return false;
+            }
+            getUser.TokenRecovery = token;
+            var local = _context.Set<Usuario>().Local.FirstOrDefault(entry => entry.Id.Equals(getUser.Id));
+            if (local != null) _context.Entry(local).State = EntityState.Detached;
+            _context.Entry(getUser).State = EntityState.Modified;
+            _context.SaveChanges();
+            return true;
+        }
+
+        //==> UPDATE USER PASSWORD
+        public static bool UpdateUserPassword(Usuario userModel)
+        {
+            if (userModel == null)
+            {
+                return false;
+            }
+            var local = _context.Set<Usuario>().Local.FirstOrDefault(entry => entry.Id.Equals(userModel.Id));
+            if (local != null) _context.Entry(local).State = EntityState.Detached;
+            _context.Entry(userModel).State = EntityState.Modified;
+            _context.SaveChanges();
+            return true;
         }
 
         //=> DELETE USER
@@ -109,23 +137,21 @@ namespace OauthAPI.Tools
 
         /*===========================> DATABASE PROJECT HELPERS <================================*/
         //=> GET ALL PROJECTS
-        internal static dynamic GetAllProjects()
+        internal static List<Proyecto> GetAllProjects()
         {
             return _context.Proyectos.Where(p => p.Id > 0).ToList();
         }
 
         /*=> GET PROJECT BY NAME*/
-        internal static dynamic GetProjectByName(string name)
+        internal static Proyecto GetProjectByName(string name)
         {
-            var getProject = _context.Proyectos.FirstOrDefault(p => p.Nombre == name);
-            return getProject;
+            return _context.Proyectos.FirstOrDefault(p => p.Nombre == name);
         }
 
         /*=> GET PROJECT BY ID*/
-        public static dynamic GetProjectById(int id)
+        public static Proyecto GetProjectById(int id)
         {
-            var project = _context.Proyectos.Where(p => p.Id == id).FirstOrDefault();
-            return project;
+            return _context.Proyectos.Where(p => p.Id == id).FirstOrDefault();
         }
 
         /*=> CHECK IF THE PROJECT NAME IS ALREADY REGISTERED*/
@@ -201,20 +227,20 @@ namespace OauthAPI.Tools
 
         /* =====================> DATABASE USERS BY PROJECT HELPERS <========================*/
         //=> GET ALL USERS BY PROJECTS
-        internal static dynamic GetAllUsersByProject()
+        internal static List<UsuariosProyecto> GetAllUsersByProject()
         {
             return _context.UsuariosProyectos.Where(uP => uP.Id > 0).ToList();
         }
 
         /*=> GET  USER BY PROJECT BY EMAIL*/
-        internal static dynamic GetUserByProjectByEmail(string email)
+        internal static UsuariosProyecto GetUserByProjectByEmail(string email)
         {
             var getUserByProject = _context.UsuariosProyectos.FirstOrDefault(uP => uP.Email == email);
             return getUserByProject;
         }
 
         /*=> GET USER BY PROJECT BY ID*/
-        public static dynamic GetUserByProjectById(int id)
+        public static UsuariosProyecto GetUserByProjectById(int id)
         {
             var UserByproject = _context.UsuariosProyectos.Where(uP => uP.Id == id).FirstOrDefault();
             return UserByproject;
@@ -297,6 +323,66 @@ namespace OauthAPI.Tools
             return AuthMethods;
         }
 
+
+        //======> SIGN IN METHODS
+        public static dynamic SignIn(string email, string pass)
+        {
+            ResponseApi response = new();
+            var user = GetUserByEmail(email);
+            if (user == null)
+            {
+                response.Ok = false; response.MsgHeader = "Usuario no registrado"; response.Msg =  "No se ha encontrado el usuario";
+                return response;
+            }
+            if (user.Activo == false)
+            {
+                response.Ok = false; response.MsgHeader = "Usuario deshabilitado"; response.Msg = "El usuario se encuentra deshabilitado";
+                return response;
+            }
+            if (user.Pass != pass)
+            {
+                response.Ok = false; response.MsgHeader = "Contraseña incorrecta"; response.Msg = "Verifica la contraseña ingresada";
+                return response;
+            }
+            response.Ok = true; response.MsgHeader = user.Nombre; response.Msg = Convert.ToString(user.Id);
+            return response;
+        }
+
+        public static ResponseApi SignInService(string email)
+        {
+            var user = GetUserByProjectByEmail(email);
+            ResponseApi response = new();
+            if (user != null)
+            {
+                response.Ok = true; response.Msg = "Inicio de sesión válido"; response.MsgHeader = "Se encontró el usaurio";
+                return response;
+            }
+            response.Ok = false; response.Msg = "No se encontró el usaurio"; response.MsgHeader = "Error";
+            return response;
+        }
+
+        public static ResponseApi SignInUserProject(string email, string pass)
+        {
+            ResponseApi response = new();
+            var user = GetUserByProjectByEmail(email);
+            if (user == null)
+            {
+                response.Ok = false; response.MsgHeader = "Usuario no registrado"; response.Msg = $"No se ha encontrado el correo {email}";
+                return response;
+            }
+            if (user.Activo == false)
+            {
+                response.Ok = false; response.MsgHeader = "Usuario deshabilitado"; response.Msg = "El usuario se encuentra deshabilitado";
+                return response;
+            }
+            if (user.Pass != pass)
+            {
+                response.Ok = false; response.MsgHeader = "Contraseña incorrecta"; response.Msg = "La contraseña ingresada es incorrecta";
+                return response;
+            }
+            response.Ok = true; response.MsgHeader = user.Email; response.Msg = Convert.ToString(user.NombreCompleto);
+            return response;
+        }
 
 
         //SET THE PASSWORD FOR THE USER UPDATED

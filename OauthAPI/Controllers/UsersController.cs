@@ -41,6 +41,19 @@ namespace OauthAPI.Controllers
             }
         }
 
+        [HttpGet]
+        public IActionResult GetByEmail(string email)
+        {
+            try
+            {
+                return Ok(DbHelper.GetUserByEmail(email));
+            }
+            catch (Exception ex)
+            {
+                return Unauthorized(new { msg = ex.Message.ToString() });
+            }
+        }
+
 
         [HttpPost] /*<ENDPOINT REGISTER NEW USER (ADMIN PORTAL)>*/
         public IActionResult Register(Usuario user)
