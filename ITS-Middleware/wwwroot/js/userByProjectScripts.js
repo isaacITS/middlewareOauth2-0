@@ -7,6 +7,7 @@ $(document).ready(() => {
     $('#btnRegisterUserByProject').on('click', function () {
         if (validateData().ok) {
             $('#viewsLoader').show()
+            $('.modal').hide()
             var formData = $('#registerUserByProjectForm').serialize()
             $.ajax({
                 type: 'POST',
@@ -46,6 +47,7 @@ $(document).ready(() => {
         var formData = $('#updateUserByProjectForm').serialize()
         if (validateDataUpdate().ok) {
             $('#viewsLoader').show()
+            $('.modal').hide()
             $.ajax({
                 type: 'post',
                 url: siteurl + 'UserByProject/Update',
@@ -81,7 +83,7 @@ $(document).ready(() => {
 
     $('#btnUpdateStatusUserByProject').on('click', function () {
         $('#viewsLoader').show()
-        console.log("USER ID => ", idUserUpdateStatus)
+        $('.modal').hide()
         $.ajax({
             type: 'post',
             url: siteurl + 'UserByProject/UpdateStatus',
@@ -114,6 +116,7 @@ $(document).ready(() => {
 
     $('#btnDeleteUserByProject').on('click', function () { 
         $('#viewsLoader').show()
+        $('.modal').hide()
         $.ajax({
             type: 'post',
             url: siteurl + 'UserByProject/DeletePost',

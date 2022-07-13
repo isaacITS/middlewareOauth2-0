@@ -1,4 +1,6 @@
-﻿var firebaseConfig = {
+﻿var tokenService
+
+var firebaseConfig = {
     apiKey: "AIzaSyCW_1wI9EevsL80zDvedYdACdepFy6S9zY",
     authDomain: "middlewareoauth20.firebaseapp.com",
     projectId: "middlewareoauth20",
@@ -9,32 +11,39 @@
 firebase.initializeApp(firebaseConfig)
 
 
-var loginFacebook = () => {
+$('#Facebook').on('click', () => {
     var provider = new firebase.auth.FacebookAuthProvider()
     firebase.auth().signInWithPopup(provider).then(function (result) {
         var token = result.credential.accessToken
         var user = result.user
-        console.log(user.uid)
-        console.log(user.displayName)
-        console.log(user.email)
-        updateUser(user)
+        if (user != null) {
+            var data = { email: user.email, pass: "" }
+            tokenService = token
+            signIn(data)
+        } else {
+            ShowToastMessage('error', 'No se pudo acceder', 'No se pudo obtener la información para el inicio de sesión, intenta de nuevo')
+        }
     }).catch(function (error) {
         var errorCode = error.code;
         var errorMessage = error.message;
         var email = error.email;
         var credential = error.credential;
         console.log(errorMessage);
-    });
-}
-var loginTwitter = () => {
+    })
+})
+
+$('#Twitter').on('click', () => {
     var provider = new firebase.auth.TwitterAuthProvider()
     firebase.auth().signInWithPopup(provider).then(function (result) {
         var token = result.credential.accessToken;
         var user = result.user;
-        console.log(user.uid);
-        console.log(user.displayName);
-        console.log(user.email);
-        updateUser(user);
+        if (user != null) {
+            var data = { email: user.email, pass: "" }
+            tokenService = token
+            signIn(data)
+        } else {
+            ShowToastMessage('error', 'No se pudo acceder', 'No se pudo obtener la información para el inicio de sesión, intenta de nuevo')
+        }
     }).catch(function (error) {
         var errorCode = error.code;
         var errorMessage = error.message;
@@ -42,17 +51,19 @@ var loginTwitter = () => {
         var credential = error.credential;
         console.log(errorMessage);
     });
-}
+})
 
 
 
-var loginGoogle = function () {
+$('#Google').on('click', () => {
     var provider = new firebase.auth.GoogleAuthProvider();
     firebase.auth().signInWithPopup(provider).then(function (result) {
         var token = result.credential.accessToken
         var user = result.user
         if (user != null) {
-            signIn(user.email)
+            var data = { email: user.email, pass: "" }
+            tokenService = token
+            signIn(data)
         } else {
             ShowToastMessage('error', 'No se pudo acceder', 'No se pudo obtener la información para el inicio de sesión, intenta de nuevo')
         }
@@ -63,23 +74,23 @@ var loginGoogle = function () {
         var errorMessage = error.message;
         console.log("ERROR: "+errorCode, errorMessage);
     });
-}
+})
 
-function signIn(credentials) {
+function signIn(data) {
     $.ajax({
         type: 'POST',
         url: siteurl + 'Home/SignIn',
         contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
         dataType: "json",
-        data: credentials,
+        data: data,
         success: function (response) {
             if (response.status == 500) {
                 window.location.href = '/Home/Error';
                 return;
             } else if (response.status == 400) {
-                ShowToastMessage('error', 'No se encontró el usuario', 'Las credenciales ingresadas no coinciden con un usuario registrado')
+                ShowToastMessage('error', response.msgHeader, response.msg)
             } else {
-                ShowToastMessage('success', 'Usuario encontrado', 'El usuario se ha encontrado')
+                window.location.href = `${redirectToUrl}/signIn?token=${tokenService}`
             }
         },
         failure: function (response) {
@@ -92,6 +103,11 @@ function signIn(credentials) {
         }
     });
 }
+
+$('#sign-in-email-pass').on('click', function () {
+    var data = $('#signInForm').serialize()
+    signIn(data)
+})
 
 function ShowToastMessage(type, title_short_text, body_text) {
     if (type == 'warning') {

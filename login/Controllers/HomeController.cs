@@ -3,6 +3,7 @@ using login.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http;
 
+
 namespace login.Controllers
 {
     public class HomeController : Controller
@@ -19,7 +20,7 @@ namespace login.Controllers
         {
             ErrorViewModel errorModel = new();
             errorModel.ErrorCore = 404; errorModel.ErrorMessageHeader = "No se ingresó algún proyecto para inicio de sesión"; errorModel.ErrorMessage = "No se encontró un proyecto registrado con el nombre ingresado";
-            if (project != null) 
+            if (project != null)
             {
                 var resultProject = requestHelper.GetProjectByName(project);
                 if (resultProject != null)
@@ -40,7 +41,7 @@ namespace login.Controllers
             try
             {
                 var response = requestHelper.SignIn(email, pass);
-                if (!response.Ok)
+                if (response.Ok)
                 {
                     return Json(new { ok = false, status = 200, msg = response.Msg, msgHeder = response.MsgHeader });
                 }

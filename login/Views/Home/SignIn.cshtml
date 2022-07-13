@@ -2,8 +2,8 @@
 @{
    Proyecto project = ViewData["project"] as Proyecto;
 }
-<div class="content-form">
-    <form asp-controller="auth" asp-action="login" method="post" class="form-login">
+<div class="content-form" >
+    <form class="form-login" id="signInForm">
         <h1>Inicia sesión en <strong>@project.Nombre</strong></h1>
         <div class="form-floating mb-3">
             <input class="form-control" type="email" name="email" id="email" placeholder="Correo electrónico" required />
@@ -14,7 +14,7 @@
             <label class="form-label" for="pass"><i class="fas fa-key"></i>&nbsp;Contraseña:</label>
         </div>
         <div class="d-grid gap-2 col-6 mx-auto">
-            <button type="button" class="btn sign-in"><i class="fas fa-sign-in-alt"></i>&nbsp;Ingresar</button>
+            <button type="button" id="sign-in-email-pass" class="btn sign-in"><i class="fas fa-sign-in-alt"></i>&nbsp;Ingresar</button>
         </div>
         @{
             string[] authMethods = project.MetodosAutenticacion.Split(",");
@@ -32,7 +32,7 @@
                             if(method != "Correo y contrasena")
                             {
                                 <div class="col">
-                                    <button class="btn" id="@method" type="button" onclick="loginFacebook()"><i class="fab fa-@method.ToLower()"></i></button>
+                                    <button class="btn" id="@method" type="button"><i class="fab fa-@method.ToLower()"></i></button>
                                 </div>
                             }
                         }
@@ -42,3 +42,9 @@
         }
     </form>
 </div>
+
+@section scripts {
+    <script type="text/javascript">
+        var redirectToUrl = "@project.Enlace"
+    </script>
+}

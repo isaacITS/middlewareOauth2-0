@@ -66,6 +66,20 @@ body .table tbody tr td {
     border: none;
 }
 
+body .table tbody tr td .btn-secondary[title='Desactivar'] {
+    color: #00ff04;
+    background-color: #022338;
+    border: none;
+    border-radius: 25px;
+}
+body .table tbody tr td .btn-secondary[title='Activar'],
+body .table tbody tr td .btn-secondary[title='Activar ']{
+    color: #FF372D;
+    background-color: #022338;
+    border: none;
+    border-radius: 25px;
+}
+
 body .table tbody tr td .dropend button {
     width: 100%;
     font-weight: 600;
@@ -105,6 +119,7 @@ header nav {
 }
 
 
+
 header nav .sidenav {
     position: relative;
     height: 100%;
@@ -113,11 +128,11 @@ header nav .sidenav {
 header nav .sidenav a {
     padding: 8px 8px 8px 32px;
     text-decoration: none;
-    font-size: 20px;
+    font-size: 16px;
     color: #a8a8a8;
     display: block;
     transition: .3s ease-in-out, box-shadow .3s ease-in-out;
-    font-weight: 600;
+    font-weight: 900;
     border-left: solid 2px #df1847;
     margin-bottom: 5px;
     width: 100%;
@@ -126,7 +141,7 @@ header nav .sidenav a {
 header nav .sidenav .userNameOnline {
     position: absolute;
     bottom: 0;
-    font-size: 16px;
+    font-size: 14px;
 }
 
 header nav .sidenav a:hover {
@@ -233,6 +248,13 @@ header .nav-bar-top .pc-width .icon-user-online {
 .modal .modal-dialog .modal-content .modal-header h3 {
     text-align: center;
     font-weight: 600;
+}
+
+.modal .modal-dialog .modal-content .modal-body form .mb-3 .alert-danger {
+    padding-bottom: 0;
+}
+.modal .modal-dialog .modal-content .modal-body form .mb-3 .alert-danger p {
+    margin-top: 5px;
 }
 
 .ring {

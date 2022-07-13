@@ -21,16 +21,16 @@ namespace login.Helpers
         }
 
 
-
         public dynamic SignIn(string email, string pass)
         {
             if (pass == null)
             {
-                var res = httpClient.GetAsync($"{Vars.API_URI}Auth/SignInService?email={email}").Result;
+                var res = httpClient.GetAsync($"{Vars.API_URI}SignIn/SignInService?email={email}").Result;
                 var resBody = JsonConvert.DeserializeObject<ResponseApi>(res.Content.ReadAsStringAsync().Result);
                 return resBody;
             }
-            var response = httpClient.GetAsync($"{Vars.API_URI}Auth/SignInUserProject?email={email}&pass={pass}").Result;
+            pass = Encrypt.sha256(pass);
+            var response = httpClient.GetAsync($"{Vars.API_URI}SignIn/SignInUserProject?email={email}&pass={pass}").Result;
             var responseBody = JsonConvert.DeserializeObject<ResponseApi>(response.Content.ReadAsStringAsync().Result);
             return responseBody;
         }

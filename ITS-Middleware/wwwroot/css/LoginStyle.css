@@ -67,6 +67,7 @@
     background: none;
     color: #12b100;
     border: none;
+    display: none;
 }
 
 .form-login .btn-login-portal:hover {

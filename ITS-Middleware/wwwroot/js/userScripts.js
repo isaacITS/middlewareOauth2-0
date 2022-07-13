@@ -5,6 +5,7 @@ $(document).ready(() => {
     $('#btnRegisterUser').on('click', function() {
         if (validateData().ok) {
             $('#viewsLoader').show()
+            $('.modal').hide()
             var formData = $('#registerUserForm').serialize()
             $.ajax({
                 type: 'POST',
@@ -44,6 +45,7 @@ $(document).ready(() => {
         var formData = $('#updateUserForm').serialize()
         if (validUpdateData().ok) {
             $('#viewsLoader').show()
+            $('.modal').hide()
             $.ajax({
                 type: 'post',
                 url: siteurl + 'User/UpdateUser/',
@@ -80,6 +82,7 @@ $(document).ready(() => {
     $('#btnUpdateStatusUser').on('click', function () {
         var formData = $('#updateStatusUserForm').serialize()
         $('#viewsLoader').show()
+        $('.modal').hide()
         $.ajax({
             type: 'post',
             url: siteurl + 'User/UpdateStatus/',
@@ -112,6 +115,7 @@ $(document).ready(() => {
 
     $('#btnDeleteUser').on('click', function () {
         $('#viewsLoader').show()
+        $('.modal').hide()
         $.ajax({
             type: 'post',
             url: siteurl + 'User/DeleteUserPost/',

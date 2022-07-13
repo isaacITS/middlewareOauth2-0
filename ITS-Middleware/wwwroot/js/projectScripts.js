@@ -11,6 +11,7 @@ $(document).ready(() => {
         getMethodsList() 
         if (validateData().ok) {
             $('#viewsLoader').show()
+            $('.modal').hide()
             var formData = $('#registerProjectForm').serialize()
             $.ajax({
                 type: 'POST',
@@ -52,6 +53,7 @@ $(document).ready(() => {
         getMethodsList() 
         var formData = $('#updateProjectForm').serialize()
         $('#viewsLoader').show()
+        $('.modal').hide()
         if (validateData().ok) {
             $.ajax({
                 type: 'post',
@@ -85,6 +87,7 @@ $(document).ready(() => {
     $('#btnUpdateStatusProject').on('click', function () {
         var formData = $('#updateStatusProjectForm').serialize()
         $('#viewsLoader').show()
+        $('.modal').hide()
         $.ajax({
             type: 'post',
             url: siteurl + 'Project/UpdateStatusPost',
@@ -113,6 +116,7 @@ $(document).ready(() => {
 
     $('#btnDeleteProject').on('click', function () {
         $('#viewsLoader').show()
+        $('.modal').hide()
         $.ajax({
             type: 'post',
             url: siteurl + 'Project/DeleteProjectPost/',

@@ -51,7 +51,7 @@
 </form>
 
 <script type="text/javascript">
-    $('#Pass').on('change', () => {
+    $('#Pass').on('change keyup paste', () => {
         if ($('#Pass').val() != '') {
             $('#pass-warning').html('<span class="align-middle material-icons">campaign</span>&nbsp;Se cambiará la contraseña')
             $('#message-password').html('Si no desea actualizar la contaseña, deje el campo vacío')
