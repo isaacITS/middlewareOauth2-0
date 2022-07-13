@@ -3,7 +3,7 @@ $('#modalRegisterUserView').on('click', () => {
     $('.modal-dialog').fadeOut(1)
     $('#viewsLoader').show()
     $('.modal-title').html('Registrar usuario para proyecto')
-    $('.modal-footer').html("<button type='button' class='btn btn-outline-secondary btn-close-modal-view' data-bs-dismiss='modal'><span class='align-middle material-icons'>close</span>&nbsp;Cancelar</button><button class='btn btn-success' id='btnRegisterUserByProject' type='button'><span class='align-middle material-icons'>save</span>&nbsp;Registrar</button>")
+    $('.modal-footer').html("<button type='button' class='btn btn-outline-secondary btn-close-modal-view' data-bs-dismiss='modal'><span class='align-middle material-icons'>close</span>&nbsp;Cancelar</button><button class='btn btn-success' id='btnRegisterUserByProject' type='button' disabled><span class='align-middle material-icons'>save</span>&nbsp;Registrar</button>")
     $.ajax({
         type: 'GET',
         url: siteurl + 'UserByProject/Register',
@@ -43,7 +43,7 @@ function getUpdateUserView(id) {
     $('.modal-dialog').fadeOut(1)
     $('#viewsLoader').show()
     $('.modal-title').html('Actualizar información de usuario')
-    $('.modal-footer').html("<button type='button' class='btn btn-outline-secondary btn-close-modal-view' data-bs-dismiss='modal'><span class='align-middle material-icons'>close</span>&nbsp;Cancelar</button><button class='btn btn-success' id='btnUpdateUserByProject' type='button'><span class='align-middle material-icons'>save</span>&nbsp;Actualizar</button>")
+    $('.modal-footer').html("<button type='button' class='btn btn-outline-secondary btn-close-modal-view' data-bs-dismiss='modal'><span class='align-middle material-icons'>close</span>&nbsp;Cancelar</button><button class='btn btn-success' id='btnUpdateUserByProject' type='button' disabled><span class='align-middle material-icons'>save</span>&nbsp;Actualizar</button>")
     $.ajax({
         type: 'GET',
         url: `${siteurl}UserByProject/Update?id=${id}`,
