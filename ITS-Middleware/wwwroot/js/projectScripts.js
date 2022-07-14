@@ -2,6 +2,7 @@
 var idProjectDelete;
 var methodsListLength = $('#authMethodsLength').val()
 
+
 $(document).ready(() => {
     $('#1').prop('checked', true)
     $("#1").attr('disabled', 'disabled')
@@ -9,7 +10,6 @@ $(document).ready(() => {
 
     $('#btnRegisterProject').on('click', function () {
         getMethodsList() 
-        if (validateData().ok) {
             $('#viewsLoader').show()
             $('.modal').hide()
             var formData = $('#registerProjectForm').serialize()
@@ -44,9 +44,6 @@ $(document).ready(() => {
                     alert(response.responseText);
                 }
             });
-        } else {
-            ShowToastMessage('error', 'Datos inválidos o incompletos', validateData().msg)
-        }
     });
 
     $('#btnUpdateProject').on('click', function () {
@@ -54,7 +51,6 @@ $(document).ready(() => {
         var formData = $('#updateProjectForm').serialize()
         $('#viewsLoader').show()
         $('.modal').hide()
-        if (validateData().ok) {
             $.ajax({
                 type: 'post',
                 url: siteurl + 'Project/UpdateProject',
@@ -79,9 +75,6 @@ $(document).ready(() => {
                     alert(response.responseText);
                 }
             });
-        } else {
-            ShowToastMessage('error', 'Datos no válidos', validateData().msg)
-        }
     });
 
     $('#btnUpdateStatusProject').on('click', function () {
@@ -144,19 +137,49 @@ $(document).ready(() => {
     });
 })
 
+
+var nameIsValid = false
+var linkIsValid = false
+var descIsValid = false
+var urlValidate = /^[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i
+var urlValidate2 = /^(http|https|ftp):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i
+
 //Validation Functions
-function validateData() {
-    if ($('#Nombre').val() == '' || $('#Descripcion').val() == '') {
-        return {
-            ok: false,
-            msg: "Se deben llenar todos los campos"
-        }
+$('#Nombre, #Descripcion, #Enlace').on('change keyup paste', () => {
+    if (nameIsValid && linkIsValid && descIsValid) {
+        $('.btn-success').prop('disabled', false)
+    } else {
+        $('.btn-success').prop('disabled', true)
     }
-    return {
-        ok: true,
-        msg: "OK"
+    if ($('#Nombre').val() == "" || $('#Nombre').val().length == 1) {
+        $('#Nombre').css('background-color', '#f700000c')
+        $('#messageNombre').html('Ingresa un nombre para el proyecto')
+        nameIsValid = false
+    } else {
+        $('#Nombre').css('background', 'none')
+        $('#messageNombre').html('')
+        nameIsValid = true
     }
-}
+    if ($('#Descripcion').val() == "" || $('#Descripcion').val().length < 20) {
+        $('#Descripcion').css('background-color', '#f700000c')
+        $('#messageDescripcion').html('Ingresa una descripción para el proyecto (mínimo 20 caracteres)')
+        descIsValid = false
+    } else {
+        $('#Descripcion').css('background', 'none')
+        $('#messageDescripcion').html('')
+        descIsValid = true
+    }
+    if ($('#Enlace').val() == "" || $('#Enlace').val().length < 5 || (!urlValidate.test($('#Enlace').val()) && !urlValidate2.test($('#Enlace').val())) ) {
+        $('#Enlace').css('background-color', '#f700000c')
+        $('#messageEnlace').html('Ingresa un enlace válido (ej: https://www.link.com, http:www.link.com, www.link.com)')
+        linkIsValid = false
+    } else {
+        $('#Enlace').css('background', 'none')
+        $('#messageEnlace').html('')
+        linkIsValid = true
+    }
+})
+
 
 
 //Getting the authentication methods ID selected

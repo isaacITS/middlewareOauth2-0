@@ -11,6 +11,7 @@
             <span class="material-icons input-group-text" id="addon-wrapping">person</span>
             <input class="form-control" asp-for="NombreCompleto" id="Nombre" placeholder="Nombre" />
         </div>
+        <p><small class="text-danger" id="messageNombre"></small></p>
     </div>
     <div class="mb-3">
         <label for="Project" class="label-form">Selecciona el proyecto:</label>
@@ -30,6 +31,7 @@
             <span class="material-icons input-group-text" id="addon-wrapping">email</span>
             <input class="form-control" asp-for="Email" id="Email" placeholder="Correo electr&oacute;nico" />
         </div>
+        <p><small class="text-danger" id="messageEmail"></small></p>
     </div>
     <div class="mb-3">
         <label for="Pass" class="label-form">Contrase&ntilde;a:</label>
@@ -38,9 +40,13 @@
             <input class="form-control" type="password" asp-for="Pass" id="Pass" placeholder="Contrase&ntilde;a" />
             <span class="material-icons input-group-text" id="btn-action-pass">visibility_off</span>
         </div>
+        <p><small class="text-danger" id="messagePass"></small></p>
     </div>
-    <button type="button" class="btn btn-generate-pass" onClick="getPassword()">Generar contrase&ntilde;a</button>
+    <button type="button" class="btn btn-generate-pass">Nueva contrase&ntilde;a</button>
 </form>
 
 <script src="~/js/userByProjectScripts.js" asp-append-version="true"></script>
 <script src="~/js/passControlScript.js" asp-append-version="true"></script>
+<script type="text/javascript" asp-append-version="true">
+    isToUpdate = false
+</script>

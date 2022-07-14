@@ -16,6 +16,7 @@ $('#modalRegisterView').on('click', () => {
             $(".modal-body").empty().append(resp)
             $('#viewsLoader').hide()
             $('.modal-dialog').fadeIn()
+            $('.btn-generate-pass').click()
         },
         error: function (resp) {
             console.log(resp)

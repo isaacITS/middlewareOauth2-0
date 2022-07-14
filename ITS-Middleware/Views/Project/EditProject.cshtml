@@ -15,12 +15,14 @@
                 <span class="material-icons input-group-text" id="addon-wrapping">grid_view</span>
                 <input class="form-control" asp-for="Nombre" id="Nombre" placeholder="Nombre" />
             </div>
+            <p><small class="text-danger" id="messageNombre"></small></p>
         </div>
         <div class="mb-3">
             <div class="form-floating">
               <textarea class="form-control" maxlength="500" placeholder="Descripción del proyecto:" asp-for="Descripcion" id="Descripcion"></textarea>
               <label cclass="label-form" for="Descripcion" style="font-weight: 600;">Descripción: </label>
             </div>
+            <p><small class="text-danger" id="messageDescripcion"></small></p>
         </div>
         <label for="MetodoAutenticacion" class="label-form">Metodos de autenticación:</label>
         <br />
@@ -44,6 +46,7 @@
                 <span class="material-icons input-group-text" id="addon-wrapping">add_link</span>
                 <input type="url" class="form-control" id="Enlace" asp-for="Enlace" placeholder="Enlace del sitio" />
             </div>
+             <p><small class="text-danger" id="messageEnlace"></small></p>
         </div>
 </form>
 

@@ -1,11 +1,12 @@
 ﻿var idUserDeleteUser
 var idUserUpdate
 var idUserUpdateStatus
+var isToUpdate = false
 
 //CRUD REQUEST
 $(document).ready(() => {
+    $('#btn-action-pass').click()
     $('#btnRegisterUserByProject').on('click', function () {
-        if (validateData().ok) {
             $('#viewsLoader').show()
             $('.modal').hide()
             var formData = $('#registerUserByProjectForm').serialize()
@@ -38,14 +39,10 @@ $(document).ready(() => {
                     alert(response.responseText);
                 }
             });
-        } else {
-            ShowToastMessage('error', 'Datos no válidos', validateData().msg)
-        }
     });
 
     $('#btnUpdateUserByProject').on('click', function () {
         var formData = $('#updateUserByProjectForm').serialize()
-        if (validateDataUpdate().ok) {
             $('#viewsLoader').show()
             $('.modal').hide()
             $.ajax({
@@ -76,9 +73,6 @@ $(document).ready(() => {
                     alert(response.responseText);
                 }
             });
-        } else {
-            ShowToastMessage('error', 'Datos no válidos', validateData().msg)
-        }
     });
 
     $('#btnUpdateStatusUserByProject').on('click', function () {
@@ -150,60 +144,51 @@ $(document).ready(() => {
 
 
 //Validation Functions
-function validateData() {
-    const validEmail = new RegExp("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$");
-    if ($('#Nombre').val() == '' || $('#Email').val() == '' || $('#Pass').val() == '') {
-        return {
-            ok: false,
-            msg: "Se deben llenar todos los campos"
-        }
-    }
-    if (!validEmail.test($('#Email').val())) {
-        $('#Email').css('background-color', 'rgba(209, 0, 0, 0.26)')
-        return {
-            ok: false,
-            msg: "Debe ingresar un correo válido"
-        }
-    }
-    if ($('#Pass').val().length < 8) {
-        $('#Pass').css('background-color', 'rgba(209, 0, 0, 0.26)')
-        return {
-            ok: false,
-            msg: "Se recomienda ingresar una contraseña segura"
-        }
-    }
-    return {
-        ok: true,
-        msg: "OK"
-    }
-}
+var nameIsValid = false
+var emailIsValid = false
+var passIsValid = false
+var validEmail = new RegExp("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$")
 
-function validateDataUpdate() {
-    const validEmail = new RegExp("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$");
-    if ($('#Nombre').val() == '' || $('#Email').val() == '') {
-        return {
-            ok: false,
-            msg: "Se deben llenar todos los campos"
-        }
+//Validation Functions
+$('#Nombre, #Email, #Pass').on('change keyup paste', () => {
+    if (nameIsValid && emailIsValid && passIsValid) {
+        $('.btn-success').prop('disabled', false)
+    } else {
+        $('.btn-success').prop('disabled', true)
     }
-    if (!validEmail.test($('#Email').val())) {
-        $('#Email').css('background-color', 'rgba(209, 0, 0, 0.26)')
-        return {
-            ok: false,
-            msg: "Debe ingresar un correo válido"
-        }
+    if ($('#Nombre').val() == "" || $('#Nombre').val().length < 3) {
+        $('#Nombre').css('background-color', '#f700000c')
+        $('#messageNombre').html('Ingresa un nombre para el usuario')
+        nameIsValid = false
+    } else {
+        $('#Nombre').css('background', 'none')
+        $('#messageNombre').html('')
+        nameIsValid = true
     }
-    if ($('#Pass').val() != '0000000000') {
-        if ($('#Pass').val().length < 8) {
-            $('#Pass').css('background-color', 'rgba(209, 0, 0, 0.26)')
-            return {
-                ok: false,
-                msg: "Se recomienda ingresar una contraseña segura"
-            }
-        }
+    if ($('#Pass').val() == "" && !isToUpdate) {
+        $('#Pass').css('background-color', '#f700000c')
+        $('#messagePass').html('Ingresa una contraseña para el usuario')
+        passIsValid = false
+    } else if ($('#Pass').val().length < 8 && !isToUpdate) {
+        $('#Pass').css('background-color', '#f700000c')
+        $('#messagePass').html('Ingresa una contraseña segura para el usuario (mayor o igual a 8 caracteres)')
+        passIsValid = false
+    } else if ($('#Pass').val().length > 0 && $('#Pass').val().length < 8 && isToUpdate) {
+        $('#Pass').css('background-color', '#f700000c')
+        $('#messagePass').html('Ingresa una contraseña segura (mayor o igual a 8 caracteres)')
+        passIsValid = false
+    } else {
+        $('#Pass').css('background', 'none')
+        $('#messagePass').html('')
+        passIsValid = true
     }
-    return {
-        ok: true,
-        msg: "OK"
+    if ($('#Email').val() == "" || $('#Email').val().length < 5 || !validEmail.test($('#Email').val())) {
+        $('#Email').css('background-color', '#f700000c')
+        $('#messageEmail').html('Ingresa un correo electrónico válido (ej: username@domain.ext)')
+        emailIsValid = false
+    } else {
+        $('#Email').css('background', 'none')
+        $('#messageEmail').html('')
+        emailIsValid = true
     }
-}
+})

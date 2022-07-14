@@ -152,6 +152,9 @@ namespace ITS_Middleware.Helpers
         /*=====> HTTP PUT REQUEST <========*/
         public dynamic UpdateUser(Usuario userModel)
         {
+            if(userModel.Pass == null) {
+                userModel.Pass = "";
+            }
             var userJson = JsonConvert.SerializeObject(userModel);
             var data = new StringContent(userJson, Encoding.UTF8, "application/json");
 
@@ -201,6 +204,10 @@ namespace ITS_Middleware.Helpers
 
         public dynamic UpdateUserByProject(UsuariosProyecto userModel)
         {
+            if (userModel.Pass == null)
+            {
+                userModel.Pass = "";
+            }
             var userJson = JsonConvert.SerializeObject(userModel);
             var data = new StringContent(userJson, Encoding.UTF8, "application/json");
 

@@ -58,9 +58,12 @@ namespace OauthAPI.Tools
             if (userModel.Id > 1)
             {
                 var userSaved = GetUserById(userModel.Id);
-                userModel.Pass = setPassword(userModel);
-                userModel.FechaAlta = userSaved.FechaAlta;
-
+                userModel.Activo = userSaved.Activo;
+                if (string.IsNullOrEmpty(userModel.Pass)) {
+                    userModel.Pass = userSaved.Pass;
+                } else {
+                    userModel.Pass = Encrypt.sha256(userModel.Pass);
+                }
                 var local = _context.Set<Usuario>().Local.FirstOrDefault(entry => entry.Id.Equals(userModel.Id));
                 if (local != null) _context.Entry(local).State = EntityState.Detached;
                 _context.Entry(userModel).State = EntityState.Modified;
@@ -124,6 +127,18 @@ namespace OauthAPI.Tools
         {
             if (id > 1)
             {
+                var referencedProjects = _context.Proyectos.Where(p => p.IdUsuarioRegsitra == id).ToList();
+                if (referencedProjects.Count() > 0)
+                {
+                    foreach (var project in referencedProjects)
+                    {
+                        project.IdUsuarioRegsitra = 1;
+                        var local = _context.Set<Proyecto>().Local.FirstOrDefault(entry => entry.Id.Equals(project.Id));
+                        if (local != null) _context.Entry(local).State = EntityState.Detached;
+                        _context.Entry(project).State = EntityState.Modified;
+                        _context.SaveChanges();
+                    }
+                }
                 var user = GetUserById(id);
                 if (user != null)
                 {
@@ -273,11 +288,15 @@ namespace OauthAPI.Tools
         /*=> UPDATE USER BY PROJECT*/
         public static bool UpdateUserByProject(UsuariosProyecto userModel)
         {
-
             var userSaved = GetUserByProjectById(userModel.Id);
             userModel.FechaCreacion = userSaved.FechaCreacion;
             userModel.FechaAcceso = userSaved.FechaAcceso;
-            userModel.Pass = setPasswordUserProject(userModel);
+            userModel.Activo = userSaved.Activo;
+            if (string.IsNullOrEmpty(userModel.Pass)) { 
+                userModel.Pass = userSaved.Pass; 
+            } else {
+                userModel.Pass = Encrypt.sha256(userModel.Pass);
+            }
 
             var local = _context.Set<UsuariosProyecto>().Local.FirstOrDefault(entry => entry.Id.Equals(userModel.Id));
             if (local != null) _context.Entry(local).State = EntityState.Detached;
@@ -382,29 +401,6 @@ namespace OauthAPI.Tools
             }
             response.Ok = true; response.MsgHeader = user.Email; response.Msg = Convert.ToString(user.NombreCompleto);
             return response;
-        }
-
-
-        //SET THE PASSWORD FOR THE USER UPDATED
-        public static string setPassword(Usuario userModel)
-        {
-            if (userModel.Pass == "0000000000" || userModel.Pass.Length < 8 || string.IsNullOrEmpty(userModel.Pass))
-            {
-                var getUsrData = _context.Usuarios.FirstOrDefault(u => u.Id == userModel.Id);
-                if (getUsrData != null) return getUsrData.Pass;
-            }
-            return Encrypt.sha256(userModel.Pass);
-        }
-
-        // SET PASSWORD FOR THE USERS BY PROJECT UPDATED
-        public static string setPasswordUserProject(UsuariosProyecto userModel)
-        {
-            if (userModel.Pass == "0000000000" || userModel.Pass.Length < 8 || string.IsNullOrEmpty(userModel.Pass))
-            {
-                var getUsrData = _context.UsuariosProyectos.FirstOrDefault(u => u.Id == userModel.Id);
-                if (getUsrData != null) return getUsrData.Pass;
-            }
-            return Encrypt.sha256(userModel.Pass);
         }
     }
 }

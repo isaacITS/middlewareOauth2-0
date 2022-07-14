@@ -8,9 +8,12 @@
     }
 })
 
-function getPassword() {
-    document.getElementById('Pass').value = autoCreate(12);
-}
+$('.btn-generate-pass').on('click', () => {
+    $('#warning-message').show()
+    document.getElementById('Pass').value = autoCreate(12)
+    $('#Pass').trigger('change')
+    $('#Pass').trigger('change')
+})
 function autoCreate(plength) {
     var chars = "abcdefghijklmnopqrstubwsyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890#$%&()=?¡!@*+{}-_";
     var password = '';

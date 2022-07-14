@@ -66,18 +66,23 @@ body .table tbody tr td {
     border: none;
 }
 
-body .table tbody tr td .btn-secondary[title='Desactivar'] {
-    color: #00ff04;
+body .table tbody tr td .btn-secondary {
     background-color: #022338;
     border: none;
     border-radius: 25px;
+    transition: all .3s;
+}
+body .table tbody tr td .btn-secondary:hover {
+    background-color: #093C5D;
+}
+
+body .table tbody tr td .btn-secondary[title='Desactivar'] {
+    color: #00ff04;
+    
 }
 body .table tbody tr td .btn-secondary[title='Activar'],
 body .table tbody tr td .btn-secondary[title='Activar ']{
     color: #FF372D;
-    background-color: #022338;
-    border: none;
-    border-radius: 25px;
 }
 
 body .table tbody tr td .dropend button {
@@ -255,6 +260,10 @@ header .nav-bar-top .pc-width .icon-user-online {
 }
 .modal .modal-dialog .modal-content .modal-body form .mb-3 .alert-danger p {
     margin-top: 5px;
+}
+
+.modal .modal-dialog .modal-content .modal-body form textarea {
+    height: 80px;
 }
 
 .ring {

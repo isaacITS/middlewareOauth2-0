@@ -9,6 +9,7 @@
                 <span class="material-icons input-group-text" id="addon-wrapping">account_circle</span>
                 <input class="form-control" asp-for="Nombre" id="Nombre" placeholder="Nombre" required/>
             </div>
+            <p><small class="text-danger" id="messageNombre"></small></p>
         </div>
         <div class="mb-3">
             <label for="Puesto" class="label-form">Puesto:</label>
@@ -16,6 +17,7 @@
                 <span class="material-icons input-group-text" id="addon-wrapping">badge</span>
                 <input class="form-control" id="Puesto" asp-for="Puesto" placeholder="Puesto" required/>
             </div>
+            <p><small class="text-danger" id="messagePuesto"></small></p>
         </div>
         <div class="mb-3">
             <label for="Email" class="label-form">Correo electr&oacute;nico:</label>
@@ -23,6 +25,7 @@
                 <span class="material-icons input-group-text" id="addon-wrapping">email</span>
                 <input class="form-control" id="Email" asp-for="Email" placeholder="Correo electrónico" required/>
             </div>
+            <p><small class="text-danger" id="messageEmail"></small></p>
         </div>
         <div class="mb-3">
             <label for="Password" class="label-form">Contrase&ntilde;a:</label>
@@ -31,10 +34,15 @@
                 <input class="form-control" type="password" asp-for="Pass" id="Pass" placeholder="Contrase&ntilde;a" />
                 <span class="material-icons input-group-text" id="btn-action-pass">visibility_off</span>
             </div>
+            <p><small class="text-danger" id="messagePass"></small></p>
         </div>
-        <button type="button" class="btn btn-generate-pass" onClick="getPassword()">Generar contrase&ntilde;a</button>
+        <button type="button" class="btn btn-generate-pass">Nueva contrase&ntilde;a</button>
     </div>
 </form>
 
-<script src="~/js/userScripts.js" asp-append-version="true"></script>
 <script src="~/js/passControlScript.js" asp-append-version="true"></script>
+<script src="~/js/userScripts.js" asp-append-version="true"></script>
+
+<script type="text/javascript" asp-append-version="true">
+    isToUpdate = false
+</script>

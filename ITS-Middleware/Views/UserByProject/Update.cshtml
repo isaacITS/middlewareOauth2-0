@@ -13,6 +13,7 @@
             <span class="material-icons input-group-text" id="addon-wrapping">person</span>
             <input class="form-control" asp-for="NombreCompleto" id="Nombre" placeholder="Nombre" />
         </div>
+        <p><small class="text-danger" id="messageNombre"></small></p>
     </div>
     <div class="mb-3">
         <label for="Project" class="label-form">Selecciona el proyecto:</label>
@@ -32,22 +33,23 @@
             <span class="material-icons input-group-text" id="addon-wrapping">email</span>
             <input class="form-control" asp-for="Email" id="Email" placeholder="Correo electr&oacute;nico" />
         </div>
+        <p><small class="text-danger" id="messageEmail"></small></p>
     </div>
     <div class="mb-3">
         <label for="Pass" class="label-form">Contrase&ntilde;a:</label>
         <div class="input-group flex-nowrap">
             <span class="material-icons input-group-text" id="addon-wrapping">vpn_key</span>
-            <input class="form-control" type="password" asp-for="Pass" id="Pass" value="0000000000" placeholder="Contrase&ntilde;a" />
+            <input class="form-control" type="password" asp-for="Pass" id="Pass" placeholder="Contrase&ntilde;a" />
             <span class="material-icons input-group-text" id="btn-action-pass">visibility_off</span>
         </div>
+        <p><small class="text-danger" id="messagePass"></small></p>
         <div class="text-center" id="warning-message" style="display: none;">
-            <br />
             <strong id="pass-warning"></strong>
             <br/>
             <small id="message-password"></small>
         </div>
     </div>
-    <button type="button" class="btn btn-generate-pass" onClick="getPassword()">Generar contrase&ntilde;a</button>
+    <button type="button" class="btn btn-generate-pass">Generar contrase&ntilde;a</button>
 </form>
 
 <script type="text/javascript">
@@ -64,3 +66,6 @@
 
 <script src="~/js/userByProjectScripts.js" asp-append-version="true"></script>
 <script src="~/js/passControlScript.js" asp-append-version="true"></script>
+<script type="text/javascript" asp-append-version="true">
+    isToUpdate = true
+</script>
