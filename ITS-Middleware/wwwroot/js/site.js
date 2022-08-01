@@ -4,7 +4,7 @@ const btnActiveMenu = document.getElementById('btn-active-menu')
 
 function actionSlideMenu() {
     if (btnIconMenu.innerHTML == 'menu') {
-        document.getElementById("sidenav").style.width = "250px";
+        document.getElementById("sidenav").style.width = "225px";
         btnIconMenu.innerHTML = 'close'
         btnActiveMenu.setAttribute('title', 'Cerrar Menu')
     } else {
@@ -17,7 +17,7 @@ function actionSlideMenu() {
 
 //Functions get tables content and views
 function GetUsersList() {
-    $("#sidenav").css('width',"0")
+    $("#sidenav").css('width', "0")
     btnIconMenu.innerHTML = 'menu'
     btnActiveMenu.setAttribute('title', 'Abrir Menu')
 
@@ -26,7 +26,7 @@ function GetUsersList() {
     $.ajax({
         type: 'GET',
         url: siteurl + 'Home/Users',
-        success: function (resp) {
+        success: function(resp) {
             if (resp.status == 500) {
                 window.location.href = '/Home/Error'
                 return;
@@ -35,7 +35,7 @@ function GetUsersList() {
             $('#viewsLoader').hide();
             $("#contentView").fadeIn();
         },
-        error: function (resp) {
+        error: function(resp) {
             console.log(resp);
         }
     });
@@ -51,7 +51,7 @@ function GetProjectsList() {
     $.ajax({
         type: 'GET',
         url: siteurl + 'Home/Projects',
-        success: function (resp) {
+        success: function(resp) {
             if (resp.status == 500) {
                 window.location.href = '/Home/Error';
                 return;
@@ -60,7 +60,7 @@ function GetProjectsList() {
             $('#viewsLoader').hide();
             $("#contentView").fadeIn();
         },
-        error: function (resp) {
+        error: function(resp) {
             console.log(resp);
         }
     })
@@ -76,7 +76,7 @@ function getUserByProjectList() {
     $.ajax({
         type: 'GET',
         url: siteurl + 'Home/UsersByProject',
-        success: function (resp) {
+        success: function(resp) {
             if (resp.status == 500) {
                 window.location.href = '/Home/Error';
                 return;
@@ -85,7 +85,7 @@ function getUserByProjectList() {
             $('#viewsLoader').hide();
             $("#contentView").fadeIn();
         },
-        error: function (resp) {
+        error: function(resp) {
             console.log(resp);
         }
     })

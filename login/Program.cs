@@ -6,6 +6,13 @@ builder.Services.AddControllersWithViews();
 builder.Configuration.AddJsonFile($"appsettings.{_env.EnvironmentName}.json", optional: true, reloadOnChange: true);
 login.Constants.Vars.API_URI = builder.Configuration.GetSection("ApplicationSettings:ApiSettings:DefaultUri").Value.ToString();
 
+//Firebase configuration
+login.Constants.Vars.ApiKey = builder.Configuration.GetSection("ApplicationSettings:firebaseSecret:apiKey").Value.ToString();
+login.Constants.Vars.AuthDomain = builder.Configuration.GetSection("ApplicationSettings:firebaseSecret:authDomain").Value.ToString();
+login.Constants.Vars.ProjectId = builder.Configuration.GetSection("ApplicationSettings:firebaseSecret:projectId").Value.ToString();
+login.Constants.Vars.StorageBucket = builder.Configuration.GetSection("ApplicationSettings:firebaseSecret:storageBucket").Value.ToString();
+login.Constants.Vars.MessagingSenderId = builder.Configuration.GetSection("ApplicationSettings:firebaseSecret:messagingSenderId").Value.ToString();
+login.Constants.Vars.AppId = builder.Configuration.GetSection("ApplicationSettings:firebaseSecret:appId").Value.ToString();
 
 var app = builder.Build();
 

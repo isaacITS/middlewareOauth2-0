@@ -6,76 +6,74 @@ var isToUpdate = false
 //CRUD REQUEST
 $(document).ready(() => {
     $('#btn-action-pass').click()
-    $('#btnRegisterUserByProject').on('click', function () {
-            $('#viewsLoader').show()
-            $('.modal').hide()
-            var formData = $('#registerUserByProjectForm').serialize()
-            $.ajax({
-                type: 'POST',
-                url: siteurl + 'UserByProject/Register',
-                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-                dataType: "json",
-                data: formData,
-                success: function (response) {
-                    $('#viewsLoader').hide()
-                    if (response.status == 500) {
-                        window.location.href = '/Home/Error';
-                        return;
-                    } else if (response.status == 410) {
-                        closeModal()
-                        ShowToastMessage('warning', 'Usuario no registrado', response.msg)
-                    } else {
-                        closeModal()
-                        ShowToastMessage('success', '!Usuario registrado¡', response.msg)
-                        getUserByProjectList()
-                    }
-                },
-                failure: function (response) {
-                    console.log(response.responseText)
-                    alert(response.responseText);
-                },
-                error: function (response) {
-                    console.log(response.responseText)
-                    alert(response.responseText);
+    $('#btnRegisterUserByProject').on('click', function() {
+        $('#viewsLoader').show()
+        $('.modal').hide()
+        var formData = $('#registerUserByProjectForm').serialize()
+        $.ajax({
+            type: 'POST',
+            url: siteurl + 'UserByProject/Register',
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            dataType: "json",
+            data: formData,
+            success: function(response) {
+                $('#viewsLoader').hide()
+                closeModal()
+                if (response.status == 500) {
+                    window.location.href = '/Home/Error'
+                    return;
+                } else if (response.status == 400) {
+                    ShowToastMessage('error', response.msgHeader, response.msg)
+                } else {
+                    ShowToastMessage('success', response.msgHeader, response.msg)
+                    getUserByProjectList()
                 }
-            });
+            },
+            failure: function(response) {
+                console.log(response.responseText)
+                alert(response.responseText);
+            },
+            error: function(response) {
+                console.log(response.responseText)
+                alert(response.responseText);
+            }
+        });
     });
 
-    $('#btnUpdateUserByProject').on('click', function () {
+    $('#btnUpdateUserByProject').on('click', function() {
         var formData = $('#updateUserByProjectForm').serialize()
-            $('#viewsLoader').show()
-            $('.modal').hide()
-            $.ajax({
-                type: 'post',
-                url: siteurl + 'UserByProject/Update',
-                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-                dataType: "json",
-                data: formData,
-                success: function (response) {
-                    $('#viewsLoader').hide()
-                    if (response.status == 500) {
-                        window.location.href = '/Home/Error';
-                        return;
-                    } else if (response.ok) {
-                        closeModal()
-                        ShowToastMessage('success', 'Información de usaurio actualizada', response.msg);
-                        getUserByProjectList()
-                    } else {
-                        closeModal()
-                        ShowToastMessage('error', 'No se actualizó el usuario', response.msg)
-                        getUserByProjectList()
-                    }
-                },
-                failure: function (response) {
-                    alert(response.responseText);
-                },
-                error: function (response) {
-                    alert(response.responseText);
+        $('#viewsLoader').show()
+        $('.modal').hide()
+        $.ajax({
+            type: 'post',
+            url: siteurl + 'UserByProject/Update',
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            dataType: "json",
+            data: formData,
+            success: function(response) {
+                $('#viewsLoader').hide()
+                closeModal()
+                console.log(response)
+                if (response.status == 500) {
+                    window.location.href = '/Home/Error'
+                    return;
+                } else if (response.status == 400) {
+                    ShowToastMessage('error', response.msgHeader, response.msg)
+                } else {
+                    ShowToastMessage('success', response.msgHeader, response.msg)
+                    getUserByProjectList()
                 }
-            });
+            },
+            failure: function(response) {
+                alert(response.responseText);
+            },
+            error: function(response) {
+                alert(response.responseText);
+            }
+        });
     });
 
-    $('#btnUpdateStatusUserByProject').on('click', function () {
+    $('#btnUpdateStatusUserByProject').on('click', function() {
         $('#viewsLoader').show()
         $('.modal').hide()
         $.ajax({
@@ -84,31 +82,29 @@ $(document).ready(() => {
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             data: idUserUpdateStatus,
-            success: function (response) {
+            success: function(response) {
                 $('#viewsLoader').hide()
+                closeModal()
                 if (response.status == 500) {
-                    window.location.href = '/Home/Error';
+                    window.location.href = '/Home/Error'
                     return;
-                } else if (response.ok) {
-                    closeModal()
-                    ShowToastMessage('success', 'Estatus de usaurio actualizado', response.msg)
-                    getUserByProjectList()
+                } else if (response.status == 400) {
+                    ShowToastMessage('error', response.msgHeader, response.msg)
                 } else {
-                    closeModal()
-                    ShowToastMessage('error', 'No se actualizó el estatus de usuario', response.msg)
+                    ShowToastMessage('success', response.msgHeader, response.msg)
                     getUserByProjectList()
                 }
             },
-            failure: function (response) {
+            failure: function(response) {
                 alert(response.responseText);
             },
-            error: function (response) {
+            error: function(response) {
                 alert(response.responseText);
             }
         });
     });
 
-    $('#btnDeleteUserByProject').on('click', function () { 
+    $('#btnDeleteUserByProject').on('click', function() {
         $('#viewsLoader').show()
         $('.modal').hide()
         $.ajax({
@@ -117,25 +113,23 @@ $(document).ready(() => {
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             data: idUserDeleteUser,
-            success: function (response) {
+            success: function(response) {
                 $('#viewsLoader').hide()
+                closeModal()
                 if (response.status == 500) {
-                    window.location.href = '/Home/Error';
+                    window.location.href = '/Home/Error'
                     return;
-                } else if (response.ok) {
-                    closeModal()
-                    ShowToastMessage('success', 'Usuario eliminado', response.msg)
-                    getUserByProjectList()
+                } else if (response.status == 400) {
+                    ShowToastMessage('error', response.msgHeader, response.msg)
                 } else {
-                    closeModal()
-                    ShowToastMessage('error', 'No se eliminó el usuario', response.msg)
+                    ShowToastMessage('success', response.msgHeader, response.msg)
                     getUserByProjectList()
                 }
             },
-            failure: function (response) {
+            failure: function(response) {
                 alert(response.responseText);
             },
-            error: function (response) {
+            error: function(response) {
                 alert(response.responseText);
             }
         });
@@ -150,7 +144,7 @@ var passIsValid = false
 var validEmail = new RegExp("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$")
 
 //Validation Functions
-$('#Nombre, #Email, #Pass').on('change keyup paste', () => {
+$('#Nombre, #Email, #Pass, #Telefono').on('change keyup paste', () => {
     if (nameIsValid && emailIsValid && passIsValid) {
         $('.btn-success').prop('disabled', false)
     } else {
@@ -181,6 +175,9 @@ $('#Nombre, #Email, #Pass').on('change keyup paste', () => {
         $('#Pass').css('background', 'none')
         $('#messagePass').html('')
         passIsValid = true
+    }
+    if ($('#Telefono').val().length > 0) {
+        $('#Telefono').val($('#Telefono').val().replace(/\D/g, ''))
     }
     if ($('#Email').val() == "" || $('#Email').val().length < 5 || !validEmail.test($('#Email').val())) {
         $('#Email').css('background-color', '#f700000c')

@@ -1,4 +1,4 @@
-﻿$(document).ready(function () {
+﻿$(document).ready(function() {
     $('table').DataTable({
         language: {
             "decimal": "",
@@ -19,7 +19,6 @@
                 "next": "Siguiente",
                 "previous": "Anterior"
             }
-        },
-        "responsive": true
+        }
     });
 });

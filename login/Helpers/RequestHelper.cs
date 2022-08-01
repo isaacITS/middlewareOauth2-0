@@ -21,36 +21,32 @@ namespace login.Helpers
         }
 
 
-        public dynamic SignIn(string email, string pass)
+        public async Task<ResponseApi> SignIn(string email, string pass, string phoneNumber)
         {
-            if (pass == null)
+            if (string.IsNullOrEmpty(pass))
             {
-                var res = httpClient.GetAsync($"{Vars.API_URI}SignIn/SignInService?email={email}").Result;
+                var res = await httpClient.GetAsync($"{Vars.API_URI}SignIn/SignInService?email={email}&phoneNumber={phoneNumber}");
                 var resBody = JsonConvert.DeserializeObject<ResponseApi>(res.Content.ReadAsStringAsync().Result);
                 return resBody;
             }
             pass = Encrypt.sha256(pass);
-            var response = httpClient.GetAsync($"{Vars.API_URI}SignIn/SignInUserProject?email={email}&pass={pass}").Result;
+            var response = await httpClient.GetAsync($"{Vars.API_URI}SignIn/SignInUserProject?email={email}&pass={pass}");
             var responseBody = JsonConvert.DeserializeObject<ResponseApi>(response.Content.ReadAsStringAsync().Result);
             return responseBody;
         }
 
 
-        public Proyecto GetProjectByName(string project)
+        public async Task<Proyecto> GetProjectByName(string project)
         {
-            var response = httpClient.GetAsync($"{Vars.API_URI}Projects/GetByName?project={project}").Result;
-            if (response.IsSuccessStatusCode)
-            {
+            var response = await httpClient.GetAsync($"{Vars.API_URI}Projects/GetByName?project={project}");
                 var responseBody = response.Content.ReadAsStringAsync().Result;
                 var projectRes = JsonConvert.DeserializeObject<Proyecto>(responseBody);
                 return projectRes;
-            }
-            return null;
         }
 
-        public List<MetodosAuth> GetAllAuthMethods()
+        public async Task<List<MetodosAuth>> GetAllAuthMethods()
         {
-            var response = httpClient.GetAsync($"{Vars.API_URI}OAuthMethod/GetAll").Result;
+            var response = await httpClient.GetAsync($"{Vars.API_URI}OAuthMethod/GetAll");
             var responseBody = response.Content.ReadAsStringAsync().Result;
             var methods = JsonConvert.DeserializeObject<List<MetodosAuth>>(responseBody);
             return methods;

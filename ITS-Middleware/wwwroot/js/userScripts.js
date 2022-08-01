@@ -5,75 +5,72 @@ var isToUpdate = false
 $(document).ready(() => {
     $('#btn-action-pass').click()
     $('#btnRegisterUser').on('click', function() {
-            $('#viewsLoader').show()
-            $('.modal').hide()
-            var formData = $('#registerUserForm').serialize()
-            $.ajax({
-                type: 'POST',
-                url: siteurl + 'User/Register',
-                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-                dataType: "json",
-                data: formData,
-                success: function (response) {
-                    $('#viewsLoader').hide()
-                    if (response.status == 500) {
-                        window.location.href = '/Home/Error';
-                        return;
-                    } else if (response.status == 410) {
-                        closeModal()
-                        ShowToastMessage('warning', 'Usuario NO registrado', response.msg)
-                    } else {
-                        closeModal()
-                        ShowToastMessage('success', '!Usuario registrado¡', response.msg)
-                        GetUsersList()
-                    }
-                },
-                failure: function (response) {
-                    console.log(response.responseText)
-                    alert(response.responseText);
-                },
-                error: function (response) {
-                    console.log(response.responseText)
-                    alert(response.responseText);
+        $('#viewsLoader').show()
+        $('.modal').hide()
+        var formData = $('#registerUserForm').serialize()
+        $.ajax({
+            type: 'POST',
+            url: siteurl + 'User/Register',
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            dataType: "json",
+            data: formData,
+            success: function(response) {
+                $('#viewsLoader').hide()
+                closeModal()
+                if (response.status == 500) {
+                    window.location.href = '/Home/Error';
+                    return;
+                } else if (response.status == 400) {
+                    ShowToastMessage('error', response.msgHeader, response.msg)
+                } else {
+                    ShowToastMessage('success', response.msgHeader, response.msg)
+                    GetUsersList()
                 }
-            });
+            },
+            failure: function(response) {
+                console.log(response.responseText)
+                alert(response.responseText);
+            },
+            error: function(response) {
+                console.log(response.responseText)
+                alert(response.responseText);
+            }
+        });
     });
 
-    $('#btnUpdateUser').on('click', function () {
+    $('#btnUpdateUser').on('click', function() {
         var formData = $('#updateUserForm').serialize()
-            $('#viewsLoader').show()
-            $('.modal').hide()
-            $.ajax({
-                type: 'post',
-                url: siteurl + 'User/UpdateUser/',
-                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-                dataType: "json",
-                data: formData,
-                success: function (response) {
-                    $('#viewsLoader').hide()
-                    if (response.status == 500) {
-                        window.location.href = '/Home/Error';
-                        return;
-                    } else if (response.ok) {
-                        closeModal()
-                        ShowToastMessage('success', 'Usuario actualizado', response.msg);
-                        GetUsersList()
-                    } else {
-                        closeModal()
-                        ShowToastMessage('error', 'No se actualizó el usuario', response.msg);
-                        GetUsersList()
-                    }
-                },
-                failure: function (response) {
-                    alert(response.responseText);
-                },
-                error: function (response) {
-                    alert(response.responseText);
+        $('#viewsLoader').show()
+        $('.modal').hide()
+        $.ajax({
+            type: 'post',
+            url: siteurl + 'User/UpdateUser/',
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            dataType: "json",
+            data: formData,
+            success: function(response) {
+                $('#viewsLoader').hide()
+                closeModal()
+                if (response.status == 500) {
+                    window.location.href = '/Home/Error';
+                    return;
+                } else if (response.status == 400) {
+                    ShowToastMessage('error', response.msgHeader, response.msg)
+                } else {
+                    ShowToastMessage('success', response.msgHeader, response.msg)
+                    GetUsersList()
                 }
-            });
+            },
+            failure: function(response) {
+                alert(response.responseText);
+            },
+            error: function(response) {
+                alert(response.responseText);
+            }
+        });
     });
 
-    $('#btnUpdateStatusUser').on('click', function () {
+    $('#btnUpdateStatusUser').on('click', function() {
         var formData = $('#updateStatusUserForm').serialize()
         $('#viewsLoader').show()
         $('.modal').hide()
@@ -83,31 +80,29 @@ $(document).ready(() => {
             contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
             dataType: "json",
             data: formData,
-            success: function (response) {
+            success: function(response) {
                 $('#viewsLoader').hide()
+                closeModal()
                 if (response.status == 500) {
                     window.location.href = '/Home/Error';
                     return;
-                } else if (response.ok) {
-                    closeModal()
-                    ShowToastMessage('success', 'Estatus de usaurio actualizado', response.msg)
-                    GetUsersList()
+                } else if (response.status == 400) {
+                    ShowToastMessage('error', response.msgHeader, response.msg)
                 } else {
-                    closeModal()
-                    ShowToastMessage('error', 'No se actualizó el estatus', response.msg)
+                    ShowToastMessage('success', response.msgHeader, response.msg)
                     GetUsersList()
                 }
             },
-            failure: function (response) {
+            failure: function(response) {
                 alert(response.responseText);
             },
-            error: function (response) {
+            error: function(response) {
                 alert(response.responseText);
             }
         });
     });
 
-    $('#btnDeleteUser').on('click', function () {
+    $('#btnDeleteUser').on('click', function() {
         $('#viewsLoader').show()
         $('.modal').hide()
         $.ajax({
@@ -116,25 +111,23 @@ $(document).ready(() => {
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             data: idUserDelete,
-            success: function (response) {
+            success: function(response) {
                 $('#viewsLoader').hide()
+                closeModal()
                 if (response.status == 500) {
                     window.location.href = '/Home/Error';
                     return;
-                } else if (response.ok) {
-                    closeModal()
-                    ShowToastMessage('success', 'Usuario eliminado', response.msg)
-                    GetUsersList()
+                } else if (response.status == 400) {
+                    ShowToastMessage('error', response.msgHeader, response.msg)
                 } else {
-                    closeModal()
-                    ShowToastMessage('error', 'No se eliminó el usuario', response.msg)
+                    ShowToastMessage('success', response.msgHeader, response.msg)
                     GetUsersList()
                 }
             },
-            failure: function (response) {
+            failure: function(response) {
                 alert(response.responseText);
             },
-            error: function (response) {
+            error: function(response) {
                 alert(response.responseText);
             }
         });
@@ -184,7 +177,7 @@ $('#Nombre, #Puesto, #Email, #Pass').on('change keyup paste', () => {
         $('#Pass').css('background-color', '#f700000c')
         $('#messagePass').html('Ingresa una contraseña segura (mayor o igual a 8 caracteres)')
         passIsValid = false
-    }else {
+    } else {
         $('#Pass').css('background', 'none')
         $('#messagePass').html('')
         passIsValid = true

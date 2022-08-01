@@ -1,80 +1,161 @@
 ﻿var tokenService
+var isEmailValid = false
+var validEmail = new RegExp("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$")
+var projectImage
 
-var firebaseConfig = {
-    apiKey: "AIzaSyCW_1wI9EevsL80zDvedYdACdepFy6S9zY",
-    authDomain: "middlewareoauth20.firebaseapp.com",
-    projectId: "middlewareoauth20",
-    storageBucket: "middlewareoauth20.appspot.com",
-    messagingSenderId: "591728715836",
-    appId: "1:591728715836:web:8b3f6902fbedffec813b39"
-}
-firebase.initializeApp(firebaseConfig)
+var ui = new firebaseui.auth.AuthUI(firebase.auth())
+var auth = firebase.auth()
+auth.language = 'es'
+
+var CLIENT_ID = '591728715836-keb38fgj9oe8cbvim4to5qlqhn929j35.apps.googleusercontent.com'
+var googleProvider = new firebase.auth.GoogleAuthProvider();
+var facebookProvider = new firebase.auth.FacebookAuthProvider();
+var twitterProvider = new firebase.auth.TwitterAuthProvider();
+var githubProvider = new firebase.auth.GithubAuthProvider();
+var yahooProvider = new firebase.auth.OAuthProvider('yahoo.com');
+var microsoftProvider = new firebase.auth.OAuthProvider('microsoft.com');
+
+$(document).ready(() => {
+    projectImage = $('#projectImageUrl').val()
+    if (projectImage != "") {
+        $('body').css('background', 'no-repeat center center fixed url(https://director.cl/wp-content/themes/Director_Theme/img/PageLoader/loading.gif)')
+        $('body').css('background-size', 'cover')
+        $('<img/>').attr('src', projectImage).on('load', () => {
+            $(this).remove()
+            $('body').css('background', `no-repeat center center fixed url(${projectImage})`)
+            $('body').css('background-size', 'cover')
+        })
+    } else {
+        $('body').css('background', '#fff')
+    }
+})
+
+$('#email, #pass').on('change keyup paste', () => {
+    if (isEmailValid && $('#pass').val().length > 2) {
+        $('#sign-in-email-pass').prop('disabled', false)
+    } else {
+        $('#sign-in-email-pass').prop('disabled', true)
+    }
+    if ($('#email').val() == "" || $('#email').val().length < 3) {
+        $('#messageEmail').html('Ingresa un correo electrónico para continuar.')
+        isEmailValid = false
+    } else if (validEmail.test($('#email').val())) {
+        $('#messageEmail').html('')
+        isEmailValid = true
+
+    } else {
+        $('#messageEmail').html('Ingresa un correo electrónico válido (ej: username@domain.ext).')
+        isEmailValid = false
+    }
+})
+
+$('#Facebook').on('click', async () => {
+    signInWithPopup(facebookProvider)
+})
+
+$('#Twitter').on('click', async () => {
+    signInWithPopup(twitterProvider)
+})
+
+$('#Google').on('click', async () => {
+    signInWithPopup(googleProvider)
+})
+
+$('#Yahoo').on('click', async () => {
+    signInWithPopup(yahooProvider)
+})
+
+$('#Github').on('click', async () => {
+    signInWithPopup(githubProvider)
+})
+
+$('#Microsoft').on('click', async () => {
+    signInWithPopup(microsoftProvider)
+})
+
+$('#Numero-de-telefono').on('click', async () => {
+    ui.reset()
+    ui.start('#firebaseui-auth-container', getUiConfig())
+})
 
 
-$('#Facebook').on('click', () => {
-    var provider = new firebase.auth.FacebookAuthProvider()
-    firebase.auth().signInWithPopup(provider).then(function (result) {
+
+const signInWithPopup = async (provider) => {
+    var currentUser = auth.currentUser
+    await auth.signInWithPopup(provider).then(result => {
         var token = result.credential.accessToken
         var user = result.user
         if (user != null) {
-            var data = { email: user.email, pass: "" }
+            var data = { email: user.email, pass: "", phoneNumber: "" }
             tokenService = token
             signIn(data)
         } else {
             ShowToastMessage('error', 'No se pudo acceder', 'No se pudo obtener la información para el inicio de sesión, intenta de nuevo')
         }
-    }).catch(function (error) {
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        var email = error.email;
-        var credential = error.credential;
-        console.log(errorMessage);
+    }).catch(error => {
+        console.log(currentUser)
+        conosle.log(error.credentials)
+        if (currentUser != null) {
+            var data = { email: currentUser.email ?? "", pass: "", phoneNumber: currentUser.phoneNumber ?? "" }
+            tokenService = currentUser.refreshToken
+            console.log(data)
+            signIn(data)
+        } else {
+            alert(error)
+        }
     })
-})
+}
 
-$('#Twitter').on('click', () => {
-    var provider = new firebase.auth.TwitterAuthProvider()
-    firebase.auth().signInWithPopup(provider).then(function (result) {
-        var token = result.credential.accessToken;
-        var user = result.user;
-        if (user != null) {
-            var data = { email: user.email, pass: "" }
-            tokenService = token
-            signIn(data)
-        } else {
-            ShowToastMessage('error', 'No se pudo acceder', 'No se pudo obtener la información para el inicio de sesión, intenta de nuevo')
+function getUiConfig() {
+    return {
+        callbacks: {
+            signInSuccess: function (response) {
+                console.log(response.phoneNumber)
+                if (response != null && response.phoneNumber != null) {
+                    var data = { email: "", pass: "", phoneNumber: response.phoneNumber }
+                    tokenService = response.refreshToken
+                    signIn(data)
+                    $('.btn-close').click()
+                } else {
+                    ShowToastMessage('error', 'No se pudo acceder', 'No se pudo obtener la información para el inicio de sesión, intenta de nuevo')
+                }
+            }
+        },
+        signInOptions: [
+            {
+                provider: firebase.auth.PhoneAuthProvider.PROVIDER_ID,
+                recaptchaParameters: {
+                    type: 'image',
+                    size: 'normal',
+                }
+            }
+        ],
+    }
+}
+
+var handleSignedInUser = function (user) {
+    if (user.photoURL) {
+        var photoURL = user.photoURL
+        /*if ((photoURL.indexOf('googleusercontent.com') != -1) ||
+            (photoURL.indexOf('ggpht.com') != -1)) {
+            photoURL = photoURL + '?sz=' +
+                document.getElementById('photo').clientHeight;
+        }*/
+    }
+};
+
+var deleteAccount = function () {
+    firebase.auth().currentUser.delete().catch(function (error) {
+        if (error.code == 'auth/requires-recent-login') {
+            firebase.auth().signOut().then(function () {
+                setTimeout(function () {
+                    alert('Please sign in again to delete your account.');
+                }, 1);
+            });
         }
-    }).catch(function (error) {
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        var email = error.email;
-        var credential = error.credential;
-        console.log(errorMessage);
     });
-})
+};
 
-
-
-$('#Google').on('click', () => {
-    var provider = new firebase.auth.GoogleAuthProvider();
-    firebase.auth().signInWithPopup(provider).then(function (result) {
-        var token = result.credential.accessToken
-        var user = result.user
-        if (user != null) {
-            var data = { email: user.email, pass: "" }
-            tokenService = token
-            signIn(data)
-        } else {
-            ShowToastMessage('error', 'No se pudo acceder', 'No se pudo obtener la información para el inicio de sesión, intenta de nuevo')
-        }
-        //console.log("TOKEN => ", token)
-        //updateUser(user)
-    }).catch(function (error) {
-        var errorCode = error.code
-        var errorMessage = error.message;
-        console.log("ERROR: "+errorCode, errorMessage);
-    });
-})
 
 function signIn(data) {
     $.ajax({
@@ -83,7 +164,7 @@ function signIn(data) {
         contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
         dataType: "json",
         data: data,
-        success: function (response) {
+        success: function(response) {
             if (response.status == 500) {
                 window.location.href = '/Home/Error';
                 return;
@@ -93,21 +174,22 @@ function signIn(data) {
                 window.location.href = `${redirectToUrl}/signIn?token=${tokenService}`
             }
         },
-        failure: function (response) {
+        failure: function(response) {
             console.log(response.responseText)
             alert(response.responseText);
         },
-        error: function (response) {
+        error: function(response) {
             console.log(response.responseText)
             alert(response.responseText);
         }
     });
 }
 
-$('#sign-in-email-pass').on('click', function () {
+$('#sign-in-email-pass').on('click', function() {
     var data = $('#signInForm').serialize()
     signIn(data)
 })
+
 
 function ShowToastMessage(type, title_short_text, body_text) {
     if (type == 'warning') {

@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using ITS_Middleware.ExceptionsHandler;
 using ITS_Middleware.Helpers;
+using Firebase.Auth;
+using Firebase.Storage;
 
 namespace ITS_Middleware.Controllers
 {
@@ -9,14 +11,16 @@ namespace ITS_Middleware.Controllers
     {
         private readonly ILogger<ProjectController> _logger;
         RequestHelper requestHelper = new();
+        IConfiguration config;
 
-        public ProjectController(ILogger<ProjectController> logger)
+        public ProjectController(ILogger<ProjectController> logger, IConfiguration _config)
         {
             _logger = logger;
+            config = _config;
         }
 
         //Registrar proyecto
-        public IActionResult Register()
+        public async Task<IActionResult> Register()
         {
             try
             {
@@ -24,7 +28,7 @@ namespace ITS_Middleware.Controllers
                 {
                     return RedirectToAction("Login", "Auth");
                 }
-                var methods = requestHelper.GetAllAuthMethods();
+                var methods = await requestHelper.GetAllAuthMethods();
                 ViewData["MetodosAuth"] = methods;
                 return PartialView();
             }
@@ -39,29 +43,39 @@ namespace ITS_Middleware.Controllers
                     errors.Add(message);
                 }
                 TempData["ErrorsMessages"] = errors;
-                return Json(new { ok = false, status = 500, msg = "Error" });
+                return Json(new { Ok = false, Status = 500, Msg = "Error" });
             }
         }
 
 
         [HttpPost]
-        public IActionResult Register(Proyecto project)
+        public async Task<IActionResult> Register(ProjectImgFile projectImgFile)
         {
             try
             {
-                project.Activo = true;
-                project.IdUsuarioRegsitra = int.Parse(HttpContext.Session.GetString("idUser"));
-                project.FechaAlta = DateTime.Now;
+                Proyecto project = new(){
+                    Nombre = projectImgFile.Nombre,
+                    Enlace = projectImgFile.Enlace,
+                    Descripcion = projectImgFile.Descripcion,
+                    FechaAlta = DateTime.Now,
+                    IdUsuarioRegsitra = int.Parse(HttpContext.Session.GetString("idUser")),
+                    Activo = true,
+                    ImageUrl = "",
+                    MetodosAutenticacion = projectImgFile.MetodosAutenticacion
+                };
+
+                if (projectImgFile.ImageFile != null)
+                {
+                    string[] imageName = projectImgFile.ImageFile.FileName.Split(".");
+                    string imageUrl = await UploadImage(projectImgFile.ImageFile, $"{projectImgFile.Nombre}.{imageName[imageName.Length - 1]}");
+                    project.ImageUrl = string.IsNullOrEmpty(imageUrl) ? "" : imageUrl;
+                }
                 if (ModelState.IsValid)
                 {
-                    var request = requestHelper.RegisterProject(project);
-                    if (!request.Ok)
-                    {
-                        return Json(new { ok = false, msg = $"El proyecto {project.Nombre} ya esta registrado" });
-                    }
-                    return Json(new { ok = true, msg = $"El proyecto {project.Nombre} se ha registrado" });
+                    var response = await requestHelper.RegisterProject(project);
+                    return Json(response);
                 }
-                return Json(new { ok = false, msg = "Información incompleta, intenta volver a iniciar sesión"});
+                return Json(new { Ok = false, Status = 400, Msg = "Información incompleta, intenta nuevamente" });
             }
             catch (Exception ex)
             {
@@ -74,12 +88,12 @@ namespace ITS_Middleware.Controllers
                     errors.Add(message);
                 }
                 TempData["ErrorsMessages"] = errors;
-                return Json(new { ok = false, status = 500, msg = "Error" });
+                return Json(new { Ok = false, Status = 500, Msg = "Error" });
             }
         }
 
         //Editar proyecto
-        public IActionResult EditProject(int id)
+        public async Task<IActionResult> EditProject(int id)
         {
             try
             {
@@ -91,16 +105,28 @@ namespace ITS_Middleware.Controllers
                 {
                     if (id == null)
                     {
-                        return Json(new { ok = false, msg = "No se ingresó un ID válido" });
+                        return Json(new { Ok = false, Status = 400, Msg = "No se ingresó un ID válido" });
                     }
-                    var project = requestHelper.GetProjectById(id);
+                    var project = await requestHelper.GetProjectById(id);
                     if (project == null)
                     {
-                        return Json(new { ok = false, msg = "El ID no coincide con un proyecto registrado" });
+                        return Json(new { Ok = false, Status = 400, Msg = "El ID no coincide con un proyecto registrado" });
                     }
-                    var metodos = requestHelper.GetAllAuthMethods();
+                    ProjectImgFile projectImg = new ProjectImgFile()
+                    {
+                        Activo = project.Activo,
+                        FechaAlta = project.FechaAlta,
+                        Descripcion = project.Descripcion,
+                        Enlace = project.Enlace,
+                        Id = project.Id,
+                        IdUsuarioRegsitra = project.IdUsuarioRegsitra,
+                        ImageUrl = project.ImageUrl,
+                        MetodosAutenticacion = project.MetodosAutenticacion,
+                        Nombre = project.Nombre
+                    };
+                    var metodos = await requestHelper.GetAllAuthMethods();
                     ViewData["MetodosAuth"] = metodos;
-                    return PartialView(project);
+                    return PartialView(projectImg);
                 }
             }
             catch (Exception ex)
@@ -114,21 +140,35 @@ namespace ITS_Middleware.Controllers
                     errors.Add(message);
                 }
                 TempData["ErrorsMessages"] = errors;
-                return Json(new { ok = false, status = 500, msg = "Error" });
+                return Json(new { Ok = false, Status = 500, Msg = "Error" });
             }
         }
 
         [HttpPost]
-        public IActionResult UpdateProject(Proyecto project)
+        public async Task<IActionResult> UpdateProject(ProjectImgFile projectImgFile)
         {
             try
             {
-                var response = requestHelper.UpdateProject(project);
-                if (response.Ok)
+                Proyecto project = new()
                 {
-                    return Json(new { ok = true, msg = response.Msg });
+                    Id = projectImgFile.Id,
+                    Nombre = projectImgFile.Nombre,
+                    Enlace = projectImgFile.Enlace,
+                    Descripcion = projectImgFile.Descripcion,
+                    FechaAlta = projectImgFile.FechaAlta,
+                    IdUsuarioRegsitra = projectImgFile.IdUsuarioRegsitra,
+                    Activo = projectImgFile.Activo,
+                    ImageUrl = projectImgFile.ImageUrl,
+                    MetodosAutenticacion = projectImgFile.MetodosAutenticacion
+                };
+                if (projectImgFile.ImageFile != null)
+                {
+                    string[] imageName = projectImgFile.ImageFile.FileName.Split(".");
+                    string imageUrl = await UploadImage(projectImgFile.ImageFile, $"{projectImgFile.Nombre}.{imageName[imageName.Length - 1]}");
+                    project.ImageUrl = string.IsNullOrEmpty(imageUrl) ? "" : imageUrl;
                 }
-                return Json(new { ok = true, msg = response.Msg });
+                var response = await requestHelper.UpdateProject(project);
+                return Json(response);
             }
             catch (Exception ex)
             {
@@ -141,13 +181,13 @@ namespace ITS_Middleware.Controllers
                     errors.Add(message);
                 }
                 TempData["ErrorsMessages"] = errors;
-                return Json(new { ok = false, status = 500, msg = "Error" });
+                return Json(new { Ok = false, Status = 500, Msg = "Error" });
             }
         }
 
 
         //Eliminar proyecto
-        public IActionResult DeleteProject(int id)
+        public async Task<IActionResult> DeleteProject(int id)
         {
             try
             {
@@ -159,12 +199,12 @@ namespace ITS_Middleware.Controllers
                 {
                     if (id == null)
                     {
-                        return Json(new { ok = false, msg = "No se ingresó un ID válido" });
+                        return Json(new { Ok = false, Status = 400, Msg = "No se ingresó un ID válido" });
                     }
-                    var project = requestHelper.GetProjectById(id);
+                    var project = await requestHelper.GetProjectById(id);
                     if (project == null)
                     {
-                        return Json(new { ok = false, msg = "No se encontró un proyecto registrado" });
+                        return Json(new { Ok = false, Status = 400, Msg = "No se encontró un proyecto registrado" });
                     }
                     return PartialView(project);
                 }
@@ -180,23 +220,19 @@ namespace ITS_Middleware.Controllers
                     errors.Add(message);
                 }
                 TempData["ErrorsMessages"] = errors;
-                return Json(new { ok = false, status = 500, msg = "Error" });
+                return Json(new { Ok = false, Status = 500, Msg = "Error" });
             }
         }
 
 
 
         [HttpPost]
-        public IActionResult DeleteProjectPost([FromBody] int id)
+        public async Task<IActionResult> DeleteProjectPost([FromBody] int id)
         {
             try
             {
-                var response = requestHelper.DeleteProject(id);
-                if (response.Ok)
-                {
-                    return Json(new { ok = true, msg = response.Msg });
-                } 
-                return Json(new { ok = false, msg = "No se eliminó el proyecto. No se encontró el proyecto" });
+                var response = await requestHelper.DeleteProject(id);
+                return Json(response);
             }
             catch (Exception ex)
             {
@@ -209,12 +245,12 @@ namespace ITS_Middleware.Controllers
                     errors.Add(message);
                 }
                 TempData["ErrorsMessages"] = errors;
-                return Json(new { ok = false, status = 500, msg = "Error" });
+                return Json(new { Ok = false, Status = 500, Msg = "Error" });
             }
         }
 
         //Estatus activo/desactivo proyectos
-        public IActionResult UpdateStatus(int id)
+        public async Task<IActionResult> UpdateStatus(int id)
         {
             try
             {
@@ -226,12 +262,12 @@ namespace ITS_Middleware.Controllers
                 {
                     if (id == null)
                     {
-                        return Json(new { ok = false, msg = "No se ingresó un ID válido" });
+                        return Json(new { Ok = false, Msg = "No se ingresó un ID válido" });
                     }
-                    var project = requestHelper.GetProjectById(id);
+                    var project = await requestHelper.GetProjectById(id);
                     if (project == null)
                     {
-                        return Json(new { ok = false, msg = "El ID no coincide con un usuario registrado" });
+                        return Json(new { Ok = false, Msg = "El ID no coincide con un usuario registrado" });
                     }
                     return PartialView("ChangeStatus", project);
                 }
@@ -247,21 +283,17 @@ namespace ITS_Middleware.Controllers
                     errors.Add(message);
                 }
                 TempData["ErrorsMessages"] = errors;
-                return Json(new { ok = false, status = 500, msg = "Error" });
+                return Json(new { Ok = false, Status = 500, Msg = "Error" });
             }
         }
 
         [HttpPost]
-        public IActionResult UpdateStatusPost(int id)
+        public async Task<IActionResult> UpdateStatusPost(int id)
         {
             try
             {
-                var response = requestHelper.UpdateProjectStatus(id);
-                if (response.Ok)
-                {
-                    return Json(new { ok = true, msg = response.Msg });
-                }
-                return Json(new { ok = false, msg = response.Msg });
+                var response = await requestHelper.UpdateProjectStatus(id);
+                return Json(response);
             }
             catch (Exception ex)
             {
@@ -274,8 +306,36 @@ namespace ITS_Middleware.Controllers
                     errors.Add(message);
                 }
                 TempData["ErrorsMessages"] = errors;
-                return Json(new { ok = false, status = 500, msg = "Error" });
+                return Json(new { Ok = false, Status = 500, Msg = "Error" });
             }
+        }
+
+
+        public async Task<string> UploadImage(IFormFile imageUrl, string name)
+        {
+            Stream file = imageUrl.OpenReadStream();
+
+            string email = config.GetSection("ApplicationSettings:FirebaseStorage:email").Value.ToString();
+            string key = config.GetSection("ApplicationSettings:FirebaseStorage:key").Value.ToString();
+            string path = config.GetSection("ApplicationSettings:FirebaseStorage:path").Value.ToString();
+            string apiKey = config.GetSection("ApplicationSettings:FirebaseStorage:apiKey").Value.ToString();
+
+            var auth = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
+            var a = await auth.SignInWithEmailAndPasswordAsync(email, key);
+            var cancellation = new CancellationTokenSource();
+            var task = new FirebaseStorage(
+                path,
+                new FirebaseStorageOptions
+                {
+                    AuthTokenAsyncFactory = () => Task.FromResult(a.FirebaseToken),
+                    ThrowOnCancel = true
+                }
+                )
+                .Child("assets")
+                .Child(name)
+                .PutAsync(file, cancellation.Token);
+            var downloadUrl = await task;
+            return downloadUrl;
         }
     }
 }

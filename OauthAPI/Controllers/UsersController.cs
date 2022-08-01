@@ -24,7 +24,7 @@ namespace OauthAPI.Controllers
             }
             catch (Exception ex)
             {
-                return Unauthorized(new { msg = ex.Message.ToString() });
+                return BadRequest(new { ok = false, status = 500, msg = ex.Message.ToString() });
             }
         }
 
@@ -37,7 +37,7 @@ namespace OauthAPI.Controllers
             }
             catch (Exception ex)
             {
-                return Unauthorized(new { msg = ex.Message.ToString() });
+                return BadRequest(new { ok = false, status = 500, msg = ex.Message.ToString() });
             }
         }
 
@@ -50,7 +50,7 @@ namespace OauthAPI.Controllers
             }
             catch (Exception ex)
             {
-                return Unauthorized(new { msg = ex.Message.ToString() });
+                return BadRequest(new { ok = false, status = 500, msg = ex.Message.ToString() });
             }
         }
 
@@ -60,12 +60,12 @@ namespace OauthAPI.Controllers
         {
             try
             {
-                if (DbHelper.RegisterUser(user)) return Ok(new { ok = true, msg = $"Se ha registrado el usuario {user.Nombre}" });
-                return Unauthorized(new { ok = false, msg = $"El correo {user.Email} ya está registrado" });
+                if (DbHelper.RegisterUser(user)) return Ok(new { ok = true, msg = $"Se ha registrado el usuario {user.Nombre}", msgHeader = "Usuario registrado", status = 200 });
+                return Unauthorized(new { ok = false, msg = $"El correo {user.Email} ya está registrado", msgHeader = "No se registró el usuario", status = 400 });
             }
             catch (Exception ex)
             {
-                return Unauthorized(new { ok = false, msg = ex.Message.ToString() });
+                return BadRequest(new { ok = false, status = 500, msg = ex.Message.ToString() });
             }
         }
 
@@ -74,12 +74,14 @@ namespace OauthAPI.Controllers
         {
             try
             {
-                if (DbHelper.UpdateUser(user)) return Ok(new { ok = true, msg = $"Se ha actualizado el usuario {user.Nombre}" });
-                return Unauthorized(new { ok = false, msg = "No se pudó encontrar el usaurio" });
+                var oldEmail = DbHelper.GetUserById(user.Id).Email;
+                if (!DbHelper.isEmailAvailable(user.Email) && user.Email != oldEmail) return Unauthorized(new { ok = false, msg = $"El correo {user.Email} ya se encuentra registrado, intenta con otro", msgHeader = "Usuario no actualizado", status = 400 });
+                if (DbHelper.UpdateUser(user)) return Ok(new { ok = true, msg = $"Se ha actualizado el usuario {user.Nombre}", msgHeader = "Usuario actualizado", status = 200 });
+                return Unauthorized(new { ok = false, msg = "No se pudo encontrar el usuario", msgHeader = "Usuario no encontrado", status = 400 });
             }
             catch (Exception ex)
             {
-                return Unauthorized(new { ok = false, msg = ex.Message.ToString() });
+                return BadRequest(new { ok = false, status = 500, msg = ex.Message.ToString() });
             }
         }
 
@@ -88,12 +90,14 @@ namespace OauthAPI.Controllers
         {
             try
             {
-                if (DbHelper.UpdateUserStatus(id) != null) return Ok(new { ok = true, msg = "Estatus de usuario actualizado" });
-                return Unauthorized(new { ok = false, msg = "No se encontró al usuario" });
+                var user = DbHelper.GetUserById(id);
+                string message = user.Activo ? "desactivado" : "activado";
+                if (DbHelper.UpdateUserStatus(id) != null) return Ok(new { ok = true, msgHeader = "Estatus de usuario actualizado", msg = $"Se ha {message} el usuario {user.Nombre}", status = 200 });
+                return Unauthorized(new { ok = false, status = 400, msgHeader = "No se activó/desactivó el usuario", msg = "No se es posible activar o desactivar el usuario" });
             }
             catch (Exception ex)
             {
-                return Unauthorized(new { ok = false, msg = ex.Message.ToString() });
+                return BadRequest(new { ok = false, status = 500, msg = ex.Message.ToString() });
             }
         }
 
@@ -102,12 +106,13 @@ namespace OauthAPI.Controllers
         {
             try
             {
-                if (DbHelper.DeleteUser(id)) return Ok(new { ok = true, msg = "Usuario eliminado con éxito" });
-                return Unauthorized(new { ok = false, msg = "No se encontró al usuario" });
+                var user = DbHelper.GetUserById(id);
+                if (DbHelper.DeleteUser(id)) return Ok(new { ok = true, status = 200, msgheader = "Usuario eliminado con éxito", msg = $"Se ha eliminado el usaurio {user.Nombre} de forma permanente" });
+                return Unauthorized(new { ok = false, status = 400, msgHeader = "No se eliminó el usuario", msg = "No es posible eliminar el usaurio" });
             }
             catch (Exception ex)
             {
-                return Unauthorized(new { msg = ex.Message.ToString() });
+                return BadRequest(new { ok = false, status = 500, msg = ex.Message.ToString() });
             }
         }
     }

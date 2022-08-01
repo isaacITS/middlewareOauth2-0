@@ -16,13 +16,14 @@ namespace login.Controllers
             _logger = logger;
         }
 
-        public IActionResult SignIn(string project)
+        public async Task<IActionResult> SignIn(string project)
         {
             ErrorViewModel errorModel = new();
+            ViewData["ProjectName"] = project;
             errorModel.ErrorCore = 404; errorModel.ErrorMessageHeader = "No se ingresó algún proyecto para inicio de sesión"; errorModel.ErrorMessage = "No se encontró un proyecto registrado con el nombre ingresado";
             if (project != null)
             {
-                var resultProject = requestHelper.GetProjectByName(project);
+                var resultProject = await requestHelper.GetProjectByName(project);
                 if (resultProject != null)
                 {
                     ViewData["project"] = resultProject;
@@ -36,11 +37,11 @@ namespace login.Controllers
         }
 
         [HttpPost]
-        public IActionResult SignIn(string email, string pass)
+        public async Task<IActionResult> SignIn(string email, string pass, string phoneNumber)
         {
             try
             {
-                var response = requestHelper.SignIn(email, pass);
+                var response = await requestHelper.SignIn(email, pass, phoneNumber);
                 if (response.Ok)
                 {
                     return Json(new { ok = false, status = 200, msg = response.Msg, msgHeder = response.MsgHeader });
@@ -52,5 +53,18 @@ namespace login.Controllers
                 return Json(new { ok = false, status = 500, msg = ex });
             }
         }
+
+
+        public IActionResult RestorePass()
+        {
+            try
+            {
+                return View();
+            }
+            catch (Exception ex)
+            {
+                return Json(new { ok = false, status = 500, msg = ex });
+            }
+        }        
     }
 }

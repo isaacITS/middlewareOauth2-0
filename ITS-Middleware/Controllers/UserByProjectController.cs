@@ -15,7 +15,7 @@ namespace ITS_Middleware.Controllers
             _logger = logger;
         }
 
-        public IActionResult Register()
+        public async Task<IActionResult> Register()
         {
             try
             {
@@ -23,7 +23,7 @@ namespace ITS_Middleware.Controllers
                 {
                     return RedirectToAction("Login", "Auth");
                 }
-                var projects = requestHelper.GetAllProjects();
+                var projects = await requestHelper.GetAllProjects();
                 ViewData["ProjectsList"] = projects;
                 return PartialView();
             }
@@ -38,12 +38,12 @@ namespace ITS_Middleware.Controllers
                     errors.Add(message);
                 }
                 TempData["ErrorsMessages"] = errors;
-                return Json(new { ok = false, status = 500, msg = "Error" });
+                return Json(new { Ok = false, Status = 500, Msg = "Error" });
             }
         }
 
         [HttpPost]
-        public IActionResult Register(UsuariosProyecto user)
+        public async Task<IActionResult> Register(UsuariosProyecto user)
         {
             try
             {
@@ -52,12 +52,8 @@ namespace ITS_Middleware.Controllers
                 user.Activo = true;
                 if (ModelState.IsValid)
                 {
-                    var response = requestHelper.RegisterUserByProject(user);
-                    if (response.Ok)
-                    {
-                        return Json(new { ok = true, status = 200, msg = response.Msg });
-                    }
-                    return Json(new { ok = false, status = 410, msg = response.Msg });
+                    var response = await requestHelper.RegisterUserByProject(user);
+                    return Json(response);
                 }
                 return Json(user);
             }
@@ -72,13 +68,13 @@ namespace ITS_Middleware.Controllers
                     errors.Add(message);
                 }
                 TempData["ErrorsMessages"] = errors;
-                return Json(new { ok = false, status = 500, msg = "Error" });
+                return Json(new { Ok = false, Status = 500, Msg = "Error" });
             }
         }
 
 
         //Editar usuario
-        public IActionResult Update(int id)
+        public async Task<IActionResult> Update(int id)
         {
             try
             {
@@ -88,11 +84,11 @@ namespace ITS_Middleware.Controllers
                 }
                 else
                 {
-                    var usuario = requestHelper.GetUserByProjectById(id);
-                    ViewData["ProjectsList"] = requestHelper.GetAllProjects();
+                    var usuario = await requestHelper.GetUserByProjectById(id);
+                    ViewData["ProjectsList"] = await requestHelper.GetAllProjects();
                     if (usuario == null)
                     {
-                        return Json(new { ok = false, msg = "El ID no coincide con un usuario registrado" });
+                        return Json(new { Ok = false, Status = 400, Msg = "El ID no coincide con un usuario registrado" });
                     }
                     return PartialView(usuario);
                 }
@@ -108,21 +104,17 @@ namespace ITS_Middleware.Controllers
                     errors.Add(message);
                 }
                 TempData["ErrorsMessages"] = errors;
-                return Json(new { ok = false, status = 500, msg = "Error" });
+                return Json(new { Ok = false, Status = 500, Msg = "Error" });
             }
         }
 
         [HttpPost]
-        public IActionResult Update(UsuariosProyecto user)
+        public async Task<IActionResult> Update(UsuariosProyecto user)
         {
             try
             {
-                var response = requestHelper.UpdateUserByProject(user);
-                if (response.Ok)
-                {
-                    return Json(new { ok = true, msg = response.Msg });
-                }
-                return Json(new { ok = false, msg = response.Msg });
+                var response = await requestHelper.UpdateUserByProject(user);
+                return Json(response);
             }
             catch (Exception ex)
             {
@@ -135,13 +127,13 @@ namespace ITS_Middleware.Controllers
                     errors.Add(message);
                 }
                 TempData["ErrorsMessages"] = errors;
-                return Json(new { ok = false, status = 500, msg = "Error" });
+                return Json(new { Ok = false, Status = 500, Msg = "Error" });
             }
         }
 
 
         /*UPDATE USER STATUS*/
-        public IActionResult ChangeStatus(int id)
+        public async Task<IActionResult> ChangeStatus(int id)
         {
             try
             {
@@ -153,12 +145,12 @@ namespace ITS_Middleware.Controllers
                 {
                     if (id == null || id == 1)
                     {
-                        return Json(new { ok = false, msg = "No se ingresó un ID válido o no puede ser activado/desactivado" });
+                        return Json(new { Ok = false, status = 400, Msg = "No se ingresó un ID válido o no puede ser activado/desactivado" });
                     }
-                    var usuario = requestHelper.GetUserByProjectById(id);
+                    var usuario = await requestHelper.GetUserByProjectById(id);
                     if (usuario == null)
                     {
-                        return Json(new { ok = false, msg = "El ID no coincide con un usuario registrado" });
+                        return Json(new { Ok = false, status = 400, Msg = "El ID no coincide con un usuario registrado" });
                     }
                     return PartialView(usuario);
                 }
@@ -174,22 +166,18 @@ namespace ITS_Middleware.Controllers
                     errors.Add(message);
                 }
                 TempData["ErrorsMessages"] = errors;
-                return Json(new { ok = false, status = 500, msg = "Error" });
+                return Json(new { Ok = false, Status = 500, Msg = "Error" });
             }
         }
 
 
         [HttpPost]
-        public IActionResult UpdateStatus([FromBody] int id)
+        public async Task<IActionResult> UpdateStatus([FromBody] int id)
         {
             try
             {
-                var response = requestHelper.UpdateUserByProjectStatus(id);
-                if (response.Ok)
-                {
-                    return Json(new { ok = true, status = 200, msg = response.Msg });
-                }
-                return Json(new { ok = false, status = 410, msg = response.Msg });
+                var response = await requestHelper.UpdateUserByProjectStatus(id);
+                    return Json(response);
             }
             catch (Exception ex)
             {
@@ -202,12 +190,12 @@ namespace ITS_Middleware.Controllers
                     errors.Add(message);
                 }
                 TempData["ErrorsMessages"] = errors;
-                return Json(new { ok = false, status = 500, msg = "Error" });
+                return Json(new { Ok = false, Status = 500, Msg = "Error" });
             }
         }
 
         //Eliminar usuario
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {
@@ -217,10 +205,10 @@ namespace ITS_Middleware.Controllers
                 }
                 else
                 {
-                    var usuario = requestHelper.GetUserByProjectById(id);
+                    var usuario = await requestHelper.GetUserByProjectById(id);
                     if (usuario == null)
                     {
-                        return Json(new { ok = true, msg = "El ID No coincide con un usuario registrado" });
+                        return Json(new { Ok = false, Msg = "El ID No coincide con un usuario registrado" });
                     }
                     return PartialView(usuario);
                 }
@@ -236,21 +224,17 @@ namespace ITS_Middleware.Controllers
                     errors.Add(message);
                 }
                 TempData["ErrorsMessages"] = errors;
-                return Json(new { ok = false, status = 500, msg = "Error" });
+                return Json(new { Ok = false, Status = 500, Msg = "Error" });
             }
         }
 
         [HttpPost]
-        public IActionResult DeletePost([FromBody] int id)
+        public async Task<IActionResult> DeletePost([FromBody] int id)
         {
             try
             {
-                var response = requestHelper.DeleteUserByProject(id); 
-                if (response.Ok)
-                {
-                    return Json(new { ok = true, msg = response.Msg });
-                }
-                return Json(new { ok = false, msg = response.Msg });
+                var response = await requestHelper.DeleteUserByProject(id); 
+                return Json(response);
             }
             catch (Exception ex)
             {
@@ -263,7 +247,7 @@ namespace ITS_Middleware.Controllers
                     errors.Add(message);
                 }
                 TempData["ErrorsMessages"] = errors;
-                return Json(new { ok = false, status = 500, msg = "Error" });
+                return Json(new { Ok = false, Status = 500, Msg = "Error" });
             }
         }
     }

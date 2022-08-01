@@ -25,7 +25,7 @@ namespace OauthAPI.Controllers
             }
             catch (Exception ex)
             {
-                return Unauthorized(new { ok = false, msg = ex.Message.ToString() });
+                return BadRequest(new { ok = false, status = 500, msg = ex.Message.ToString() });
             }
         }
 
@@ -38,7 +38,7 @@ namespace OauthAPI.Controllers
             }
             catch (Exception ex)
             {
-                return Unauthorized(new { ok = false, msg = ex.Message.ToString() });
+                return BadRequest(new { ok = false, status = 500, msg = ex.Message.ToString() });
             }
         }
 
@@ -51,7 +51,7 @@ namespace OauthAPI.Controllers
             }
             catch (Exception ex)
             {
-                return Unauthorized(new { ok = false, msg = ex.Message.ToString() });
+                return BadRequest(new { ok = false, status = 500, msg = ex.Message.ToString() });
             }
         }
 
@@ -60,12 +60,12 @@ namespace OauthAPI.Controllers
         {
             try
             {
-                if (DbHelper.RegisterProject(project)) return Ok(new { ok = true, msg = $"Se ha registrado el proyecto {project.Nombre}" });
-                return Unauthorized(new { ok = false, msg = $"El proyecto {project.Nombre} ya está registrado" });
+                if (DbHelper.RegisterProject(project)) return Ok(new { ok = true, status = 200, msgHeader = "Proyecto registrado con éxito", msg = $"Se ha registrado el proyecto {project.Nombre}" });
+                return Unauthorized(new { ok = false, status = 400, msgHeader = "No se registró el proyecto", msg = $"El proyecto {project.Nombre} ya está registrado" });
             }
             catch (Exception ex)
             {
-                return Unauthorized(new { ok = false, msg = ex.Message.ToString() });
+                return BadRequest(new { ok = false, status = 500, msg = ex.Message.ToString() });
             }
         }
 
@@ -74,12 +74,12 @@ namespace OauthAPI.Controllers
         {
             try
             {
-                if (DbHelper.UpdateProject(project)) return Ok(new { ok = true, msg = $"Se ha actualizado el proyecto {project.Nombre}" });
-                return Unauthorized(new { ok = false, msg = "No se puede actualizar este proyecto" });
+                if (DbHelper.UpdateProject(project)) return Ok(new { ok = true, status = 200, msgHeader = "Proyecto actualizado con éxito", msg = $"Se ha actualizado el proyecto {project.Nombre}" });
+                return Unauthorized(new { ok = false, msgHeader = "No se pudo encontrar el proyecto", msg = "No se puede actualizar el proyecto, intenta más tarde" });
             }
             catch (Exception ex)
             {
-                return Unauthorized(new { ok = false, msg = ex.Message.ToString() });
+                return BadRequest(new { ok = false, status = 500, msg = ex.Message.ToString() });
             }
         }
 
@@ -88,12 +88,14 @@ namespace OauthAPI.Controllers
         {
             try
             {
-                if (DbHelper.UpdateProjectStatus(id) != null) return Ok(new { ok = true, msg = "Estatus del proyecto actualizado" });
-                return Unauthorized(new { ok = false, msg = "No se encontró el proyecto" });
+                var project = DbHelper.GetProjectById(id);
+                string action = project.Activo ? "desactivado" : "activado";
+                if (DbHelper.UpdateProjectStatus(id) != null) return Ok(new { ok = true, status = 200, msgHeader = "Estatus de proyecto actualizado", msg = $"Se ha {action} el proyecto {project.Nombre}" });
+                return Unauthorized(new { ok = false, status = 400, msg = "No se encontró el proyecto, intenta más tarde", msgHeader = "No se ha encontrado el proyecto" });
             }
             catch (Exception ex)
             {
-                return Unauthorized(new { ok = false, msg = ex.Message.ToString() });
+                return BadRequest(new { ok = false, status = 500, msg = ex.Message.ToString() });
             }
         }
 
@@ -102,12 +104,13 @@ namespace OauthAPI.Controllers
         {
             try
             {
-                if (DbHelper.DeleteProject(id)) return Ok(new { ok = true, msg = "El proyecto ha sido eliminado" });
-                return Unauthorized(new { ok = false, msg = "No se encontró el proyecto" });
+                var project = DbHelper.GetProjectById(id);
+                if (DbHelper.DeleteProject(id)) return Ok(new { ok = true, status = 200, msgHeader = "Proyecto eliminado", msg = $"Se ha elimado el proyecto {project.Nombre} de forma permanente" });
+                return Unauthorized(new { ok = false, status = 400, msgHeader = "Proyecto no encontrado", msg = "No se encontró el proyecto a eliminar, intenta nuevamente" });
             }
             catch (Exception ex)
             {
-                return Unauthorized(new { ok = false, msg = ex.Message.ToString() });
+                return BadRequest(new { ok = false, status = 500, msg = ex.Message.ToString() });
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿using ITS_Middleware.Constants;
 using ITS_Middleware.Models.Entities;
+using ITS_Middleware.Tools;
 using Newtonsoft.Json;
 using System.Text;
 
@@ -22,17 +23,17 @@ namespace ITS_Middleware.Helpers
         }
 
         /*=====> HTTP GET REQUEST <=======*/
-        public dynamic GetAllProjects()
+        public async Task<List<Proyecto>> GetAllProjects()
         {
-            var response = httpClient.GetAsync($"{Vars.API_URI}Projects/GetAll").Result;
+            var response = await httpClient.GetAsync($"{Vars.API_URI}Projects/GetAll");
             var responseBody = response.Content.ReadAsStringAsync().Result;
             var projects = JsonConvert.DeserializeObject<List<Proyecto>>(responseBody);
             return projects;
         }
 
-        public dynamic GetProjectById(int id)
+        public async Task<Proyecto> GetProjectById(int id)
         {
-            var response = httpClient.GetAsync($"{Vars.API_URI}Projects/GetById?id={id}").Result;
+            var response = await httpClient.GetAsync($"{Vars.API_URI}Projects/GetById?id={id}");
             if (response.IsSuccessStatusCode)
             {
                 var responseBody = JsonConvert.DeserializeObject<Proyecto>(response.Content.ReadAsStringAsync().Result);
@@ -41,19 +42,9 @@ namespace ITS_Middleware.Helpers
             return null;
         }
 
-        /*
-        public async Task<List<Proyecto>> GetAllProjects()
+        public async Task<List<Usuario>> GetAllUsers(bool getAll)
         {
-            HttpResponseMessage response = await httpClient.GetAsync($"{Vars.API_URI}Projects/GetAll");
-            response.EnsureSuccessStatusCode();
-            var responseBody = await response.Content.ReadAsStringAsync();
-            var projects = JsonConvert.DeserializeObject<List<Proyecto>>(responseBody);
-            return projects;
-        }*/
-
-        public dynamic GetAllUsers(bool getAll)
-        {
-            var response = httpClient.GetAsync($"{Vars.API_URI}Users/GetAll").Result;
+            var response = await httpClient.GetAsync($"{Vars.API_URI}Users/GetAll");
             var responseBody = response.Content.ReadAsStringAsync().Result;
             var users = JsonConvert.DeserializeObject<List<Usuario>>(responseBody);
             if (getAll)
@@ -65,9 +56,9 @@ namespace ITS_Middleware.Helpers
             return users;
         }
 
-        public dynamic GetUserById(int id)
+        public async Task<Usuario> GetUserById(int id)
         {
-            var response = httpClient.GetAsync($"{Vars.API_URI}Users/GetById?id={id}").Result;
+            var response = await httpClient.GetAsync($"{Vars.API_URI}Users/GetById?id={id}");
             if (response.IsSuccessStatusCode)
             {
                 var responseBody = JsonConvert.DeserializeObject<Usuario>(response.Content.ReadAsStringAsync().Result);
@@ -76,9 +67,9 @@ namespace ITS_Middleware.Helpers
             return null;
         }
 
-        public dynamic GetUserByEmail(string email)
+        public async Task<Usuario> GetUserByEmail(string email)
         {
-            var response = httpClient.GetAsync($"{Vars.API_URI}Users/GetByEmail?email={email}").Result;
+            var response = await httpClient.GetAsync($"{Vars.API_URI}Users/GetByEmail?email={email}");
             if (response.IsSuccessStatusCode)
             {
                 var responseBody = JsonConvert.DeserializeObject<Usuario>(response.Content.ReadAsStringAsync().Result);
@@ -87,17 +78,17 @@ namespace ITS_Middleware.Helpers
             return null;
         }
 
-        public dynamic GetAllUsersByProject()
+        public async Task<List<UsuariosProyecto>> GetAllUsersByProject()
         {
-            var response = httpClient.GetAsync($"{Vars.API_URI}UsersByProject/GetAll").Result;
+            var response = await httpClient.GetAsync($"{Vars.API_URI}UsersByProject/GetAll");
             var responseBody = response.Content.ReadAsStringAsync().Result;
             var users = JsonConvert.DeserializeObject<List<UsuariosProyecto>>(responseBody);
             return users;
         }
 
-        public dynamic GetUserByProjectById(int id)
+        public async Task<UsuariosProyecto> GetUserByProjectById(int id)
         {
-            var response = httpClient.GetAsync($"{Vars.API_URI}UsersByProject/GetById?id={id}").Result;
+            var response = await httpClient.GetAsync($"{Vars.API_URI}UsersByProject/GetById?id={id}");
             if (response.IsSuccessStatusCode)
             {
                 var responseBody = JsonConvert.DeserializeObject<UsuariosProyecto>(response.Content.ReadAsStringAsync().Result);
@@ -106,9 +97,9 @@ namespace ITS_Middleware.Helpers
             return null;
         }
 
-        public dynamic GetAllAuthMethods()
+        public async Task<List<MetodosAuth>> GetAllAuthMethods()
         {
-            var response = httpClient.GetAsync($"{Vars.API_URI}OAuthMethod/GetAll").Result;
+            var response = await httpClient.GetAsync($"{Vars.API_URI}OAuthMethod/GetAll");
             var responseBody = response.Content.ReadAsStringAsync().Result;
             var methods = JsonConvert.DeserializeObject<List<MetodosAuth>>(responseBody);
             return methods;
@@ -117,32 +108,34 @@ namespace ITS_Middleware.Helpers
 
 
         /* =====> HTTP POST REQUEST <======*/
-        public dynamic RegisterUser(Usuario userModel)
+        public async Task<ResponseApi> RegisterUser(Usuario userModel)
         {
+            userModel.Pass = Encrypt.sha256(userModel.Pass);
             var userJson = JsonConvert.SerializeObject(userModel);
             var data = new StringContent(userJson, Encoding.UTF8, "application/json");
 
-            var response = httpClient.PostAsync($"{Vars.API_URI}Users/Register", data).Result;
+            var response = await httpClient.PostAsync($"{Vars.API_URI}Users/Register", data);
             var resultResponse = JsonConvert.DeserializeObject<ResponseApi>(response.Content.ReadAsStringAsync().Result);
             return resultResponse;
         }
 
-        public dynamic RegisterProject(Proyecto projectModel)
+        public async Task<ResponseApi> RegisterProject(Proyecto projectModel)
         {
             var projectJson = JsonConvert.SerializeObject(projectModel);
             var data = new StringContent(projectJson, Encoding.UTF8, "application/json");
 
-            var response = httpClient.PostAsync($"{Vars.API_URI}Projects/Register", data).Result;
+            var response = await httpClient.PostAsync($"{Vars.API_URI}Projects/Register", data);
             var resultResponse = JsonConvert.DeserializeObject<ResponseApi>(response.Content.ReadAsStringAsync().Result);
             return resultResponse;
         }
 
-        public dynamic RegisterUserByProject(UsuariosProyecto userModel)
+        public async Task<ResponseApi> RegisterUserByProject(UsuariosProyecto userModel)
         {
+            userModel.Pass = Encrypt.sha256(userModel.Pass);
             var userJson = JsonConvert.SerializeObject(userModel);
             var data = new StringContent(userJson, Encoding.UTF8, "application/json");
 
-            var response = httpClient.PostAsync($"{Vars.API_URI}UsersByProject/Register", data).Result;
+            var response = await httpClient.PostAsync($"{Vars.API_URI}UsersByProject/Register", data);
             var resultResponse = JsonConvert.DeserializeObject<ResponseApi>(response.Content.ReadAsStringAsync().Result);
             return resultResponse;
         }
@@ -150,75 +143,82 @@ namespace ITS_Middleware.Helpers
 
 
         /*=====> HTTP PUT REQUEST <========*/
-        public dynamic UpdateUser(Usuario userModel)
+        public async Task<ResponseApi> UpdateUser(Usuario userModel)
         {
             if(userModel.Pass == null) {
                 userModel.Pass = "";
+            } else {
+                userModel.Pass = Encrypt.sha256(userModel.Pass);
             }
             var userJson = JsonConvert.SerializeObject(userModel);
             var data = new StringContent(userJson, Encoding.UTF8, "application/json");
 
-            var response = httpClient.PutAsync($"{Vars.API_URI}Users/Update", data).Result;
+            var response = await httpClient.PutAsync($"{Vars.API_URI}Users/Update", data);
             var resultResponse = JsonConvert.DeserializeObject<ResponseApi>(response.Content.ReadAsStringAsync().Result);
             return resultResponse;
         }
-        public dynamic UpdateUserStatus(int id)
+        public async Task<ResponseApi> UpdateUserStatus(int id)
         {
-            var response = httpClient.PutAsync($"{Vars.API_URI}Users/UpdateStatus?id={id}", null).Result;
+            var response = await httpClient.PutAsync($"{Vars.API_URI}Users/UpdateStatus?id={id}", null);
             var resultResponse = JsonConvert.DeserializeObject<ResponseApi>(response.Content.ReadAsStringAsync().Result);
             return resultResponse;
         }
 
-        public dynamic UpdateUserTokenRecovery(string email, string token)
+        public async Task<ResponseApi> UpdateUserTokenRecovery(string email, string token)
         {
-            var response = httpClient.PutAsync($"{Vars.API_URI}SignIn/UpdateToken?email={email}&token={token}", null).Result;
+            var dataJson = JsonConvert.SerializeObject(new { email = email, token = token });
+            var data = new StringContent(dataJson, Encoding.UTF8, "application/json");
+
+            var response = await httpClient.PutAsync($"{Vars.API_URI}SignIn/UpdateToken", data);
             var resultResponse = JsonConvert.DeserializeObject<ResponseApi>(response.Content.ReadAsStringAsync().Result);
             return resultResponse;
         }
-        public dynamic UpdateUserPassword(Usuario userModel)
+        public async Task<ResponseApi> UpdateUserPassword(Usuario userModel)
         {
+            userModel.Pass = Encrypt.sha256(userModel.Pass);
             var userJson = JsonConvert.SerializeObject(userModel);
             var data = new StringContent(userJson, Encoding.UTF8, "application/json");
 
-            var response = httpClient.PutAsync($"{Vars.API_URI}SignIn/UpdatePassword", data).Result;
+            var response = await httpClient.PutAsync($"{Vars.API_URI}SignIn/UpdatePassword", data);
             var resultResponse = JsonConvert.DeserializeObject<ResponseApi>(response.Content.ReadAsStringAsync().Result);
             return resultResponse;
         }
 
-        public dynamic UpdateProject(Proyecto projectModel)
+        public async Task<ResponseApi> UpdateProject(Proyecto projectModel)
         {
             var projectJson = JsonConvert.SerializeObject(projectModel);
             var data = new StringContent(projectJson, Encoding.UTF8, "application/json");
 
-            var response = httpClient.PutAsync($"{Vars.API_URI}Projects/Update", data).Result;
+            var response = await httpClient.PutAsync($"{Vars.API_URI}Projects/Update", data);
             var resultResponse = JsonConvert.DeserializeObject<ResponseApi>(response.Content.ReadAsStringAsync().Result);
             return resultResponse;
         }
 
-        public dynamic UpdateProjectStatus(int id)
+        public async Task<ResponseApi> UpdateProjectStatus(int id)
         {
-            var response = httpClient.PutAsync($"{Vars.API_URI}Projects/UpdateStatus?id={id}", null).Result;
+            var response = await httpClient.PutAsync($"{Vars.API_URI}Projects/UpdateStatus?id={id}", null);
             var resultResponse = JsonConvert.DeserializeObject<ResponseApi>(response.Content.ReadAsStringAsync().Result);
             return resultResponse;
         }
 
-        public dynamic UpdateUserByProject(UsuariosProyecto userModel)
+        public async Task<ResponseApi> UpdateUserByProject(UsuariosProyecto userModel)
         {
-            if (userModel.Pass == null)
-            {
+            if (userModel.Pass == null) {
                 userModel.Pass = "";
+            } else {
+                userModel.Pass = Encrypt.sha256(userModel.Pass);
             }
             var userJson = JsonConvert.SerializeObject(userModel);
             var data = new StringContent(userJson, Encoding.UTF8, "application/json");
 
-            var response = httpClient.PutAsync($"{Vars.API_URI}UsersByProject/Update", data).Result;
+            var response = await httpClient.PutAsync($"{Vars.API_URI}UsersByProject/Update", data);
             var resultResponse = JsonConvert.DeserializeObject<ResponseApi>(response.Content.ReadAsStringAsync().Result);
             return resultResponse;
         }
 
-        public dynamic UpdateUserByProjectStatus(int id)
+        public async Task<ResponseApi> UpdateUserByProjectStatus(int id)
         {
-            var response = httpClient.PutAsync($"{Vars.API_URI}UsersByProject/UpdateStatus?id={id}", null).Result;
+            var response = await httpClient.PutAsync($"{Vars.API_URI}UsersByProject/UpdateStatus?id={id}", null);
             var resultResponse = JsonConvert.DeserializeObject<ResponseApi>(response.Content.ReadAsStringAsync().Result);
             return resultResponse;
         }
@@ -226,36 +226,47 @@ namespace ITS_Middleware.Helpers
 
 
         /*========> HTTP DELETE REQUEST <==============*/
-        public dynamic DeleteUser(int id)
+        public async Task<ResponseApi> DeleteUser(int id)
         {
-            var response = httpClient.DeleteAsync($"{Vars.API_URI}Users/Delete?id={id}").Result;
+            var response = await httpClient.DeleteAsync($"{Vars.API_URI}Users/Delete?id={id}");
             var resultResponse = JsonConvert.DeserializeObject<ResponseApi>(response.Content.ReadAsStringAsync().Result);
             return resultResponse;
         }
 
-        public dynamic DeleteProject(int id)
+        public async Task<ResponseApi> DeleteProject(int id)
         {
-            var response = httpClient.DeleteAsync($"{Vars.API_URI}Projects/Delete?id={id}").Result;
+            var response = await httpClient.DeleteAsync($"{Vars.API_URI}Projects/Delete?id={id}");
             var resultResponse = JsonConvert.DeserializeObject<ResponseApi>(response.Content.ReadAsStringAsync().Result);
             return resultResponse;
         }
 
-        public dynamic DeleteUserByProject(int id)
+        public async Task<ResponseApi> DeleteUserByProject(int id)
         {
-            var response = httpClient.DeleteAsync($"{Vars.API_URI}UsersByProject/Delete?id={id}").Result;
+            var response = await httpClient.DeleteAsync($"{Vars.API_URI}UsersByProject/Delete?id={id}");
             var resultResponse = JsonConvert.DeserializeObject<ResponseApi>(response.Content.ReadAsStringAsync().Result);
             return resultResponse;
         }
 
 
-        //===> UPDATE PASSWORD PROCESS
+        //===> UPDATE/REGISTER IMAGE FOR PROJECTS
+        public async Task<ResponseApi> UploadImage(int id, string imageUrl)
+        {
+            var objectData = new { id = id, imageUrl = imageUrl };
+            var dataJson = JsonConvert.SerializeObject(objectData);
+            var data = new StringContent(dataJson, Encoding.UTF8, "application/json");
+
+            var response = await httpClient.PutAsync($"{Vars.API_URI}Projects/UploadImage?id={id}", data);
+            var resultResponse = JsonConvert.DeserializeObject<ResponseApi>(response.Content.ReadAsStringAsync().Result);
+            return resultResponse;
+        }
         
 
 
         /*==> SIGN IN REQUEST */
-        public dynamic SignIn(string email, string pass)
+        public async Task<ResponseApi> SignIn(string email, string pass)
         {
-            var response = httpClient.GetAsync($"{Vars.API_URI}SignIn/SignIn?email={email}&pass={pass}").Result;
+            pass = Encrypt.sha256(pass);
+            var response = await httpClient.GetAsync($"{Vars.API_URI}SignIn/SignIn?email={email}&pass={pass}");
             var resultResponse = JsonConvert.DeserializeObject<ResponseApi>(response.Content.ReadAsStringAsync().Result);
             return resultResponse;
         }

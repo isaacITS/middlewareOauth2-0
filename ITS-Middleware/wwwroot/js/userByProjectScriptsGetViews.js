@@ -7,10 +7,9 @@ $('#modalRegisterUserView').on('click', () => {
     $.ajax({
         type: 'GET',
         url: siteurl + 'UserByProject/Register',
-        success: function (resp) {
-            if (resp == "Error") {
+        success: function(resp) {
+            if (resp.status == 500) {
                 window.location.href = '/Home/Error'
-                console.log("Error al obtener vista registro")
                 return;
             }
             $(".modal-body").empty().append(resp)
@@ -18,23 +17,23 @@ $('#modalRegisterUserView').on('click', () => {
             $('.modal-dialog').fadeIn()
             $('.btn-generate-pass').click()
         },
-        error: function (resp) {
-            console.log(resp)
+        error: function(resp) {
+            alert(resp)
         }
     })
 })
 
-$('.modalUpdateUserView').on('click', function () {
+$('.modalUpdateUserView').on('click', function() {
     idUserUpdate = $(this).attr('data-idUser')
     getUpdateUserView(idUserUpdate)
 })
 
-$('.modalStatusUserView').on('click', function () {
+$('.modalStatusUserView').on('click', function() {
     idUserUpdateStatus = $(this).attr('data-idUser')
     getUpdateStatusUserView($(this).attr('data-idUser'))
 })
 
-$('.modalDeleteUserView').on('click', function () {
+$('.modalDeleteUserView').on('click', function() {
     idUserDeleteUser = $(this).attr('data-idUser')
     getDeleteUserView($(this).attr('data-idUser'))
 })
@@ -48,18 +47,17 @@ function getUpdateUserView(id) {
     $.ajax({
         type: 'GET',
         url: `${siteurl}UserByProject/Update?id=${id}`,
-        success: function (resp) {
-            if (resp == "Error") {
+        success: function(resp) {
+            if (resp.status == 500) {
                 window.location.href = '/Home/Error'
-                console.log("Error al obtener vista editar usuario")
                 return;
             }
             $(".modal-body").empty().append(resp)
             $('#viewsLoader').hide()
             $('.modal-dialog').fadeIn()
         },
-        error: function (resp) {
-            console.log(resp)
+        error: function(resp) {
+            alert(resp)
         }
     })
 }
@@ -72,18 +70,17 @@ function getDeleteUserView(id) {
     $.ajax({
         type: 'GET',
         url: siteurl + `UserByProject/Delete?id=${id}`,
-        success: function (resp) {
-            if (resp == "Error") {
+        success: function(resp) {
+            if (resp.status == 500) {
                 window.location.href = '/Home/Error'
-                console.log("Error al obtener vista eliminar usuario")
                 return;
             }
             $(".modal-body").empty().append(resp)
             $('#viewsLoader').hide()
             $('.modal-dialog').fadeIn()
         },
-        error: function (resp) {
-            console.log(resp)
+        error: function(resp) {
+            alert(resp)
         }
     })
 }
@@ -96,19 +93,17 @@ function getUpdateStatusUserView(id) {
     $.ajax({
         type: 'GET',
         url: siteurl + `UserByProject/ChangeStatus/${id}`,
-        success: function (resp) {
-            if (resp == "Error") {
+        success: function(resp) {
+            if (resp.status == 500) {
                 window.location.href = '/Home/Error'
-                console.log("Error al obtener vista cambiar estatus de usuario")
                 return;
             }
             $(".modal-body").empty().append(resp)
             $('#viewsLoader').hide()
             $('.modal-dialog').fadeIn()
         },
-        error: function (resp) {
-            console.log(resp)
+        error: function(resp) {
+            alert(resp)
         }
     })
 }
-

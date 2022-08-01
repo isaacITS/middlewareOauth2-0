@@ -59,6 +59,10 @@ namespace OauthAPI.Models.Context
                     .IsUnicode(false)
                     .HasColumnName("descripcion");
 
+                entity.Property(e => e.ImageUrl)
+                    .IsUnicode(false)
+                    .HasColumnName("imageUrl");
+
                 entity.Property(e => e.FechaAlta)
                     .HasColumnType("datetime")
                     .HasColumnName("fechaAlta");
@@ -140,6 +144,10 @@ namespace OauthAPI.Models.Context
                 entity.Property(e => e.FechaCreacion)
                     .HasColumnType("datetime")
                     .HasColumnName("fechaCreacion");
+
+                entity.Property(e => e.Telefono)
+                    .IsUnicode(false)
+                    .HasColumnName("telefono");
 
                 entity.Property(e => e.Activo).HasColumnName("activo");
 

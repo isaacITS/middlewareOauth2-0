@@ -88,12 +88,12 @@
         </tr>
         <tr>
             <td bgcolor="#f4f4f4" align="center" style="padding: 0px 10px 0px 10px;">
-                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; margin-bottom: 0;">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
                     <tr>
                         <td bgcolor="#ffffff" align="center" valign="top" style="padding:10px 0px 0px 0px; border-radius: 15px 15px 0px 0px; color: #111111; font-family: 'Rubik', Helvetica, Arial, sans-serif; font-size: 32px; font-weight: 400; letter-spacing: 1px; line-height: 5px;">
                             <h3>¡Hola!</h3>
                             <h5 style="color: #0b2e57;">{contact-name}</h5>
-                            <h6 style="margin-bottom: 20px;">Solicitud de cambio de contraseña</h6>
+                            <h6>¡Se ha actualizado tu cuenta del Portal Oauth!</h6>
                         </td>
                     </tr>
                 </table>
@@ -101,10 +101,13 @@
         </tr>
         <tr>
             <td bgcolor="#f4f4f4" align="center" style="padding: 0px 5px 0px 10px;">
-                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; margin-top: 0;">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
                     <tr>
                         <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 40px 30px; color: #666666; font-family: 'Rubik', Roboto, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
-                            <p style="font-size: 18px; margin-bottom: 0;">Se ha solicitado un cambio de contraseña, puedes hacerlo dando clic en el siguiente botón:</p>
+                            <p style="margin: 0;">Se ha modificado <strong>{data-updated}</strong> de tu cuenta</p>
+                            <p style="font-size: 18px; margin-bottom: 0;">Tus nuevas credenciales son las siguientes:</p>
+                            <p style="font-size: 18px; margin-top: 0; margin-bottom: 0;"><strong>Usuario (correo):</strong>&nbsp; {user-email}</p>
+                            <p style="font-size: 18px; margin-top: 0;"><strong>Contraseña:</strong>&nbsp; {user-pass}</p>
                         </td>
                     </tr>
                     <tr>
@@ -114,7 +117,7 @@
                                     <td bgcolor="#ffffff" align="center" style="padding: 0px 20px 50px 30px;">
                                         <table border="0" cellspacing="0" cellpadding="0">
                                             <tr>
-                                                <td align="center" style="border-radius: 30px;" bgcolor="#0b2e57"><a href="{link-update-pass}" target="_blank" style="font-size: 20px; font-family: 'Rubik',Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 35px; border-radius: 10px; display: inline-block;">Actualizar contraseña</a></td>
+                                                <td align="center" style="border-radius: 30px;" bgcolor="#0b2e57"><a href="{link-signin}" target="_blank" style="font-size: 20px; font-family: 'Rubik',Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 35px; border-radius: 10px; display: inline-block;">Ingresar al portal</a></td>
                                             </tr>
                                         </table>
                                     </td>
@@ -124,12 +127,7 @@
                     </tr>
                     <tr>
                         <td bgcolor="#ffffff" align="left" style="padding: 0px 30px 0px 30px; color: #666666; font-family: 'Rubik', Roboto, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
-                            <p style="margin: 0;">Si eso no funciona, copie y pegue el siguiente enlace en su navegador:</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td bgcolor="#ffffff" align="center" style="padding: 0px 30px 0px 30px; color: #666666; font-family: 'Rubik', Roboto, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
-                            <h6 style="margin: 0; color: #e70f42;">{link-update-pass}</h6>
+                            <p style="margin: 0;">Puedes modificar tus datos en el Portal de Administración</p>
                         </td>
                     </tr>
                     <tr>
@@ -146,7 +144,7 @@
                     <tr>
                         <td bgcolor="#f4f4f4" align="left" style="padding: 20px 30px 30px 30px; color: #666666; font-family: 'Rubik', Roboto,Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 18px;">
                             <p style="margin: 0;">
-                                Si no fue usted quien solicitó este correo de restablecimiento de contraseña, puede ignorar este correo electrónico
+                                Se le envió este correo porque sus credenciales para el acceso al portal de administración oauth fueron actualizadas.
                             </p>
                         </td>
                     </tr>

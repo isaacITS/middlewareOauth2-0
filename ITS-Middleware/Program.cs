@@ -15,6 +15,7 @@ builder.Services.AddLogging(config => config.AddLog4Net("log4net.config", true))
 builder.Configuration.AddJsonFile($"appsettings.{_env.EnvironmentName}.json", optional: true, reloadOnChange: true);
 ITS_Middleware.Constants.Vars.API_URI = builder.Configuration.GetSection("ApplicationSettings:ApiSettings:DefaultUri").Value.ToString();
 
+
 var app = builder.Build();
 
 app.UseSession();

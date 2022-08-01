@@ -24,7 +24,7 @@ namespace OauthAPI.Controllers
             }
             catch (Exception ex)
             {
-                return Unauthorized(new { msg = ex.Message.ToString() });
+                return BadRequest(new { ok = false, status = 500, msg = ex.Message.ToString() });
             }
         }
 
@@ -37,7 +37,7 @@ namespace OauthAPI.Controllers
             }
             catch (Exception ex)
             {
-                return Unauthorized(new { msg = ex.Message.ToString() });
+                return BadRequest(new { ok = false, status = 500, msg = ex.Message.ToString() });
             }
         }
 
@@ -47,12 +47,12 @@ namespace OauthAPI.Controllers
         {
             try
             {
-                if (DbHelper.RegisterUSerByProject(userModel)) return Ok(new { ok = true, msg = $"Se ha registrado el usuario {userModel.NombreCompleto}" });
-                return Unauthorized(new { ok = false, msg = $"El correo {userModel.Email} ya está registrado" });
+                if (DbHelper.RegisterUSerByProject(userModel)) return Ok(new { ok = true, status = 200, msgHeader = "¡Usaurio registrado!", msg = $"Se ha registrado el usuario {userModel.NombreCompleto}" });
+                return Unauthorized(new { ok = false, status = 400, msgHeader = "No se registró el usuario", msg = $"El correo {userModel.Email} ya está registrado, intenta usar otro" });
             }
             catch (Exception ex)
             {
-                return Unauthorized(new { msg = ex.Message.ToString() });
+                return BadRequest(new { ok = false, status = 500, msg = ex.Message.ToString() });
             }
         }
 
@@ -61,12 +61,14 @@ namespace OauthAPI.Controllers
         {
             try
             {
-                if (DbHelper.UpdateUserByProject(userModel)) return Ok(new { ok = true, msg = $"Se ha actualizado el usuario {userModel.NombreCompleto}" });
-                return Unauthorized(new { ok = false, msg = "No se pudó encontrar el usuario" });
+                var oldEmail = DbHelper.GetUserByProjectById(userModel.Id).Email;
+                if (!DbHelper.isUserProjectEmailAvailable(userModel.Email) && userModel.Email != oldEmail) return Unauthorized(new { ok = false, status = 400, msgHeader = "No se actualizó el usuario", msg = $"El correo {userModel.Email} ya está registrado, intenta usar otro" });
+                if (DbHelper.UpdateUserByProject(userModel)) return Ok(new { ok = true, status = 200, msgHeader = "Usuario actualizado", msg = $"Se ha actualizado el usuario {userModel.NombreCompleto}" });
+                return Unauthorized(new { ok = false, status = 400, msgHeader = "No se pudo actualizar el usuario",  msg = "Intenta actualizar el usaurio nuevamente, más tarde"});
             }
             catch (Exception ex)
             {
-                return Unauthorized(new { ok = false, msg = ex.Message.ToString() });
+                return BadRequest(new { ok = false, status = 500, msg = ex.Message.ToString() });
             }
         }
 
@@ -75,12 +77,14 @@ namespace OauthAPI.Controllers
         {
             try
             {
-                if (DbHelper.UpdateUserByProjectStatus(id) != null) return Ok(new { ok = true, msg = "Estatus de usuario actualizado" });
-                return Unauthorized(new { ok = false, msg = "No se encontró al usuario" });
+                var user = DbHelper.GetUserByProjectById(id);
+                string action = user.Activo ? "desactivado" : "activado";
+                if (DbHelper.UpdateUserByProjectStatus(id) != null) return Ok(new { ok = true, status = 200, msgHeader = "Estatus de usuario actualizado", msg = $"Se ha {action} el usuario {user.NombreCompleto}" });
+                return Unauthorized(new { ok = false, status = 400, msg = "No se ha podido encontrar el usuario, intenta más tarde", msgHeader = "No se encontró el usuario" });
             }
             catch (Exception ex)
             {
-                return Unauthorized(new { ok = false, msg = ex.Message.ToString() });
+                return BadRequest(new { ok = false, status = 500, msg = ex.Message.ToString() });
             }
         }
 
@@ -89,12 +93,13 @@ namespace OauthAPI.Controllers
         {
             try
             {
-                if (DbHelper.DeleteUserByProject(id)) return Ok(new { ok = true, msg = "Se ha eliminado el usuario" });
-                return Unauthorized(new { ok = false, msg = "No se encontró al usuario" });
+                var user = DbHelper.GetUserByProjectById(id);
+                if (DbHelper.DeleteUserByProject(id)) return Ok(new { ok = true, status = 200, msgHeader = "Usuario eliminado con éxito", msg = $"Se ha eliminado el usuario {user.NombreCompleto} permanentemente" });
+                return Unauthorized(new { ok = false, status = 400, msgHeader = "No se encontró al usuario", msg = "No ha sido posible encontrar el usuario a elimnar, intenta más tarde" });
             }
             catch (Exception ex)
             {
-                return Unauthorized(new { ok = false, msg = ex.Message.ToString() });
+                return BadRequest(new { ok = false, status = 500, msg = ex.Message.ToString() });
             }
         }
     }

@@ -1,5 +1,5 @@
 ﻿@using ITS_Middleware.Models.Entities
-@model Proyecto
+@model ProjectImgFile
 @{
    IEnumerable<MetodosAuth> metodosAuth = ViewData["MetodosAuth"] as IEnumerable<MetodosAuth>;
 }
@@ -48,19 +48,55 @@
             </div>
              <p><small class="text-danger" id="messageEnlace"></small></p>
         </div>
+        <input type="hidden" asp-for="ImageUrl" id="ImageUrl"/>
 </form>
+
+<div class="file-upload">
+    <h2>Actualizar imagen de proyecto</h2>
+    <div class="image-saved">
+        <small id="textStatusImage"></small>
+        <img src="" id="imageSaved" alt="" srcset="">
+    </div>
+    <button class="file-upload-btn" type="button" onclick="$('.file-upload-input').trigger( 'click' )"><span class="align-middle material-icons">image</span>&nbsp;Seleccionar imagen</button>
+    <div class="image-upload-wrap">
+        <input class="file-upload-input" asp-for="ImageFile" id="ImageFile" type='file' onchange="readURL(this);" accept="image/*" />
+        <div class="drag-text">
+            <h3><span class="align-middle material-icons">image</span>&nbsp;Arrastra o selecciona una imagen</h3>
+        </div>
+    </div>
+    <div class="file-upload-content">
+        <img class="file-upload-image" src="#" alt="your image" />
+        <div class="image-title-wrap">
+            <span class="image-title"></span>
+            <br>
+            <button type="button" onclick="removeUpload()" class="remove-image"><span class="align-middle md-16 material-icons">close</span>&nbsp;Cancelar</button>
+        </div>
+    </div>
+</div>
 
 <script type="text/javascript">
     //marking registered auth methods
+    var allAuthMethods = $('.form-check-input').map(function() {
+        return this.value
+    }).get()
+    var methodsListRegistered = $('#auth-method-list').val()
+    var methodsSavedList = methodsListRegistered.split(',')
+
     $(document).ready(() => {
-        var methodsListRegistered = $('#auth-method-list').val()
-        const methodsArray = methodsListRegistered.split(',')
-        for (let x = 1; x <= $('#authMethodsLength').val(); x++) {
-            for (let i = 0; i < methodsArray.length; i++) {
-                if (methodsArray[i] == $(`#${x}`).val()) {
-                    $(`#${x}`).prop('checked', true)
-                }
+        allAuthMethods.forEach(method => {
+        methodsSavedList.forEach(mSaved => {
+            if (method == mSaved) {
+                $(`.form-check-input[value='${method}']`).prop('checked', true)
             }
+        })
+    })
+        if ($('#ImageUrl').val().length > 5) {
+            $('#imageSaved').attr('src', $('#ImageUrl').val())
+            $('#textStatusImage').append('Imagen registrada del proyecto')
+            $('#textStatusImage').css('color', "#000")
+        } else {
+            $('#textStatusImage').append('Este proyecto no cuenta con una imagen registrada')
+            $('#textStatusImage').css('color', "#D60000")
         }
     })
 </script>

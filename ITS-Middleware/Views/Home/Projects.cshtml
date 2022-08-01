@@ -47,7 +47,7 @@
                     }
                     <td>
                         <div class="dropend">
-                            <button class="btn dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">Ver métodos</button>
+                            <button class="btn dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false"><span class="align-middle material-icons">list</span>&nbsp;Ver métodos</button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
                                 @for(int i = 0; i < methodsList.Length; i++)
                                 {
@@ -75,6 +75,7 @@
                         <button class="btn btn-dark modalReadDescription" data-description="@project.Descripcion" data-bs-toggle="modal" data-bs-target="#projectModal" title="Leer descripción">
                             <span class="material-icons">library_books</span>
                         </button>
+                        <input type="hidden" value="@project.Enlace" id="linkProject"/>
                     </td>
                     <td>
                         <button class="btn btn-secondary modalStatusProjectView" data-idProject="@project.Id" title="@if (project.Activo){<text>Desactivar</text>}else{<text>Activar</text>}" data-bs-toggle="modal" data-bs-target="#projectModal">
@@ -112,8 +113,9 @@
     function getDescription(description) {
         $('.modal-dialog').fadeOut(1)
         $('#viewsLoader').show()
+        var linkProject = $('#linkProject').val()
         $('.modal-title').html('Descripción del proyecto')
-        $(".modal-body").html(`<p class="text-justify">${description}</p>`)
+        $(".modal-body").html(`<p class="text-justify">${description}</p><p><strong>Enlace:&nbsp;</strong>${linkProject}</p>`)
         $('.modal-footer').html("<button type='button' class='btn btn-outline-secondary btn-close-modal-view' data-bs-dismiss='modal'><span class='align-middle material-icons'>close</span>&nbsp;Cerrar</button>")
         $('#viewsLoader').hide()
         $('.modal-dialog').fadeIn()

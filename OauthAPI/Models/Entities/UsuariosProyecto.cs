@@ -11,6 +11,7 @@ namespace OauthAPI.Models.Entities
         public string Pass { get; set; } = null!;
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaAcceso { get; set; }
+        public string? Telefono { get; set; }
         public bool Activo { get; set; }
         public int? IdProyecto { get; set; }
     }

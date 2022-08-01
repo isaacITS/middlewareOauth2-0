@@ -25,6 +25,7 @@
                 <th>Nombre</th>
                 <th>Proyecto</th>
                 <th>Correo</th>
+                <th>Teléfono</th>
                 <th>Fecha de alta</th>
                 <th>Fecha acceso</th>
                 <th>Acciones</th>
@@ -46,6 +47,7 @@
                         }
                     </td>
                     <td>@user.Email</td>
+                    <td>@user.Telefono</td>
                     <td>@user.FechaCreacion.ToShortDateString()</td>
                     @if(user.FechaAcceso != user.FechaCreacion) {
                         <td>@user.FechaAcceso.ToShortDateString()</td>

@@ -7,8 +7,8 @@ $('#modalRegisterProjectView').on('click', () => {
     $.ajax({
         type: 'GET',
         url: siteurl + 'Project/Register/',
-        success: function (resp) {
-            if (resp == "Error") {
+        success: function(resp) {
+            if (resp.status == 500) {
                 window.location.href = '/Home/Error'
                 return;
             }
@@ -16,22 +16,22 @@ $('#modalRegisterProjectView').on('click', () => {
             $('#viewsLoader').hide()
             $('.modal-dialog').fadeIn()
         },
-        error: function (resp) {
+        error: function(resp) {
             console.log(resp)
         }
     })
 })
 
-$('.modalUpdateProjectView').on('click', function () {
+$('.modalUpdateProjectView').on('click', function() {
     getUpdateProjectView($(this).attr('data-idProject'))
 })
 
-$('.modalDeleteProjectView').on('click', function () {
+$('.modalDeleteProjectView').on('click', function() {
     getDeleteProjecctView($(this).attr('data-idProject'))
     idProjectDelete = $(this).attr('data-idProject')
 })
 
-$('.modalStatusProjectView').on('click', function () {
+$('.modalStatusProjectView').on('click', function() {
     getUpdateStatusProjectView($(this).attr('data-idProject'))
 })
 
@@ -43,8 +43,8 @@ function getUpdateProjectView(id) {
     $.ajax({
         type: 'GET',
         url: `${siteurl}Project/EditProject/${id}`,
-        success: function (resp) {
-            if (resp == "Error") {
+        success: function(resp) {
+            if (resp.status == 500) {
                 window.location.href = '/Home/Error'
                 return;
             }
@@ -52,7 +52,7 @@ function getUpdateProjectView(id) {
             $('#viewsLoader').hide()
             $('.modal-dialog').fadeIn()
         },
-        error: function (resp) {
+        error: function(resp) {
             console.log(resp)
         }
     })
@@ -66,8 +66,8 @@ function getDeleteProjecctView(id) {
     $.ajax({
         type: 'GET',
         url: `${siteurl}Project/DeleteProject/${id}`,
-        success: function (resp) {
-            if (resp == "Error") {
+        success: function(resp) {
+            if (resp.status == 500) {
                 window.location.href = '/Home/Error'
                 return;
             }
@@ -75,7 +75,7 @@ function getDeleteProjecctView(id) {
             $('#viewsLoader').hide()
             $('.modal-dialog').fadeIn()
         },
-        error: function (resp) {
+        error: function(resp) {
             console.log(resp)
         }
     })
@@ -89,8 +89,8 @@ function getUpdateStatusProjectView(id) {
     $.ajax({
         type: 'GET',
         url: `${siteurl}Project/UpdateStatus/${id}`,
-        success: function (resp) {
-            if (resp == "Error") {
+        success: function(resp) {
+            if (resp.status == 500) {
                 window.location.href = '/Home/Error'
                 return;
             }
@@ -98,7 +98,7 @@ function getUpdateStatusProjectView(id) {
             $('#viewsLoader').hide()
             $('.modal-dialog').fadeIn()
         },
-        error: function (resp) {
+        error: function(resp) {
             console.log(resp)
         }
     })

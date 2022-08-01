@@ -7,8 +7,8 @@ $('#modalRegisterView').on('click', () => {
     $.ajax({
         type: 'GET',
         url: siteurl + 'User/Register/',
-        success: function (resp) {
-            if (resp == "Error") {
+        success: function(resp) {
+            if (resp.status == 500) {
                 window.location.href = '/Home/Error'
                 console.log("Error al obtener vista registro")
                 return;
@@ -18,23 +18,23 @@ $('#modalRegisterView').on('click', () => {
             $('.modal-dialog').fadeIn()
             $('.btn-generate-pass').click()
         },
-        error: function (resp) {
+        error: function(resp) {
             console.log(resp)
         }
     })
 })
 
-$('.modalUpdateView').on('click', function () {
+$('.modalUpdateView').on('click', function() {
     getUpdateUserView($(this).attr('data-idUser'))
     idUserUpdate = $(this).attr('data-idUser')
 })
 
-$('.modalDeleteView').on('click', function () {
+$('.modalDeleteView').on('click', function() {
     getDeleteUserView($(this).attr('data-idUser'))
     idUserDelete = $(this).attr('data-idUser')
 })
 
-$('.modalStatusView').on('click', function () {
+$('.modalStatusView').on('click', function() {
     getUpdateStatusUserView($(this).attr('data-idUser'))
     idUserUpdateStatus = $(this).attr('data-idUser')
 })
@@ -47,8 +47,8 @@ function getUpdateUserView(id) {
     $.ajax({
         type: 'GET',
         url: siteurl + `User/EditUser/${id}`,
-        success: function (resp) {
-            if (resp == "Error") {
+        success: function(resp) {
+            if (resp.status == 500) {
                 window.location.href = '/Home/Error'
                 console.log("Error al obtener vista editar usuario")
                 return;
@@ -57,7 +57,7 @@ function getUpdateUserView(id) {
             $('#viewsLoader').hide()
             $('.modal-dialog').fadeIn()
         },
-        error: function (resp) {
+        error: function(resp) {
             console.log(resp)
         }
     })
@@ -71,8 +71,8 @@ function getDeleteUserView(id) {
     $.ajax({
         type: 'GET',
         url: siteurl + `User/DeleteUser/${id}`,
-        success: function (resp) {
-            if (resp == "Error") {
+        success: function(resp) {
+            if (resp.status == 500) {
                 window.location.href = '/Home/Error'
                 console.log("Error al obtener vista eliminar usuario")
                 return;
@@ -81,7 +81,7 @@ function getDeleteUserView(id) {
             $('#viewsLoader').hide()
             $('.modal-dialog').fadeIn()
         },
-        error: function (resp) {
+        error: function(resp) {
             console.log(resp)
         }
     })
@@ -95,8 +95,8 @@ function getUpdateStatusUserView(id) {
     $.ajax({
         type: 'GET',
         url: siteurl + `User/ChangeStatus/${id}`,
-        success: function (resp) {
-            if (resp == "Error") {
+        success: function(resp) {
+            if (resp.status == 500) {
                 window.location.href = '/Home/Error'
                 console.log("Error al obtener vista cambiar estatus de usuario")
                 return;
@@ -105,7 +105,7 @@ function getUpdateStatusUserView(id) {
             $('#viewsLoader').hide()
             $('.modal-dialog').fadeIn()
         },
-        error: function (resp) {
+        error: function(resp) {
             console.log(resp)
         }
     })

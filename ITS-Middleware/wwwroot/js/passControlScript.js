@@ -14,8 +14,9 @@ $('.btn-generate-pass').on('click', () => {
     $('#Pass').trigger('change')
     $('#Pass').trigger('change')
 })
+
 function autoCreate(plength) {
-    var chars = "abcdefghijklmnopqrstubwsyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890#$%&()=?¡!@*+{}-_";
+    var chars = "abcdefghijklmnopqrstubwsyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890#$%&()=?¡!@*+{}-_";
     var password = '';
     for (i = 0; i < plength; i++) {
         password += chars.charAt(Math.floor(Math.random() * chars.length));

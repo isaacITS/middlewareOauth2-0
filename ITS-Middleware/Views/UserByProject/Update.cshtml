@@ -11,7 +11,7 @@
         <label for="Nombre" class="label-form">Nombre completo:</label>
         <div class="input-group flex-nowrap">
             <span class="material-icons input-group-text" id="addon-wrapping">person</span>
-            <input class="form-control" asp-for="NombreCompleto" id="Nombre" placeholder="Nombre" />
+            <input type="text" class="form-control" asp-for="NombreCompleto" id="Nombre" placeholder="Nombre" />
         </div>
         <p><small class="text-danger" id="messageNombre"></small></p>
     </div>
@@ -28,10 +28,17 @@
         </select>
     </div>
     <div class="mb-3">
+        <label for="Telefono" class="label-form">Número de teléfono:</label>
+        <div class="input-group flex-nowrap">
+            <span class="material-icons input-group-text" id="addon-wrapping">phone_android</span>
+            <input type="tel" class="form-control" asp-for="Telefono" maxlength="15" id="Telefono" placeholder="Número de teléfono" />
+        </div>
+    </div>
+    <div class="mb-3">
         <label for="Email" class="label-form">Correo electr&oacute;nico:</label>
         <div class="input-group flex-nowrap">
             <span class="material-icons input-group-text" id="addon-wrapping">email</span>
-            <input class="form-control" asp-for="Email" id="Email" placeholder="Correo electr&oacute;nico" />
+            <input type="email" class="form-control" asp-for="Email" id="Email" placeholder="Correo electr&oacute;nico" />
         </div>
         <p><small class="text-danger" id="messageEmail"></small></p>
     </div>

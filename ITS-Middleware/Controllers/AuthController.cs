@@ -22,7 +22,7 @@ namespace ITS_Middleware.Controllers
         }
 
 
-        public IActionResult Login()
+        public async Task<IActionResult> Login()
         {
             try
             {
@@ -31,12 +31,11 @@ namespace ITS_Middleware.Controllers
                     Activo = true,
                     Nombre = "Administrador",
                     FechaAlta = DateTime.Now,
-                    Email = "admin.its@seekers.com",
-                    Pass = Encrypt.sha256("admin123"),
+                    Email = "admin.oauth@it-seekers.com",
+                    Pass = "admin123",
                     Puesto = "Administrador"
                 };
-                var response = requestHelper.RegisterUser(usuario);
-                Console.WriteLine(response.Msg);
+                var response = await requestHelper.RegisterUser(usuario);
                 if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName")))
                 {
                     return View();
@@ -59,17 +58,15 @@ namespace ITS_Middleware.Controllers
             }
         }
 
-
-
         /*      Methods Requests        */
         //Autenticacion de credenciales
         [HttpPost]
-        public IActionResult Login(string email, string pass)
+        public async Task<IActionResult> Login(string email, string pass)
         {
             try
             {
-                var response = requestHelper.SignIn(email, Encrypt.sha256(pass));
-                if (response.Ok == true)
+                var response = await requestHelper.SignIn(email, pass);
+                if (response.Ok)
                 {
                     string id = response.MsgHeader;
                     string nombre = response.Msg;
@@ -119,28 +116,27 @@ namespace ITS_Middleware.Controllers
 
         //Restore password method
         [HttpPost]
-        public IActionResult GenerateToken([FromBody] string email)
+        public async Task<IActionResult> GenerateToken([FromBody] string email)
         {
             try
             {
-                var user = requestHelper.GetUserByEmail(email);
+                var user = await requestHelper.GetUserByEmail(email);
                 if (user != null)
                 {
                     if (!user.Activo) return Json(new { ok = false, status = 205, msg = "El usuario se encuentra deshabilitado" });
                     var token = tokenJwt.CreateToken(user.Id);
                     var response = requestHelper.UpdateUserTokenRecovery(email, token);
-                    if (response.Ok)
+                    if (response.Result.Ok)
                     {
                         var baseUrl = $"{this.Request.Scheme}://{this.Request.Host.Value}";
                         var bodyEmail = System.IO.File.ReadAllText(Path.Combine(_env.ContentRootPath, @"wwwroot\htmlViews\resetPassMessage.html"))
                             .Replace("{contact-name}", user.Nombre)
                             .Replace("{link-update-pass}", $"{baseUrl}/Auth/UpdatePass?token={token}");
-                        SendEmail(email, bodyEmail, "Recuperación de contraseña, portal de administración");
-                        return Json(new { ok = true, status = 200, msg = $"Se ha enviado un correo a {email} para restablecer la contraseña" });
+                        SendEmail.SendEmailReq(email, bodyEmail, "Recuperación de contraseña, portal de administración Oauth2.0");
                     }
-                    return Json(new { ok = false, status = 400, msg = response.Msg });
+                    return Json(response);
                 }
-                return Json(new { ok = false, status = 400, msg = $"No se encontró el usuario con correo {email}" });
+                return Json(new { Ok = false, Status = 400, Msg = $"No se encontró el usuario con el correo {email}" });
             }
             catch (Exception ex)
             {
@@ -153,19 +149,19 @@ namespace ITS_Middleware.Controllers
                     errors.Add(message);
                 }
                 TempData["ErrorsMessages"] = errors;
-                return View("Error");
+                return Json(new { Ok = false, Status = 500, Msg = "Error" });
             }
         }
 
-        public IActionResult UpdatePass(string token)
+        public async Task<IActionResult> UpdatePass(string token)
         {
-            try
+            try 
             {
                 if (tokenJwt.TokenIsValid(token))
                 {
                     string[] dataToken = Encrypt.DecryptString(token).Split("$");
                     int id = int.Parse(dataToken[0]);
-                    var user = requestHelper.GetUserById(id);
+                    var user = await requestHelper.GetUserById(id);
                     if (user != null)
                     {
                         if (user.TokenRecovery == token) return View("UpdatePassword", user);
@@ -186,23 +182,21 @@ namespace ITS_Middleware.Controllers
                     errors.Add(message);
                 }
                 TempData["ErrorsMessages"] = errors;
-                return Json(new { ok = false, status = 500, msg = "Internal Server Error" });
+                return View("Error");
             }
         }
 
         [HttpPost]
-        public IActionResult UpdatePass(Usuario userModel)
+        public async Task<IActionResult> UpdatePass(Usuario userModel)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    userModel.Pass = Encrypt.sha256(userModel.Pass);
-                    var response = requestHelper.UpdateUserPassword(userModel);
-                    if(response.Ok) return Json(new { ok = true, status = 200, msg = response.Msg, MsgHeader = response.MsgHeader });
-                    return Json(new { ok = false, status = 400, msg = response.Msg, MsgHeader = response.MsgHeader });
+                    var response = await requestHelper.UpdateUserPassword(userModel);
+                    return Json(response);
                 }
-                return Json(new { ok = false, status = 400, msg = "Los datos recibidos no son válidos o están incompletos", MsgHeader = "Información no válida"});
+                return Json(new { Ok = false, Status = 400, Msg = "Los datos recibidos no son válidos o están incompletos", MsgHeader = "Información no válida"});
             }
             catch (Exception ex)
             {
@@ -215,7 +209,7 @@ namespace ITS_Middleware.Controllers
                     errors.Add(message);
                 }
                 TempData["ErrorsMessages"] = errors;
-                return Json(new { ok = false, status = 500, msg = "No se recibió un modelo válido" });
+                return Json(new { Ok = false, Status = 500, Msg = "Error" });
             }
         }
 
@@ -241,26 +235,8 @@ namespace ITS_Middleware.Controllers
                     errors.Add(message);
                 }
                 TempData["ErrorsMessages"] = errors;
-                return Json(new { ok = false, status = 500, msg = "Error" });
+                return View("Error");
             }
-        }
-
-
-
-        public void SendEmail(string toEmail, string body, string subject)
-        {
-            var smtpClient = new SmtpClient("smtp.gmail.com", 587);
-            smtpClient.Credentials = new NetworkCredential("noreply.its.portalconfig@gmail.com", "dvqxxkdwmuynsboa");
-            smtpClient.EnableSsl = true;
-
-            var email = new MailMessage();
-            email.From = new MailAddress("noreply.its.portalconfig@gmail.com");
-            email.To.Add(toEmail);
-            email.Subject = subject;
-            email.Body = body;
-            email.IsBodyHtml = true;
-
-            smtpClient.Send(email);
         }
     }
 }

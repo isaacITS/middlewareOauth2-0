@@ -20,15 +20,11 @@ namespace OauthAPI.Controllers
             try
             {
                 var authMethods = DbHelper.GetAllAuthMethods();
-                if (authMethods != null)
-                {
-                    return Ok(authMethods);
-                }
-                return Unauthorized(new { ok = false, msg = "Error al obtener los metodos Oauth" });
+                return Ok(authMethods);
             }
             catch (Exception ex)
             {
-                return Unauthorized(new { ok = false, msg = ex.Message.ToString() });
+                return BadRequest(new { ok = false, status = 500, msg = ex.Message.ToString() });
             }
         }
     }

@@ -1,51 +1,69 @@
 ﻿@using ITS_Middleware.Models.Entities
-@model Proyecto
+@model ProjectImgFile
 @{
-   IEnumerable<MetodosAuth> metodosAuth = ViewData["MetodosAuth"] as IEnumerable<MetodosAuth>;
+    IEnumerable<MetodosAuth> metodosAuth = ViewData["MetodosAuth"] as IEnumerable<MetodosAuth>;
 }
 
 <form id="registerProjectForm">
-        <div class="mb-3">
-            <label for="nombre" class="label-form">Nombre:</label>
-            <div class="input-group flex-nowrap">
-                <span class="material-icons input-group-text" id="addon-wrapping">grid_view</span>
-                <input class="form-control" asp-for="Nombre" id="Nombre" placeholder="Nombre" />
-            </div>
-            <p><small class="text-danger" id="messageNombre"></small></p>
+    <div class="mb-3">
+        <label for="nombre" class="label-form">Nombre:</label>
+        <div class="input-group flex-nowrap">
+            <span class="material-icons input-group-text" id="addon-wrapping">grid_view</span>
+            <input class="form-control" asp-for="Nombre" id="Nombre" placeholder="Nombre" />
         </div>
-        <div class="mb-3">
-            <div class="form-floating">
-              <textarea class="form-control" maxlength="500" placeholder="Descripción del proyecto:" asp-for="Descripcion" id="Descripcion"></textarea>
-              <label cclass="label-form" for="Descripcion" style="font-weight: 600;">Descripción: </label>
-            </div>
-            <p><small class="text-danger" id="messageDescripcion"></small></p>
+        <p><small class="text-danger" id="messageNombre"></small></p>
+    </div>
+    <div class="mb-3">
+        <div class="form-floating">
+            <textarea class="form-control" maxlength="500" placeholder="Descripción del proyecto:" asp-for="Descripcion" id="Descripcion"></textarea>
+            <label cclass="label-form" for="Descripcion" style="font-weight: 600;">Descripción: </label>
         </div>
-        <label for="MetodoAutenticacion" class="label-form">Metodos de autenticación:</label>
-        <br />
-        <div class="row">
-            @foreach (MetodosAuth metodosAuthLocal in metodosAuth)
-            {
-                <div class="col-6">
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="@metodosAuthLocal.Id" value="@metodosAuthLocal.Nombre">
-                        <label class="form-check-label" for="@metodosAuthLocal.Id">@metodosAuthLocal.Nombre</label>
-                    </div>
+        <p><small class="text-danger" id="messageDescripcion"></small></p>
+    </div>
+    <label for="MetodoAutenticacion" class="label-form">Metodos de autenticación:</label>
+    <br />
+    <div class="row">
+        @foreach (MetodosAuth metodosAuthLocal in metodosAuth)
+        {
+            <div class="col-6">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="@metodosAuthLocal.Id" value="@metodosAuthLocal.Nombre">
+                    <label class="form-check-label" for="@metodosAuthLocal.Id">@metodosAuthLocal.Nombre</label>
                 </div>
-            }
-        </div>
-            <input asp-for="MetodosAutenticacion" id="auth-method-list" type="hidden" />
-            <input id="authMethodsLength" type="hidden" value="@metodosAuth.Count()"/>
-            <br />
-        <div class="mb-3">
-            <label for="Enlace" class="label-form">Enlace del sitio:</label>
-            <div class="input-group flex-nowrap">
-                <span class="material-icons input-group-text" id="addon-wrapping">add_link</span>
-                <input type="url" class="form-control" id="Enlace" asp-for="Enlace" placeholder="Enlace del sitio" />
             </div>
-            <p><small class="text-danger" id="messageEnlace"></small></p>
+        }
+    </div>
+    <input asp-for="MetodosAutenticacion" id="auth-method-list" type="hidden" />
+    <input id="authMethodsLength" type="hidden" value="@metodosAuth.Count()" />
+    <br />
+    <div class="mb-3">
+        <label for="Enlace" class="label-form">Enlace del sitio:</label>
+        <div class="input-group flex-nowrap">
+            <span class="material-icons input-group-text" id="addon-wrapping">add_link</span>
+            <input type="url" class="form-control" id="Enlace" asp-for="Enlace" placeholder="Enlace del sitio" />
         </div>
+        <p><small class="text-danger" id="messageEnlace"></small></p>
+    </div>
 </form>
 
+<div class="file-upload">
+    <h2>Agregar una imagen para el proyecto</h2>
+    <button class="file-upload-btn" type="button" onclick="$('.file-upload-input').trigger( 'click' )"><span class="align-middle material-icons">image</span>&nbsp;Seleccionar imagen</button>
+    <div class="image-upload-wrap">
+        <input class="file-upload-input" id="ImageFile" asp-for="ImageFile" name="ImageFile" type='file' onchange="readURL(this);" accept="image/*" />
+        <div class="drag-text">
+            <h3><span class="align-middle material-icons">image</span>&nbsp;Arrastra o selecciona una imagen</h3>
+        </div>
+    </div>
+    <div class="file-upload-content">
+        <img class="file-upload-image" src="#" alt="your image" />
+        <div class="image-title-wrap">
+            <span class="image-title"></span>
+            <br>
+            <button type="button" onclick="removeUpload()" class="remove-image"><span class="align-middle md-16 material-icons">close</span>&nbsp;Cancelar</button>
+        </div>
+    </div>
+</div>
 
 <script src="~/js/projectScripts.js" asp-append-version="true"></script>
 <script src="~/js/passControlScript.js" asp-append-version="true"></script>

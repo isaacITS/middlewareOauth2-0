@@ -18,44 +18,80 @@ namespace OauthAPI.Controllers
         [HttpGet]
         public IActionResult SignIn(string email, string pass)
         {
-            var trySignIn = DbHelper.SignIn(email, pass);
-            if (trySignIn.Ok)
+            try
             {
-                return Ok(new { ok = true, msg = trySignIn.MsgHeader, msgHeader = trySignIn.Msg });
+                var trySignIn = DbHelper.SignIn(email, pass);
+                if (trySignIn.Ok)
+                {
+                    return Ok(trySignIn);
+                }
+                return Unauthorized(trySignIn);
+
             }
-            return Unauthorized(new { ok = false, msg = trySignIn.MsgHeader, msgHeader = trySignIn.Msg });
+            catch (Exception ex)
+            {
+                return BadRequest(new { ok = false, status = 500, msg = ex.Message.ToString() });
+            }
         }
 
         [HttpGet]
-        public IActionResult SignInService(string email)
+        public IActionResult SignInService(string email, string phoneNumber)
         {
-            return Ok(DbHelper.SignInService(email));
+            try
+            {
+                return Ok(DbHelper.SignInService(email, phoneNumber));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { ok = false, status = 500, msg = ex.Message.ToString() });
+            }
         }
 
         [HttpGet]
         public IActionResult SignInUserProject(string email, string pass)
         {
-            return Ok(DbHelper.SignInUserProject(email, pass));
+            try
+            {
+                return Ok(DbHelper.SignInUserProject(email, pass));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { ok = false, status = 500, msg = ex.Message.ToString() });
+            }
         }
 
         [HttpPut]
         public IActionResult UpdateToken(string email, string token)
         {
-            if (DbHelper.UpdateTokenUser(email, token))
+            try
             {
-                return Ok(new { ok = true, msg = "Se ha generado el token para cambiar la contraseña", msgHeader = "Token generado" });
+                if (DbHelper.UpdateTokenUser(email, token))
+                {
+                    return Ok(new { ok = true, status = 200, msg = "Se ha enviado un correo con un token para actualizar la contraseña", msgHeader = $"Correo enviado a {email}" });
+                }
+                return Unauthorized(new { ok = false, status = 400, msg = $"No se encotró un usuario registrado con el correo {email}", msgHeader = "Usuairo no encontrado" });
             }
-            return Unauthorized(new { ok = false, msg = "No se encotró un usaurio registrado, intennta más tarde", msgHeader = "Usuairo no encontrado" });
+            catch (Exception ex)
+            {
+                return BadRequest(new { ok = false, status = 500, msg = ex.Message.ToString() });
+            }
         }
 
         [HttpPut]
         public IActionResult UpdatePassword(Usuario usuario)
         {
-            if (DbHelper.UpdateUserPassword(usuario))
+            try
             {
-                return Ok(new { ok = true, msg = $"Hola {usuario.Nombre}, se ha actualizado su contraseña", msgHeader = "Contraseña actualizada" });
+                if (DbHelper.UpdateUserPassword(usuario))
+                {
+                    return Ok(new { ok = true, status = 200, msg = $"Hola {usuario.Nombre}, se ha actualizado su contraseña", msgHeader = "Contraseña actualizada" });
+                }
+                return Unauthorized(new { ok = false, status = 400, msg = "No se encotró un usuario registrado", msgHeader = "Usuairo no encontrado" });
             }
-            return Unauthorized(new { ok = false, msg = "No se encotró un usaurio registrado, intennta más tarde", msgHeader = "Usuairo no encontrado" });
+            catch (Exception ex)
+            {
+               return BadRequest(new { ok = false, status = 500, msg = ex.Message.ToString() });
+            }
         }
     }
 }

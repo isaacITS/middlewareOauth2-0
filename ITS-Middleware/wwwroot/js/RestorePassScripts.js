@@ -12,27 +12,23 @@ $(document).ready(() => {
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 data: JSON.stringify(email),
-                success: function (response) {
+                success: function(response) {
                     $('#viewsLoader').hide()
                     $('.form-restore-pass').show()
                     if (response.status == 500) {
                         window.location.href = '/Home/Error'
-                        console.log(response)
                         return;
-                    } else if (response.status == 205) {
-                        ShowToastMessage('warning', 'Usuario deshabilitado', response.msg)
-                    } else if (response.status == 200) {
-                        ShowToastMessage('success', `Correo de recuperación enviado`, response.msg)
-                        redirectToLogin()
+                    } else if (response.status == 400) {
+                        ShowToastMessage('error', response.msgHeader, response.msg)
                     } else {
-                        ShowToastMessage('error', `No se encontro el usuario`, response.msg)
+                        ShowToastMessage('success', response.msgHeader, response.msg)
                     }
                 },
-                failure: function (response) {
+                failure: function(response) {
                     console.log(response.responseText)
                     alert(response.responseText);
                 },
-                error: function (response) {
+                error: function(response) {
                     console.log(response.responseText)
                     alert(response.responseText);
                 }
@@ -42,37 +38,35 @@ $(document).ready(() => {
         }
     })
 
-    $('#btnUpdatePassword').on('click', function () {
+    $('#btnUpdatePassword').on('click', function() {
         $('.update-password-form').hide()
         $('#viewsLoader').show()
         var formData = $('#restorePasswordForm').serialize()
-            $.ajax({
-                type: 'post',
-                url: siteurl + 'Auth/UpdatePass',
-                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-                dataType: "json",
-                data: formData,
-                success: function (response) {
-                    $('#viewsLoader').hide()
-                    $('.update-password-form').show()
-                    if (response.status == 500) {
-                        window.location.href = '/Home/Error'
-                        console.log(response)
-                        return;
-                    } else if (response.status == 200) {
-                        ShowToastMessage('success', 'Contraseña actualizada', response.msg)
-                        redirectToLogin()
-                    } else {
-                        ShowToastMessage('error', `Ocurrió un error con los datos`, response.msg)
-                    }
-                },
-                failure: function (response) {
-                    alert(response.responseText);
-                },
-                error: function (response) {
-                    alert(response.responseText);
+        $.ajax({
+            type: 'post',
+            url: siteurl + 'Auth/UpdatePass',
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            dataType: "json",
+            data: formData,
+            success: function(response) {
+                $('#viewsLoader').hide()
+                $('.update-password-form').show()
+                if (response.status == 500) {
+                    window.location.href = '/Home/Error'
+                    return;
+                } else if (response.status == 400) {
+                    ShowToastMessage('error', response.msgHeader, response.msg)
+                } else {
+                    ShowToastMessage('success', response.msgHeader, response.msg)
                 }
-            });
+            },
+            failure: function(response) {
+                alert(response.responseText);
+            },
+            error: function(response) {
+                alert(response.responseText);
+            }
+        });
     })
 })
 
@@ -91,7 +85,7 @@ function checkDataSendEmail() {
 }
 
 
-$('#email').on('change keyup paste', function () {
+$('#email').on('change keyup paste', function() {
     const validEmail = new RegExp("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$");
     if (validEmail.test($('#email').val())) {
         $('#email').css('background', 'none')

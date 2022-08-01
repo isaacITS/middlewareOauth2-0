@@ -11,6 +11,7 @@ namespace OauthAPI.Models.Entities
         public string? Descripcion { get; set; }
         public DateTime FechaAlta { get; set; }
         public string MetodosAutenticacion { get; set; } = null!;
+        public string? ImageUrl { get; set; }
         public bool Activo { get; set; }
         public string Enlace { get; set; }
         public int? IdUsuarioRegsitra { get; set; }

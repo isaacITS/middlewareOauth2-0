@@ -10,10 +10,12 @@ namespace ITS_Middleware.Controllers
     {
         private readonly ILogger<UserController> _logger;
         RequestHelper requestHelper = new();
+        private readonly IHostEnvironment _env;
 
-        public UserController(ILogger<UserController> logger)
+        public UserController(ILogger<UserController> logger, IHostEnvironment env)
         {
             _logger = logger;
+            _env = env;
         }
 
         public IActionResult Register()
@@ -37,27 +39,35 @@ namespace ITS_Middleware.Controllers
                     errors.Add(message);
                 }
                 TempData["ErrorsMessages"] = errors;
-                return Json(new { ok = false, status = 500, msg = "Error" });
+                return Json(new { Ok = false, Status = 500, Msg = "Error" });
             }
         }
 
         [HttpPost]
-        public IActionResult Register(Usuario user)
+        public async Task<IActionResult> Register(Usuario user)
         {
             try
             {
+                string password = user.Pass;
                 user.FechaAlta = DateTime.Now;
                 user.Activo = true;
                 if (ModelState.IsValid)
                 {
-                    var response = requestHelper.RegisterUser(user);
+                    var response = await requestHelper.RegisterUser(user);
                     if (!response.Ok)
                     {
-                        return Json(new { ok = false, status = 410, msg = response.Msg });
+                        return Json(response);
                     }
-                    return Json(new { ok = true, status = 200, msg = response.Msg });
+                    var baseUrl = $"{this.Request.Scheme}://{this.Request.Host.Value}";
+                    var bodyEmail = System.IO.File.ReadAllText(Path.Combine(_env.ContentRootPath, @"wwwroot\htmlViews\newAccount.html"))
+                        .Replace("{contact-name}", user.Nombre)
+                        .Replace("{link-signin}", baseUrl)
+                        .Replace("{user-email}", user.Email)
+                        .Replace("{user-pass}", password);
+                    SendEmail.SendEmailReq(user.Email, bodyEmail, "Nueva cuenta para Portal de Adminstración Oauth");
+                    return Json(response);
                 }
-                return Json(new { ok = false, status = 410, msg = "Información inválida o incompleta" });
+                return Json(new { Ok = false, Status = 400, MsgHeader = "Información inválida o incompleta", Msg = "Existen algunos datos que son reuqueridos para el registro" });
             }
             catch (Exception ex)
             {
@@ -70,13 +80,13 @@ namespace ITS_Middleware.Controllers
                     errors.Add(message);
                 }
                 TempData["ErrorsMessages"] = errors;
-                return Json(new { ok = false, status = 500, msg = "Error" });
+                return Json(new { Ok = false, Status = 500, Msg = "Error" });
             }
         }
 
 
         //Editar usuario
-        public IActionResult EditUser(int id)
+        public async Task<IActionResult> EditUser(int id)
         {
             try
             {
@@ -88,12 +98,12 @@ namespace ITS_Middleware.Controllers
                 {
                     if (id == null || id == 1)
                     {
-                        return Json(new { ok = false, msg = "No se ingresó un ID válido o no puede ser editado" });
+                        return Json(new { Ok = false, MsgHeader = "No se puede editar el usaurio", Msg = "No se ingresó un ID válido o no puede ser editado" });
                     }
-                    var usuario = requestHelper.GetUserById(id);
+                    var usuario = await requestHelper.GetUserById(id);
                     if (usuario == null)
                     {
-                        return Json(new { ok = false, msg = "El ID no coincide con un usuario registrado" });
+                        return Json(new { Ok = false, MsgHeader = "No se encontró el usuario", Msg = "El ID no coincide con un usuario registrado" });
                     }
                     return PartialView(usuario);
                 }
@@ -109,21 +119,38 @@ namespace ITS_Middleware.Controllers
                     errors.Add(message);
                 }
                 TempData["ErrorsMessages"] = errors;
-                return Json(new { ok = false, status = 500, msg = "Error" });
+                return Json(new { Ok = false, Status = 500, Msg = "Error" });
             }
         }
 
         [HttpPost]
-        public IActionResult UpdateUser(Usuario user)
+        public async Task<IActionResult> UpdateUser(Usuario user)
         {
             try
             {
-                var response = requestHelper.UpdateUser(user);
+                string password = user.Pass;
+                string email = user.Email;
+                var oldUser = await requestHelper.GetUserById(user.Id);
+                var response = await requestHelper.UpdateUser(user);
                 if (response.Ok)
                 {
-                    return Json(new { ok = true, status = 200, msg = response.Msg });
+                    if (oldUser.Email != email || (!string.IsNullOrEmpty(password) && oldUser.Pass != Encrypt.sha256(password)))
+                    {
+                        string dataUpdated = oldUser.Email != email && oldUser.Pass != user.Pass ? "el correo y contraseña" : oldUser.Email != email ? "el correo" : oldUser.Pass != user.Pass ? "la contraseña" : "";
+                        password = oldUser.Pass != Encrypt.sha256(password) ? password : "Tu contraseña siguie siendo la misma";
+                        var baseUrl = $"{this.Request.Scheme}://{this.Request.Host.Value}";
+                        var bodyEmail = System.IO.File.ReadAllText(Path.Combine(_env.ContentRootPath, @"wwwroot\htmlViews\updateAccount.html"))
+                            .Replace("{contact-name}", user.Nombre)
+                            .Replace("{link-signin}", baseUrl)
+                            .Replace("{data-updated}", dataUpdated)
+                            .Replace("{user-email}", email)
+                            .Replace("{user-pass}", password);
+                        SendEmail.SendEmailReq(oldUser.Email, bodyEmail, "Actualización de datos de usuario para Portal de Administración OAuth");
+                        if (oldUser.Email != email) SendEmail.SendEmailReq(email, bodyEmail, "Actualización de datos para portal de administración OAuth");
+                    }
+                    return Json(response);
                 }
-                return Json(new { ok = false, status = 410, msg = response.Msg });
+                return Json(response);
             }
             catch (Exception ex)
             {
@@ -136,12 +163,12 @@ namespace ITS_Middleware.Controllers
                     errors.Add(message);
                 }
                 TempData["ErrorsMessages"] = errors;
-                return Json(new { ok = false, status = 500, msg = "Error" });
+                return Json(new { Ok = false, Status = 500, Msg = "Error" });
             }
         }
 
         /*UPDATE USER STATUS*/
-        public IActionResult ChangeStatus(int id)
+        public async Task<IActionResult> ChangeStatus(int id)
         {
             try
             {
@@ -153,12 +180,12 @@ namespace ITS_Middleware.Controllers
                 {
                     if (id == null || id == 1)
                     {
-                        return Json(new { ok = false, msg = "No se ingresó un ID válido o no puede ser activado/desactivado" });
+                        return Json(new { Ok = false, MsgHeader = "No se puede editar el usuario", Msg = "No se ingresó un ID válido o no puede ser activado/desactivado" });
                     }
-                    var usuario = requestHelper.GetUserById(id);
+                    var usuario = await requestHelper.GetUserById(id);
                     if (usuario == null)
                     {
-                        return Json(new { ok = false, msg = "El ID no coincide con un usuario registrado" });
+                        return Json(new { Ok = false, MsgHeader = "Usuario no encontrado", Msg = "El ID no coincide con un usuario registrado" });
                     }
                     return PartialView(usuario);
                 }
@@ -174,22 +201,18 @@ namespace ITS_Middleware.Controllers
                     errors.Add(message);
                 }
                 TempData["ErrorsMessages"] = errors;
-                return Json(new { ok = false, status = 500, msg = "Error" });
+                return Json(new { Ok = false, Status = 500, Msg = "Error" });
             }
         }
 
 
         [HttpPost]
-        public IActionResult UpdateStatus(int id)
+        public async Task<IActionResult> UpdateStatus(int id)
         {
             try
             {
-                var response = requestHelper.UpdateUserStatus(id);
-                if (response.Ok)
-                {
-                    return Json(new { ok = true, status = 200, msg = response.Msg });
-                }
-                return Json(new { ok = false, status = 410, msg = response.Msg });
+                var response = await requestHelper.UpdateUserStatus(id);
+                return Json(response);
             }
             catch (Exception ex)
             {
@@ -202,13 +225,13 @@ namespace ITS_Middleware.Controllers
                     errors.Add(message);
                 }
                 TempData["ErrorsMessages"] = errors;
-                return Json(new { ok = false, status = 500, msg = "Error" });
+                return Json(new { Ok = false, Status = 500, Msg = "Error" });
             }
         }
 
 
         //Eliminar usuario
-        public IActionResult DeleteUser(int id)
+        public async Task<IActionResult> DeleteUser(int id)
         {
             try
             {
@@ -220,12 +243,12 @@ namespace ITS_Middleware.Controllers
                 {
                     if (id == null || id == 1)
                     {
-                        return Json(new { ok = false, msg = "No se ingresó un ID válido o no puede ser eliminado" });
+                        return Json(new { Ok = false, MsgHeader = "No se puede encontrar un usuario", Msg = "No se ingresó un ID válido o no puede ser eliminado" });
                     }
-                    var usuario = requestHelper.GetUserById(id);
+                    var usuario = await requestHelper.GetUserById(id);
                     if (usuario == null)
                     {
-                        return Json(new { ok = false, msg = "El ID No coincide con un usuario registrado" });
+                        return Json(new { Ok = false, MsgHeader = "No se encontró un usuario", Msg = "El ID No coincide con un usuario registrado" });
                     }
                     return PartialView(usuario);
                 }
@@ -241,22 +264,18 @@ namespace ITS_Middleware.Controllers
                     errors.Add(message);
                 }
                 TempData["ErrorsMessages"] = errors;
-                return Json(new { ok = false, status = 500, msg = "Error" });
+                return Json(new { Ok = false, Status = 500, Msg = "Error" });
             }
         }
 
 
         [HttpPost]
-        public IActionResult DeleteUserPost([FromBody] int id)
+        public async Task<IActionResult> DeleteUserPost([FromBody] int id)
         {
             try
             {
-                var response = requestHelper.DeleteUser(id);
-                if (response.Ok)
-                {
-                    return Json(new { ok = true, status = 200, msg = response.Msg });
-                }
-                return Json(new { ok = false, status = 410, msg = response.Msg });
+                var response = await requestHelper.DeleteUser(id);
+                return Json(response);
             }
             catch (Exception ex)
             {
@@ -269,7 +288,7 @@ namespace ITS_Middleware.Controllers
                     errors.Add(message);
                 }
                 TempData["ErrorsMessages"] = errors;
-                return Json(new { ok = false, status = 500, msg = "Error" });
+                return Json(new { Ok = false, Status = 500, Msg = "Error" });
             }
         }
     }

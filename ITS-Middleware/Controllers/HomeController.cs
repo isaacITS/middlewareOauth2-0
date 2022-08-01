@@ -37,12 +37,12 @@ namespace ITS_Middleware.Controllers
                     errors.Add(message);
                 }
                 TempData["ErrorsMessages"] = errors;
-                return Json(new { ok = false, status = 500, msg = "Error" });
+                return Json(new { Ok = false, Status = 500, Msg = "Error" });
             }
         }
 
         //Get all projects
-        public IActionResult Projects()
+        public async Task<IActionResult> Projects()
         {
             try
             {
@@ -50,8 +50,8 @@ namespace ITS_Middleware.Controllers
                 {
                     return RedirectToAction("Login", "Auth");
                 }
-                var projects = requestHelper.GetAllProjects();
-                var users = requestHelper.GetAllUsers(true);
+                var projects = await requestHelper.GetAllProjects();
+                var users = await requestHelper.GetAllUsers(true);
                 ViewData["UserList"] = users;
                 return PartialView(projects);
             }
@@ -66,13 +66,13 @@ namespace ITS_Middleware.Controllers
                     errors.Add(message);
                 }
                 TempData["ErrorsMessages"] = errors;
-                return Json(new { ok = false, status = 500, msg = "Error" });
+                return Json(new { Ok = false, Status = 500, Msg = "Error" });
             }
         }
 
 
         //Get all Users
-        public IActionResult Users()
+        public async Task<IActionResult> Users()
         {
             try
             {
@@ -80,7 +80,7 @@ namespace ITS_Middleware.Controllers
                 {
                     return RedirectToAction("Login", "Auth");
                 }
-                var users = requestHelper.GetAllUsers(false);
+                var users = await requestHelper.GetAllUsers(false);
                 return PartialView(users);
             }
             catch (Exception ex)
@@ -94,13 +94,13 @@ namespace ITS_Middleware.Controllers
                     errors.Add(message);
                 }
                 TempData["ErrorsMessages"] = errors;
-                return Json(new { ok = false, status = 500, msg = "Error" });
+                return Json(new { Ok = false, Status = 500, Msg = "Error" });
             }
         }
 
 
         //Get and return view usersByProject with all data registered in DB
-        public IActionResult UsersByProject()
+        public async Task<IActionResult> UsersByProject()
         {
             try
             {
@@ -108,8 +108,8 @@ namespace ITS_Middleware.Controllers
                 {
                     return RedirectToAction("Login", "Auth");
                 }
-                var usersByProject = requestHelper.GetAllUsersByProject();
-                var projects = requestHelper.GetAllProjects();
+                var usersByProject = await requestHelper.GetAllUsersByProject();
+                var projects = await requestHelper.GetAllProjects();
                 ViewData["ProjectsList"] = projects;
                 return PartialView(usersByProject);
             }
@@ -124,7 +124,7 @@ namespace ITS_Middleware.Controllers
                     errors.Add(message);
                 }
                 TempData["ErrorsMessages"] = errors;
-                return Json(new { ok = false, status = 500, msg = "Error" });
+                return Json(new { Ok = false, Status = 500, Msg = "Error" });
             }
         }
 

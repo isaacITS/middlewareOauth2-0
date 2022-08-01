@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Passion+One:wght@700&display=swap');
 html {
     font-size: 14px;
     font-family: 'Roboto';
@@ -8,7 +8,6 @@ html {
 .btn span {
     margin: 0;
 }
-
 
 @media (min-width: 768px) {
     html {
@@ -72,16 +71,17 @@ body .table tbody tr td .btn-secondary {
     border-radius: 25px;
     transition: all .3s;
 }
+
 body .table tbody tr td .btn-secondary:hover {
     background-color: #093C5D;
 }
 
 body .table tbody tr td .btn-secondary[title='Desactivar'] {
     color: #00ff04;
-    
 }
+
 body .table tbody tr td .btn-secondary[title='Activar'],
-body .table tbody tr td .btn-secondary[title='Activar ']{
+body .table tbody tr td .btn-secondary[title='Activar '] {
     color: #FF372D;
 }
 
@@ -89,10 +89,11 @@ body .table tbody tr td .dropend button {
     width: 100%;
     font-weight: 600;
     font-size: 11pt;
+    transition: all .2s;
 }
 
 body .table tbody tr td .dropend button:focus {
-    box-shadow: 0px 0px 5px 1px #022338;
+    box-shadow: 4px 4px 6px 0px #022338;
 }
 
 body .table tbody tr td .dropend .dropdown-menu {
@@ -112,7 +113,7 @@ body .table tbody tr td .dropend .dropdown-menu li:hover {
 
 header nav {
     height: 100%;
-    width: 0;
+    width: 210px;
     position: fixed;
     z-index: 1;
     top: 0;
@@ -123,18 +124,16 @@ header nav {
     transition: 0.5s;
 }
 
-
-
 header nav .sidenav {
     position: relative;
     height: 100%;
 }
 
 header nav .sidenav a {
-    padding: 8px 8px 8px 32px;
+    padding: 5px 5px 5px 15px;
     text-decoration: none;
-    font-size: 16px;
-    color: #a8a8a8;
+    font-size: 14px;
+    color: #e4e4e4;
     display: block;
     transition: .3s ease-in-out, box-shadow .3s ease-in-out;
     font-weight: 900;
@@ -245,6 +244,12 @@ header .nav-bar-top .pc-width .icon-user-online {
     font-weight: 600;
 }
 
+.modal .modal-dialog .modal-content form .mb-3 .form-select,
+.modal .modal-dialog .modal-content form .mb-3 .form-select option {
+    font-weight: 600;
+    font-size: 15px;
+}
+
 .modal .modal-dialog .modal-content .input-group span {
     color: #f8f8f8;
     background-color: #022338;
@@ -257,20 +262,167 @@ header .nav-bar-top .pc-width .icon-user-online {
 
 .modal .modal-dialog .modal-content .modal-body form .mb-3 .alert-danger {
     padding-bottom: 0;
+    font-weight: 600;
+    font-size: 15px;
 }
+
 .modal .modal-dialog .modal-content .modal-body form .mb-3 .alert-danger p {
     margin-top: 5px;
+    margin-top: 10px;
 }
 
 .modal .modal-dialog .modal-content .modal-body form textarea {
     height: 80px;
 }
 
+.modal .modal-dialog .modal-content .modal-body .file-upload {
+    width: 100%;
+    margin-top: 25px;
+    text-align: center;
+    color: #022338;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload h2 {
+    font-weight: 600;
+    font-size: 17px;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload .file-upload-btn {
+    width: 100%;
+    color: #fff;
+    background-color: #022338;
+    border: none;
+    padding: 5px;
+    border-radius: 4px;
+    transition: all .2s ease;
+    outline: none;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload .file-upload-btn:hover {
+    background-color: #0223382c;
+    color: #002999;
+    transition: all .2s ease;
+    cursor: pointer;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload .file-upload-btn:active {
+    border: 0;
+    transition: all .2s ease;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload .file-upload-content {
+    display: none;
+    text-align: center;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload .file-upload-input {
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    outline: none;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload .image-saved {
+    margin-bottom: 10px;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload .image-saved img {
+    width: 15%;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload .image-upload-wrap {
+    border: solid 2px #02233813;
+    border-radius: 5px;
+    position: relative;
+    transition: all .2s ease-in-out;
+    margin-top: 10px;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload .image-dropping,
+.image-upload-wrap:hover {
+    background-color: #02233813;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload .image-title-wrap {
+    padding: 0 10px 5px 5px;
+    color: #222;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload .image-title-wrap .image-title {
+    font-weight: 600;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload .drag-text {
+    text-align: center;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload .drag-text h3 {
+    font-weight: bold;
+    color: #022338;
+    font-size: 20px;
+    padding: 40px 0;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload .file-upload-image {
+    max-width: 350px;
+    margin: auto;
+    padding: 20px;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload .remove-image {
+    margin: 0;
+    color: #970f00;
+    background: none;
+    border: none;
+    padding: 5px;
+    border-radius: 5px;
+    transition: all .2s ease;
+    outline: none;
+    font-weight: 700;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload .upload-image {
+    border: none;
+    background-color: #005e10;
+    color: #fff;
+    font-weight: 600;
+    transition: all .2s;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload .upload-image:hover {
+    background-color: #00ff2a28;
+    color: #008116;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload .remove-image:hover {
+    background: #ff1e0033;
+    color: #ff0000;
+    transition: all .2s ease;
+    cursor: pointer;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload .remove-image:active {
+    border: 0;
+    transition: all .2s ease;
+}
+
+.modal .modal-dialog .modal-content .modal-body input[type='password'] {
+    letter-spacing: 2px;
+    font-weight: 900;
+}
+
 .ring {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%, -50%);
     width: 100px;
     height: 100px;
     background: transparent;
@@ -280,7 +432,7 @@ header .nav-bar-top .pc-width .icon-user-online {
     line-height: 150px;
     letter-spacing: 4px;
     text-transform: uppercase;
-    box-shadow: 0 0 20px rgba(0,0,0,.5);
+    box-shadow: 0 0 20px rgba(0, 0, 0, .5);
     z-index: 20;
 }
 
@@ -308,6 +460,16 @@ header .nav-bar-top .pc-width .icon-user-online {
 #btn-action-pass:hover {
     background-color: #093C5D;
     color: #f5f5f5;
+}
+
+#imageSaved {
+    transition: all .3s ease-in-out;
+    cursor: pointer;
+}
+
+#imageSaved:hover,
+#imageSaved:focus {
+    transform: scale(4);
 }
 
 .ring span {
@@ -355,23 +517,33 @@ header .nav-bar-top .pc-width .icon-user-online {
     color: #151515ff;
 }
 
-.dataTables_length, .dataTables_filter {
+.dataTables_length,
+.dataTables_filter {
     margin-bottom: 10px;
 }
 
-.dataTables_info, .dataTables_paginate {
+.dataTables_info,
+.dataTables_paginate {
     margin-top: 10px;
 }
 
+#dropdownMenu2 span {
+    margin-top: -3px;
+    font-size: 22px;
+}
 
-#modalRegisterView, #modalRegisterProjectView, #modalRegisterUserView {
+#modalRegisterView,
+#modalRegisterProjectView,
+#modalRegisterUserView {
     background-color: #022338;
     border: solid 1px #022338;
     transition: ease-out .3s;
     font-weight: 600;
 }
 
-#modalRegisterView:hover, #modalRegisterProjectView:hover, #modalRegisterUserView:hover {
+#modalRegisterView:hover,
+#modalRegisterProjectView:hover,
+#modalRegisterUserView:hover {
     background-color: #df1847;
     border: solid 1px #df1847;
 }
@@ -380,7 +552,6 @@ footer {
     margin-top: 0;
     margin-bottom: 0;
 }
-
 
 @keyframes animateC {
     0% {
@@ -395,12 +566,10 @@ footer {
     0% {
         transform: rotate(45deg);
     }
-
     100% {
         transform: rotate(405deg);
     }
 }
-
 
 @keyframes animateModal {
     50% {

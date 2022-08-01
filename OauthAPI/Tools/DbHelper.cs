@@ -8,6 +8,7 @@ namespace OauthAPI.Tools
     internal static class DbHelper
     {
         private static readonly OauthContextDb _context = new();
+        private static ResponseApi apiResponse = new();
 
         /* ====================> DATABASE USERS HELPERS <==========================*/
         //=> GET ALL USERS
@@ -42,7 +43,6 @@ namespace OauthAPI.Tools
         /*=> REGISTER NEW USER*/
         public static bool RegisterUser(Usuario userModel)
         {
-            userModel.Pass = Encrypt.sha256(userModel.Pass);
             if (isEmailAvailable(userModel.Email))
             {
                 _context.Add(userModel);
@@ -59,10 +59,9 @@ namespace OauthAPI.Tools
             {
                 var userSaved = GetUserById(userModel.Id);
                 userModel.Activo = userSaved.Activo;
-                if (string.IsNullOrEmpty(userModel.Pass)) {
+                if (string.IsNullOrEmpty(userModel.Pass))
+                {
                     userModel.Pass = userSaved.Pass;
-                } else {
-                    userModel.Pass = Encrypt.sha256(userModel.Pass);
                 }
                 var local = _context.Set<Usuario>().Local.FirstOrDefault(entry => entry.Id.Equals(userModel.Id));
                 if (local != null) _context.Entry(local).State = EntityState.Detached;
@@ -254,6 +253,12 @@ namespace OauthAPI.Tools
             return getUserByProject;
         }
 
+        internal static UsuariosProyecto GetUserByProjectByPhone(string phoneNumber)
+        {
+            var getUserByProject = _context.UsuariosProyectos.FirstOrDefault(uP => uP.Telefono == phoneNumber);
+            return getUserByProject;
+        }
+
         /*=> GET USER BY PROJECT BY ID*/
         public static UsuariosProyecto GetUserByProjectById(int id)
         {
@@ -275,7 +280,6 @@ namespace OauthAPI.Tools
         /*=> REGISTER NEW USER BY PROJECT*/
         public static bool RegisterUSerByProject(UsuariosProyecto userModel)
         {
-            userModel.Pass = Encrypt.sha256(userModel.Pass);
             if (isUserProjectEmailAvailable(userModel.Email))
             {
                 _context.Add(userModel);
@@ -292,10 +296,9 @@ namespace OauthAPI.Tools
             userModel.FechaCreacion = userSaved.FechaCreacion;
             userModel.FechaAcceso = userSaved.FechaAcceso;
             userModel.Activo = userSaved.Activo;
-            if (string.IsNullOrEmpty(userModel.Pass)) { 
-                userModel.Pass = userSaved.Pass; 
-            } else {
-                userModel.Pass = Encrypt.sha256(userModel.Pass);
+            if (string.IsNullOrEmpty(userModel.Pass))
+            {
+                userModel.Pass = userSaved.Pass;
             }
 
             var local = _context.Set<UsuariosProyecto>().Local.FirstOrDefault(entry => entry.Id.Equals(userModel.Id));
@@ -344,63 +347,74 @@ namespace OauthAPI.Tools
 
 
         //======> SIGN IN METHODS
-        public static dynamic SignIn(string email, string pass)
+        public static ResponseApi SignIn(string email, string pass)
         {
-            ResponseApi response = new();
             var user = GetUserByEmail(email);
             if (user == null)
             {
-                response.Ok = false; response.MsgHeader = "Usuario no registrado"; response.Msg =  "No se ha encontrado el usuario";
-                return response;
+                apiResponse.Ok = false; apiResponse.Status = 400; apiResponse.MsgHeader = "Usuario no registrado"; apiResponse.Msg = "No se ha encontrado el usuario";
+                return apiResponse;
             }
-            if (user.Activo == false)
+            if (!user.Activo)
             {
-                response.Ok = false; response.MsgHeader = "Usuario deshabilitado"; response.Msg = "El usuario se encuentra deshabilitado";
-                return response;
+                apiResponse.Ok = false; apiResponse.Status = 400; apiResponse.MsgHeader = "Usuario deshabilitado"; apiResponse.Msg = "El usuario se encuentra deshabilitado";
+                return apiResponse;
             }
             if (user.Pass != pass)
             {
-                response.Ok = false; response.MsgHeader = "Contraseña incorrecta"; response.Msg = "Verifica la contraseña ingresada";
-                return response;
+                apiResponse.Ok = false; apiResponse.Status = 400; apiResponse.MsgHeader = "Contraseña incorrecta"; apiResponse.Msg = "La contraseña ingresada no es correcta";
+                return apiResponse;
             }
-            response.Ok = true; response.MsgHeader = user.Nombre; response.Msg = Convert.ToString(user.Id);
-            return response;
+            apiResponse.Ok = true; apiResponse.Status = 200; apiResponse.Msg = user.Nombre; apiResponse.MsgHeader = Convert.ToString(user.Id);
+            return apiResponse;
         }
 
-        public static ResponseApi SignInService(string email)
+
+        public static ResponseApi SignInService(string email, string phoneNumber)
         {
+            if (!string.IsNullOrEmpty(phoneNumber))
+            {
+                var userPhone = GetUserByProjectByPhone(phoneNumber);
+                if (userPhone != null)
+                {
+                    apiResponse.Ok = true; apiResponse.Msg = "Inicio de sesión válido"; apiResponse.MsgHeader = "Se encontró el usaurio";
+                    return apiResponse;
+                }
+                apiResponse.Ok = false; apiResponse.Msg = "No se encontró el usaurio"; apiResponse.MsgHeader = "Error";
+                return apiResponse;
+            }
             var user = GetUserByProjectByEmail(email);
-            ResponseApi response = new();
             if (user != null)
             {
-                response.Ok = true; response.Msg = "Inicio de sesión válido"; response.MsgHeader = "Se encontró el usaurio";
-                return response;
+                apiResponse.Ok = true; apiResponse.Msg = "Inicio de sesión válido"; apiResponse.MsgHeader = "Se encontró el usaurio";
+                return apiResponse;
             }
-            response.Ok = false; response.Msg = "No se encontró el usaurio"; response.MsgHeader = "Error";
-            return response;
+            apiResponse.Ok = false; apiResponse.Msg = "No se encontró el usaurio"; apiResponse.MsgHeader = "Error";
+            return apiResponse;
         }
+
+
 
         public static ResponseApi SignInUserProject(string email, string pass)
         {
-            ResponseApi response = new();
             var user = GetUserByProjectByEmail(email);
             if (user == null)
             {
-                response.Ok = false; response.MsgHeader = "Usuario no registrado"; response.Msg = $"No se ha encontrado el correo {email}";
-                return response;
+                apiResponse.Ok = false; apiResponse.Status = 400; apiResponse.MsgHeader = "Usuario no registrado"; apiResponse.Msg = "No se ha encontrado el usuario";
+                return apiResponse;
             }
-            if (user.Activo == false)
+            if (!user.Activo)
             {
-                response.Ok = false; response.MsgHeader = "Usuario deshabilitado"; response.Msg = "El usuario se encuentra deshabilitado";
-                return response;
+                apiResponse.Ok = false; apiResponse.Status = 400; apiResponse.MsgHeader = "Usuario deshabilitado"; apiResponse.Msg = "El usuario se encuentra deshabilitado";
+                return apiResponse;
             }
             if (user.Pass != pass)
             {
-                response.Ok = false; response.MsgHeader = "Contraseña incorrecta"; response.Msg = "La contraseña ingresada es incorrecta";
-                return response;
+                apiResponse.Ok = false; apiResponse.Status = 400; apiResponse.MsgHeader = "Contraseña incorrecta"; apiResponse.Msg = "La contraseña ingresada no es correcta";
+                return apiResponse;
             }
-            response.Ok = true; response.MsgHeader = user.Email; response.Msg = Convert.ToString(user.NombreCompleto);
-            return response;
+            apiResponse.Ok = true; apiResponse.Status = 200; apiResponse.MsgHeader = user.NombreCompleto; apiResponse.Msg = Convert.ToString(user.Id);
+            return apiResponse;
         }
     }
 }

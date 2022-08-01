@@ -2,37 +2,43 @@
 @{
    Proyecto project = ViewData["project"] as Proyecto;
 }
-<div class="content-form" >
+<div class="content-form">
+    <input type="hidden" value="@project.ImageUrl" id="projectImageUrl"/>
     <form class="form-login" id="signInForm">
         <h1>Inicia sesión en <strong>@project.Nombre</strong></h1>
         <div class="form-floating mb-3">
             <input class="form-control" type="email" name="email" id="email" placeholder="Correo electrónico" required />
             <label class="form-label" for="email"><i class="fas fa-envelope"></i>&nbsp;Correo electrónico:</label>
+            <p class="text-danger"><small id="messageEmail"></small></p>
         </div>
         <div class="form-floating mb-3">
             <input class="form-control" type="password" name="pass" id="pass" placeholder="Contraseña" required />
             <label class="form-label" for="pass"><i class="fas fa-key"></i>&nbsp;Contraseña:</label>
+            <p class="text-danger"><small id="messagePass"></small></p>
         </div>
         <div class="d-grid gap-2 col-6 mx-auto">
-            <button type="button" id="sign-in-email-pass" class="btn sign-in"><i class="fas fa-sign-in-alt"></i>&nbsp;Ingresar</button>
+            <button type="button" id="sign-in-email-pass" class="btn sign-in" disabled><i class="fas fa-sign-in-alt"></i>&nbsp;Ingresar</button>
         </div>
         @{
             string[] authMethods = project.MetodosAutenticacion.Split(",");
             if(authMethods.Length > 1)
             {
                 <div class="oauth-services">
-                <div class="divisor">
-                    <hr>
-                    <p>o</p>
-                    <hr>
-                </div>
+                    <div class="divisor">
+                        <hr><p>o</p><hr>
+                    </div>
                     <div class="row">
                         @foreach(string method in authMethods)
                         {
-                            if(method != "Correo y contrasena")
+                            if(method != "Correo y contrasena" && method != "Numero de telefono")
                             {
                                 <div class="col">
                                     <button class="btn" id="@method" type="button"><i class="fab fa-@method.ToLower()"></i></button>
+                                </div>
+                            } else if(method == "Numero de telefono")
+                            {
+                                <div class="col">
+                                    <button class="btn" id="@method.Replace(' ','-')" type="button" data-bs-toggle="modal" data-bs-target="#signInPhoneModal"><i class="fas fa-phone"></i></button>
                                 </div>
                             }
                         }
