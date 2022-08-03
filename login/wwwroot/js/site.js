@@ -2,6 +2,7 @@
 var isEmailValid = false
 var validEmail = new RegExp("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$")
 var projectImage
+var projectId = $('#projectId').val()
 
 var ui = new firebaseui.auth.AuthUI(firebase.auth())
 var auth = firebase.auth()
@@ -82,26 +83,30 @@ $('#Numero-de-telefono').on('click', async () => {
 
 const signInWithPopup = async (provider) => {
     var currentUser = auth.currentUser
+    if (currentUser != null) {
+        deleteAccount()
+    }
     await auth.signInWithPopup(provider).then(result => {
         var token = result.credential.accessToken
         var user = result.user
         if (user != null) {
-            var data = { email: user.email, pass: "", phoneNumber: "" }
+            var data = `email=${user.email}&projectId=${projectId}&userUid=${user.uid}`
             tokenService = token
             signIn(data)
         } else {
             ShowToastMessage('error', 'No se pudo acceder', 'No se pudo obtener la información para el inicio de sesión, intenta de nuevo')
         }
     }).catch(error => {
-        console.log(currentUser)
-        conosle.log(error.credentials)
-        if (currentUser != null) {
-            var data = { email: currentUser.email ?? "", pass: "", phoneNumber: currentUser.phoneNumber ?? "" }
-            tokenService = currentUser.refreshToken
-            console.log(data)
-            signIn(data)
-        } else {
-            alert(error)
+        if (error.code == "auth/internal-error") {
+            auth.signInWithPopup(provider).then((result) => {
+                var token = result.credential.accessToken
+                var user = result.user
+                var data = `email=${user.email}&projectId=${projectId}&userUid=${user.uid}`
+                tokenService = token
+                signIn(data)
+            }).catch((error) => {
+                alert(error)
+            });
         }
     })
 }
@@ -112,7 +117,7 @@ function getUiConfig() {
             signInSuccess: function (response) {
                 console.log(response.phoneNumber)
                 if (response != null && response.phoneNumber != null) {
-                    var data = { email: "", pass: "", phoneNumber: response.phoneNumber }
+                    var data = `phoneNumber=${response.phoneNumber.slice(-10)}&projectId=${projectId}&userUid=${response.uid}`
                     tokenService = response.refreshToken
                     signIn(data)
                     $('.btn-close').click()
@@ -133,24 +138,18 @@ function getUiConfig() {
     }
 }
 
-var handleSignedInUser = function (user) {
-    if (user.photoURL) {
-        var photoURL = user.photoURL
-        /*if ((photoURL.indexOf('googleusercontent.com') != -1) ||
-            (photoURL.indexOf('ggpht.com') != -1)) {
-            photoURL = photoURL + '?sz=' +
-                document.getElementById('photo').clientHeight;
-        }*/
-    }
-};
 
-var deleteAccount = function () {
+function signOutFb() {
+    auth.signOut().then(() => {
+        console.log("SignOut...")
+    })
+}
+
+function deleteAccount() {
     firebase.auth().currentUser.delete().catch(function (error) {
         if (error.code == 'auth/requires-recent-login') {
             firebase.auth().signOut().then(function () {
-                setTimeout(function () {
-                    alert('Please sign in again to delete your account.');
-                }, 1);
+                console.log("SignOut...")
             });
         }
     });
@@ -158,36 +157,54 @@ var deleteAccount = function () {
 
 
 function signIn(data) {
+    $('.loader-form').show()
     $.ajax({
         type: 'POST',
         url: siteurl + 'Home/SignIn',
         contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
         dataType: "json",
         data: data,
-        success: function(response) {
+        success: function (response) {
+            $('.loader-form').hide()
             if (response.status == 500) {
                 window.location.href = '/Home/Error';
                 return;
             } else if (response.status == 400) {
                 ShowToastMessage('error', response.msgHeader, response.msg)
             } else {
+                ShowToastMessage('success', "Ingresando...", "En un momento serás redireccionado a la pantalla principal")
                 window.location.href = `${redirectToUrl}/signIn?token=${tokenService}`
             }
         },
-        failure: function(response) {
+        failure: function (response) {
             console.log(response.responseText)
             alert(response.responseText);
         },
-        error: function(response) {
+        error: function (response) {
             console.log(response.responseText)
             alert(response.responseText);
         }
     });
 }
 
-$('#sign-in-email-pass').on('click', function() {
-    var data = $('#signInForm').serialize()
+$('#sign-in-email-pass').on('click', function () {
+    var data = `email=${$('#email').val()}&pass=${$('#pass').val()}&projectId=${projectId}`
     signIn(data)
+})
+
+
+$('#emailResPass').on('change keyup paste input', () => {
+    $('#sendEmailRestorePass').prop('disabled', true)
+    if ($('#emailResPass').val() == "") {
+        $('#messageInvalidEmail').html('<i class="bi bi-exclamation-circle-fill"></i><small> Ingresa un correo electrónico para continuar</small>')
+        $('#messageInvalidEmail').show()
+    } else if (!validEmail.test($('#emailResPass').val())) {
+        $('#messageInvalidEmail').html('<i class="bi bi-exclamation-circle-fill"></i><small> Debes ingresar un correo electrónico valido (ej: user@mail.com)</small>')
+        $('#messageInvalidEmail').show()
+    } else {
+        $('#sendEmailRestorePass').prop('disabled', false)
+        $('#messageInvalidEmail').hide()
+    }
 })
 
 
@@ -214,6 +231,14 @@ function ShowToastMessage(type, title_short_text, body_text) {
         $('#liveToast').removeClass("bg-warning");
         $('#liveToast').removeClass("bg-danger");
         $('#liveToast').addClass("bg-info");
+    } else if (type == 'success') {
+        $('#toast-title-icon').text('done');
+        $('#toast-title-text').text(' Listo');
+        $('#toast-body-text').addClass('text-light');
+        $('#liveToast').removeClass("bg-warning");
+        $('#liveToast').removeClass("bg-danger");
+        $('#liveToast').removeClass("bg-info");
+        $('#liveToast').addClass("bg-success");
     }
     $('#toast-title-short-text').text(title_short_text);
     $('#toast-body-text').text(body_text);

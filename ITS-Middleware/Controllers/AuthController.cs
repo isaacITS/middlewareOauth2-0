@@ -2,8 +2,6 @@
 using ITS_Middleware.Tools;
 using ITS_Middleware.Models.Entities;
 using ITS_Middleware.ExceptionsHandler;
-using System.Net.Mail;
-using System.Net;
 using ITS_Middleware.Helpers;
 
 namespace ITS_Middleware.Controllers

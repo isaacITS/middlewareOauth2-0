@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OauthAPI.Models.Entities;
 using OauthAPI.Tools;
@@ -30,6 +31,7 @@ namespace OauthAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult GetById(int id)
         {
             try

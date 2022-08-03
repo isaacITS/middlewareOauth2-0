@@ -13,6 +13,7 @@ namespace OauthAPI.Models.Entities
         public DateTime FechaAcceso { get; set; }
         public string? Telefono { get; set; }
         public bool Activo { get; set; }
+        public string? TokenRecovery { get; set; }
         public int? IdProyecto { get; set; }
     }
 }

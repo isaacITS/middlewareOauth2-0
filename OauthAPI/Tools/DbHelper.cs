@@ -2,6 +2,7 @@
 using OauthAPI.Models.Context;
 using OauthAPI.Models.Entities;
 using Microsoft.EntityFrameworkCore;
+using OauthAPI.Helpers;
 
 namespace OauthAPI.Tools
 {
@@ -9,6 +10,7 @@ namespace OauthAPI.Tools
     {
         private static readonly OauthContextDb _context = new();
         private static ResponseApi apiResponse = new();
+        private static FirebaseHelper firebaseHelper = new();
 
         /* ====================> DATABASE USERS HELPERS <==========================*/
         //=> GET ALL USERS
@@ -370,50 +372,42 @@ namespace OauthAPI.Tools
         }
 
 
-        public static ResponseApi SignInService(string email, string phoneNumber)
+        public static ResponseApi SignInUserProject(SigninData signinData)
         {
-            if (!string.IsNullOrEmpty(phoneNumber))
+            var userProject = new UsuariosProyecto();
+            apiResponse.Ok = false; apiResponse.Status = 400; apiResponse.MsgHeader = "Credenciales incorrectas"; apiResponse.Msg = "Las credenciales ingresadas no son correctas, verifica tus datos";
+            if (!string.IsNullOrEmpty(signinData.Email)) userProject = GetUserByProjectByEmail(signinData.Email);
+            
+            if (userProject != null)
             {
-                var userPhone = GetUserByProjectByPhone(phoneNumber);
-                if (userPhone != null)
-                {
-                    apiResponse.Ok = true; apiResponse.Msg = "Inicio de sesión válido"; apiResponse.MsgHeader = "Se encontró el usaurio";
+                if (userProject.Pass != signinData.Pass || signinData.ProjectId != userProject.IdProyecto) return apiResponse;
+                if (!userProject.Activo) 
+                { 
+                    apiResponse.MsgHeader = "Usuario deshabilitado"; apiResponse.Msg = "El usuario se actualmente se encuentra inactivo";
                     return apiResponse;
                 }
-                apiResponse.Ok = false; apiResponse.Msg = "No se encontró el usaurio"; apiResponse.MsgHeader = "Error";
+                apiResponse.Ok = true; apiResponse.Status = 200; apiResponse.MsgHeader = "Ok"; apiResponse.Msg = "Ok";
                 return apiResponse;
-            }
-            var user = GetUserByProjectByEmail(email);
-            if (user != null)
-            {
-                apiResponse.Ok = true; apiResponse.Msg = "Inicio de sesión válido"; apiResponse.MsgHeader = "Se encontró el usaurio";
-                return apiResponse;
-            }
-            apiResponse.Ok = false; apiResponse.Msg = "No se encontró el usaurio"; apiResponse.MsgHeader = "Error";
+            } 
             return apiResponse;
         }
 
-
-
-        public static ResponseApi SignInUserProject(string email, string pass)
+        public static async Task<ResponseApi> SignInService(SigninData signinData)
         {
-            var user = GetUserByProjectByEmail(email);
-            if (user == null)
-            {
-                apiResponse.Ok = false; apiResponse.Status = 400; apiResponse.MsgHeader = "Usuario no registrado"; apiResponse.Msg = "No se ha encontrado el usuario";
-                return apiResponse;
-            }
-            if (!user.Activo)
-            {
-                apiResponse.Ok = false; apiResponse.Status = 400; apiResponse.MsgHeader = "Usuario deshabilitado"; apiResponse.Msg = "El usuario se encuentra deshabilitado";
-                return apiResponse;
-            }
-            if (user.Pass != pass)
-            {
-                apiResponse.Ok = false; apiResponse.Status = 400; apiResponse.MsgHeader = "Contraseña incorrecta"; apiResponse.Msg = "La contraseña ingresada no es correcta";
-                return apiResponse;
-            }
-            apiResponse.Ok = true; apiResponse.Status = 200; apiResponse.MsgHeader = user.NombreCompleto; apiResponse.Msg = Convert.ToString(user.Id);
+            apiResponse.Ok = false; apiResponse.Status = 400; apiResponse.MsgHeader = "No se ha encontrado el usuario"; apiResponse.Msg = "Al parecer el usuario no se encuentra registrado";
+            var userProject = new UsuariosProyecto();
+
+            if (!string.IsNullOrEmpty(signinData.Email)) userProject = GetUserByProjectByEmail(signinData.Email);
+            if (!string.IsNullOrEmpty(signinData.PhoneNumber)) userProject = GetUserByProjectByPhone(signinData.PhoneNumber);
+
+            if (string.IsNullOrEmpty(signinData.UserUid)) return apiResponse;
+            
+            var userFromFirebase = await firebaseHelper.GetUserByUid(signinData.UserUid);
+            if (userFromFirebase == null) return apiResponse;
+
+            if (userProject == null || userProject.IdProyecto != signinData.ProjectId || userFromFirebase.Uid != signinData.UserUid) return apiResponse;
+
+            apiResponse.Ok = true; apiResponse.Status = 200; apiResponse.MsgHeader = "Ok"; apiResponse.Msg = "Ok";
             return apiResponse;
         }
     }

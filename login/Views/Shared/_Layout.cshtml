@@ -50,6 +50,28 @@
       </div>
     </div>
 
+    <div class="modal fade" id="restorePassModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="false">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="restorePassModalLabel">Restablecer contraseña</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+          <div id="messageInvalidEmail" style="display: none;" class="alert alert-danger" role="alert"></div>
+        <div class="mb-3">
+            <label class="form-label" for="emailResPass">Escribe tu correo electrónico:</label>
+             <input class="form-control" type="email" id="emailResPass" placeholder="Correo electrónico"/>
+         </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-close-modal" data-bs-dismiss="modal"><i class="bi bi-x-lg"></i>&nbsp;Cancelar</button>
+        <button type="button" id="sendEmailRestorePass" class="btn btn-primary" disabled data-bs-dismiss="modal"><i class="bi bi-send-check-fill"></i>&nbsp;Enviar correo</button>
+      </div>
+    </div>
+  </div>
+</div>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)

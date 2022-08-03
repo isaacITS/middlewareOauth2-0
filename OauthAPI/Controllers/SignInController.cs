@@ -34,25 +34,15 @@ namespace OauthAPI.Controllers
             }
         }
 
-        [HttpGet]
-        public IActionResult SignInService(string email, string phoneNumber)
-        {
-            try
-            {
-                return Ok(DbHelper.SignInService(email, phoneNumber));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { ok = false, status = 500, msg = ex.Message.ToString() });
-            }
-        }
 
-        [HttpGet]
-        public IActionResult SignInUserProject(string email, string pass)
+        [HttpPost]
+        public async Task<IActionResult> SignInUserProject(SigninData signinData)
         {
             try
             {
-                return Ok(DbHelper.SignInUserProject(email, pass));
+                if (string.IsNullOrEmpty(signinData.Pass)) return Ok(await DbHelper.SignInService(signinData));
+                
+                return Ok(DbHelper.SignInUserProject(signinData));
             }
             catch (Exception ex)
             {

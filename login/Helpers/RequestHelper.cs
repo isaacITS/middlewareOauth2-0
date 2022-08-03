@@ -1,6 +1,7 @@
 ﻿using login.Constants;
 using login.Models.Entities;
 using Newtonsoft.Json;
+using System.Text;
 
 namespace login.Helpers
 {
@@ -21,16 +22,14 @@ namespace login.Helpers
         }
 
 
-        public async Task<ResponseApi> SignIn(string email, string pass, string phoneNumber)
+        public async Task<ResponseApi> SignIn(SigninData signinData)
         {
-            if (string.IsNullOrEmpty(pass))
-            {
-                var res = await httpClient.GetAsync($"{Vars.API_URI}SignIn/SignInService?email={email}&phoneNumber={phoneNumber}");
-                var resBody = JsonConvert.DeserializeObject<ResponseApi>(res.Content.ReadAsStringAsync().Result);
-                return resBody;
-            }
-            pass = Encrypt.sha256(pass);
-            var response = await httpClient.GetAsync($"{Vars.API_URI}SignIn/SignInUserProject?email={email}&pass={pass}");
+            if (!string.IsNullOrEmpty(signinData.Pass)) signinData.Pass = Encrypt.sha256(signinData.Pass);
+
+            var dataJson = JsonConvert.SerializeObject(signinData);
+            var data = new StringContent(dataJson, Encoding.UTF8, "application/json");
+
+            var response = await httpClient.PostAsync($"{Vars.API_URI}SignIn/SignInUserProject", data);
             var responseBody = JsonConvert.DeserializeObject<ResponseApi>(response.Content.ReadAsStringAsync().Result);
             return responseBody;
         }
@@ -50,6 +49,38 @@ namespace login.Helpers
             var responseBody = response.Content.ReadAsStringAsync().Result;
             var methods = JsonConvert.DeserializeObject<List<MetodosAuth>>(responseBody);
             return methods;
+        }
+
+        public async Task<UsuariosProyecto> GetUserProject(string email)
+        {
+            var emailObj = new { email = email };
+            var userJson = JsonConvert.SerializeObject(emailObj);
+
+            var data = new StringContent(userJson, Encoding.UTF8, "application/json");
+            var response = await httpClient.PostAsync($"{Vars.API_URI}UsersByProject/GetByEmail", data);
+            var responseBody = response.Content.ReadAsStringAsync().Result;
+            var userResult = JsonConvert.DeserializeObject<UsuariosProyecto>(responseBody);
+            return userResult;
+        }
+
+        public async Task<UsuariosProyecto> GetUserProjectById(int id)
+        {
+            var response = await httpClient.GetAsync($"{Vars.API_URI}UsersByProject/GetById");
+            var responseBody = response.Content.ReadAsStringAsync().Result;
+            var userResult = JsonConvert.DeserializeObject<UsuariosProyecto>(responseBody);
+            return userResult;
+        }
+
+
+        public async Task<ResponseApi> UpdateUserProject(UsuariosProyecto userModel)
+        {
+            var userJson = JsonConvert.SerializeObject(userModel);
+            var data = new StringContent(userJson, Encoding.UTF8, "application/json");
+
+            var response = await httpClient.PostAsync($"{Vars.API_URI}UsersByProject/Update", data);
+            var responseBody = response.Content.ReadAsStringAsync().Result;
+            var userResult = JsonConvert.DeserializeObject<ResponseApi>(responseBody);
+            return userResult;
         }
 
     }

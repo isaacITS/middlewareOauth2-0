@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Net.Mail;
 
-namespace ITS_Middleware.Helpers
+namespace login.Helpers
 {
     public static class SendEmail
     {

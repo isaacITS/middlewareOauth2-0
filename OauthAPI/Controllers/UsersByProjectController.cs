@@ -41,6 +41,19 @@ namespace OauthAPI.Controllers
             }
         }
 
+        [HttpPost]
+        public IActionResult GetByEmail([FromBody] string email)
+        {
+            try
+            {
+                return Ok(DbHelper.GetUserByProjectByEmail(email));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { ok = false, status = 500, msg = ex.Message.ToString() });
+            }
+        }
+
 
         [HttpPost] /*<ENDPOINT REGISTER NEW USER BY PROJECCT>*/
         public IActionResult Register(UsuariosProyecto userModel)

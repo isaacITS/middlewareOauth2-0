@@ -162,6 +162,11 @@ namespace OauthAPI.Models.Context
                     .HasMaxLength(200)
                     .IsUnicode(false)
                     .HasColumnName("pass");
+
+                entity.Property(e => e.TokenRecovery)
+                    .HasMaxLength(200)
+                    .IsUnicode(false)
+                    .HasColumnName("tokenRecovery");
             });
 
             OnModelCreatingPartial(modelBuilder);
