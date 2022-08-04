@@ -5,6 +5,7 @@ using Google.Apis.Auth.OAuth2;
 using OauthAPI.Helpers;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using OauthAPI.Helpers.Log;
 
 var builder = WebApplication.CreateBuilder(args);
 IWebHostEnvironment _env = builder.Environment;
@@ -13,6 +14,9 @@ IWebHostEnvironment _env = builder.Environment;
 builder.Services.AddControllers(); 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddSingleton<ILoggerManager, LoggerManager>();
+builder.Services.AddLogging(config => config.AddLog4Net("log4net.config", true));
 
 builder.Configuration.AddJsonFile($"appsettings.{_env.EnvironmentName}.json", optional: false, reloadOnChange: true);
 OauthAPI.Constants.Vars.CONNECTION_STRING = builder.Configuration.GetSection("ApplicationSettings:ConnectionStrings:DefaultConnection").Value.ToString();

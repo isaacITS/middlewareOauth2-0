@@ -1,254 +1,60 @@
 ﻿@model ErrorViewModel
+
 @{
-    ErrorViewModel errorModel = ViewData["errorData"] as ErrorViewModel;
+    Layout = null;
+    int errorCounter = 1;
 }
+<!DOCTYPE html>
+<html lang="es-mx">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Error</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/ErrorStyle.css" asp-append-version="true" />
+    <link rel="shortcut icon" href="~/icon-page.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+</head>
 
-<style>
-h1 {
-    margin: 50px auto 0 auto;
-    font-family: 'Encode Sans Semi Condensed', Verdana, sans-serif;
-    font-size: 10rem;
-    line-height: 10rem;
-    font-weight: 200;
-    text-align: center;
-    font-weight: 600;
-}
-
-h2,
-h3 {
-    margin: 20px auto 30px auto;
-    font-family: 'Encode Sans Semi Condensed', Verdana, sans-serif;
-    font-size: 35px;
-    font-weight: 200;
-    text-align: center;
-    font-weight: 600;
-}
-
-h3 {
-    font-size: 20px;
-    color: #fff;
-}
-
-h1,
-h2 {
-    -webkit-transition: opacity 0.5s linear, margin-top 0.5s linear;
-    /* Safari */
-    transition: opacity 0.5s linear, margin-top 0.5s linear;
-}
-
-.loading h1,
-.loading h2 {
-    margin-top: 0px;
-    opacity: 0;
-}
-
-.gears {
-    position: relative;
-    margin: 50px auto;
-    width: auto;
-    height: 0;
-}
-
-.gear {
-    position: relative;
-    z-index: 1;
-    width: 120px;
-    height: 120px;
-    margin: 0 auto;
-    border-radius: 50%;
-    background: #141414;
-}
-
-.gear:before {
-    position: absolute;
-    left: 5px;
-    top: 5px;
-    right: 5px;
-    bottom: 5px;
-    z-index: 2;
-    content: "";
-    border-radius: 50%;
-    background: #141414;
-}
-
-.gear:after {
-    position: absolute;
-    left: 25px;
-    top: 25px;
-    z-index: 3;
-    content: "";
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    border: 5px solid #272727;
-    box-sizing: border-box;
-    background: #141414;
-}
-
-.gear.one {
-    left: -130px;
-}
-
-.gear.two {
-    top: -75px;
-}
-
-.gear.three {
-    top: -235px;
-    left: 130px;
-}
-
-.gear .bar {
-    position: absolute;
-    left: -15px;
-    top: 50%;
-    z-index: 0;
-    width: 150px;
-    height: 30px;
-    margin-top: -15px;
-    border-radius: 5px;
-    background: #141414;
-}
-
-.gear .bar:before {
-    position: absolute;
-    left: 5px;
-    top: 5px;
-    right: 5px;
-    bottom: 5px;
-    z-index: 1;
-    content: "";
-    border-radius: 2px;
-    background: #141414;
-}
-
-.gear .bar:nth-child(2) {
-    transform: rotate(60deg);
-    -webkit-transform: rotate(60deg);
-}
-
-.gear .bar:nth-child(3) {
-    transform: rotate(120deg);
-    -webkit-transform: rotate(120deg);
-}
-
-@@keyframes clockwise {
-    0% {
-        -webkit-transform: rotate(0deg);
+<body class="loading">
+  <h1 class="text-danger">Error</h1>
+  <h2><span class="align-middle material-icons">mood_bad</span>&nbsp;Ha ocurrido un error mientras se procesaba la solicitud</h2>
+    @foreach(string errorMsg in (IEnumerable<string>)TempData["ErrorsMessages"])
+    {
+        <p class="text-center text-bg-danger">
+            <strong>Error #@errorCounter :&nbsp;</strong> <code>@errorMsg</code>
+        </p>
+        errorCounter++;
     }
-    100% {
-        -webkit-transform: rotate(360deg);
-    }
-}
-
-@@keyframes anticlockwise {
-    0% {
-        -webkit-transform: rotate(360deg);
-    }
-    100% {
-        -webkit-transform: rotate(0deg);
-    }
-}
-
-@@keyframes clockwiseError {
-    0% {
-        -webkit-transform: rotate(0deg);
-    }
-    20% {
-        -webkit-transform: rotate(30deg);
-    }
-    40% {
-        -webkit-transform: rotate(25deg);
-    }
-    60% {
-        -webkit-transform: rotate(30deg);
-    }
-    100% {
-        -webkit-transform: rotate(0deg);
-    }
-}
-
-@@keyframes anticlockwiseErrorStop {
-    0% {
-        -webkit-transform: rotate(0deg);
-    }
-    20% {
-        -webkit-transform: rotate(-30deg);
-    }
-    60% {
-        -webkit-transform: rotate(-30deg);
-    }
-    100% {
-        -webkit-transform: rotate(0deg);
-    }
-}
-
-@@keyframes anticlockwiseError {
-    0% {
-        -webkit-transform: rotate(0deg);
-    }
-    20% {
-        -webkit-transform: rotate(-30deg);
-    }
-    40% {
-        -webkit-transform: rotate(-25deg);
-    }
-    60% {
-        -webkit-transform: rotate(-30deg);
-    }
-    100% {
-        -webkit-transform: rotate(0deg);
-    }
-}
-
-.gear.one {
-    animation: anticlockwiseErrorStop 2s linear infinite;
-}
-
-.gear.two {
-    animation: anticlockwiseError 2s linear infinite;
-}
-
-.gear.three {
-    animation: clockwiseError 2s linear infinite;
-}
-
-.loading .gear.one,
-.loading .gear.three {
-    animation: clockwise 3s linear infinite;
-}
-
-.loading .gear.two {
-    animation: anticlockwise 3s linear infinite;
-}
-</style>
-
-<h1 class="text-danger">@errorModel.ErrorCore</h1>
-    <h2 class="text-danger">@errorModel.ErrorMessageHeader</h2>
-    <h3><i class="fas fa-exclamation-triangle"></i>&nbsp;@errorModel.ErrorMessage</h3>
-    <div class="gears">
-        <div class="gear one">
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-        </div>
-        <div class="gear two">
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-        </div>
-        <div class="gear three">
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-        </div>
+  <div class="gears">
+    <div class="gear one">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
     </div>
-    @section scripts {
-    <script type="text/javascript" aasp-append-version="true">
-        $(function() {
-            setTimeout(function() {
-                $('body').removeClass('loading');
-            }, 1000);
-        });
-    </script>
-    }
+    <div class="gear two">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+    <div class="gear three">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    $(function() {
+        setTimeout(function() {
+            $('body').removeClass('loading');
+        }, 1000);
+    });
+</script>
+</body>
+</html>

@@ -9,26 +9,33 @@ namespace OauthAPI.Helpers
 
         public static string GenerateToken()
         {
-            var credentials = new SigningCredentials(Vars.SECURITY_SECRET_KEY, SecurityAlgorithms.HmacSha256);
-            var headers = new JwtHeader(credentials);
+            try
+            {
+                var credentials = new SigningCredentials(Vars.SECURITY_SECRET_KEY, SecurityAlgorithms.HmacSha256);
+                var headers = new JwtHeader(credentials);
 
-            DateTime expiresDate = DateTime.UtcNow.AddHours(3);
-            int ts = (int)(expiresDate - new DateTime(1970, 1, 1)).TotalSeconds;
+                DateTime expiresDate = DateTime.UtcNow.AddHours(3);
+                int ts = (int)(expiresDate - new DateTime(1970, 1, 1)).TotalSeconds;
 
-            var payload = new JwtPayload
+                var payload = new JwtPayload
             {
                 {"exp", ts },
                 {"iss", Vars.ISSUER },
                 {"aud", Vars.AUDIENCE }
             };
 
-            var secToken = new JwtSecurityToken(headers, payload);
+                var secToken = new JwtSecurityToken(headers, payload);
 
-            var handler = new JwtSecurityTokenHandler();
+                var handler = new JwtSecurityTokenHandler();
 
-            var stringToken = handler.WriteToken(secToken);
+                var stringToken = handler.WriteToken(secToken);
 
-            return stringToken;
+                return stringToken;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }

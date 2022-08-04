@@ -1,3 +1,5 @@
+using login.Helpers.Log;
+
 var builder = WebApplication.CreateBuilder(args);
 IWebHostEnvironment _env = builder.Environment;
 
@@ -5,6 +7,9 @@ IWebHostEnvironment _env = builder.Environment;
 builder.Services.AddControllersWithViews();
 builder.Configuration.AddJsonFile($"appsettings.{_env.EnvironmentName}.json", optional: true, reloadOnChange: true);
 login.Constants.Vars.API_URI = builder.Configuration.GetSection("ApplicationSettings:ApiSettings:DefaultUri").Value.ToString();
+
+builder.Services.AddSingleton<ILoggerManager, LoggerManager>();
+builder.Services.AddLogging(config => config.AddLog4Net("log4net.config", true));
 
 //Firebase configuration
 login.Constants.Vars.ApiKey = builder.Configuration.GetSection("ApplicationSettings:firebaseSecret:apiKey").Value.ToString();

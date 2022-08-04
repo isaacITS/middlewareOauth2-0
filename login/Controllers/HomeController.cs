@@ -1,8 +1,7 @@
-﻿using login.Helpers;
-using login.Models;
+﻿using login.ExceptionsHandler;
+using login.Helpers;
 using login.Models.Entities;
 using Microsoft.AspNetCore.Mvc;
-using System.Net.Http;
 
 namespace login.Controllers
 {
@@ -23,22 +22,29 @@ namespace login.Controllers
 
         public async Task<IActionResult> SignIn(string project)
         {
-            ErrorViewModel errorModel = new();
-            ViewData["ProjectName"] = project;
-            errorModel.ErrorCore = 404; errorModel.ErrorMessageHeader = "No se ingresó algún proyecto para inicio de sesión"; errorModel.ErrorMessage = "No se encontró un proyecto registrado con el nombre ingresado";
-            if (!string.IsNullOrEmpty(project))
+            try
             {
+                if (string.IsNullOrEmpty(project)) return View("NotFound");
                 var resultProject = await requestHelper.GetProjectByName(project);
-                if (resultProject != null)
-                {
-                    ViewData["project"] = resultProject;
-                    if (resultProject.Activo) return View();
-                    errorModel.ErrorCore = 403; errorModel.ErrorMessageHeader = "Proyecto deshabilitado"; errorModel.ErrorMessage = $"El proyecto {resultProject.Nombre} se encuentra deshabilidtado";
-                }
 
+                if (resultProject == null) return View("NotFound");
+                ViewData["project"] = resultProject;
+                if (resultProject.Activo) return View();
+                return View("NotFound");
             }
-            ViewData["errorData"] = errorModel;
-            return View("Error");
+            catch (Exception ex)
+            {
+                List<string> errors = new List<string>();
+                var messages = ex.FromHierarchy(x => x.InnerException).Select(x => x.Message);
+                foreach (var message in messages)
+                {
+                    _logger.LogError("[ERROR MESSAGE]: " + message);
+                    Console.WriteLine(message.ToString().Trim());
+                    errors.Add(message);
+                }
+                TempData["ErrorsMessages"] = errors;
+                return View("Error");
+            }
         }
 
         [HttpPost]
@@ -51,7 +57,16 @@ namespace login.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { ok = false, status = 500, msg = ex });
+                List<string> errors = new List<string>();
+                var messages = ex.FromHierarchy(x => x.InnerException).Select(x => x.Message);
+                foreach (var message in messages)
+                {
+                    _logger.LogError("[ERROR MESSAGE]: " + message);
+                    Console.WriteLine(message.ToString().Trim());
+                    errors.Add(message);
+                }
+                TempData["ErrorsMessages"] = errors;
+                return View("Error");
             }
         }
 
@@ -81,7 +96,16 @@ namespace login.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { ok = false, status = 500, msg = ex });
+                List<string> errors = new List<string>();
+                var messages = ex.FromHierarchy(x => x.InnerException).Select(x => x.Message);
+                foreach (var message in messages)
+                {
+                    _logger.LogError("[ERROR MESSAGE]: " + message);
+                    Console.WriteLine(message.ToString().Trim());
+                    errors.Add(message);
+                }
+                TempData["ErrorsMessages"] = errors;
+                return View("Error");
             }
         }
 
@@ -98,7 +122,16 @@ namespace login.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { ok = false, status = 500, msg = ex });
+                List<string> errors = new List<string>();
+                var messages = ex.FromHierarchy(x => x.InnerException).Select(x => x.Message);
+                foreach (var message in messages)
+                {
+                    _logger.LogError("[ERROR MESSAGE]: " + message);
+                    Console.WriteLine(message.ToString().Trim());
+                    errors.Add(message);
+                }
+                TempData["ErrorsMessages"] = errors;
+                return View("Error");
             }
         }
 
@@ -117,7 +150,16 @@ namespace login.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { ok = false, status = 500, msg = ex });
+                List<string> errors = new List<string>();
+                var messages = ex.FromHierarchy(x => x.InnerException).Select(x => x.Message);
+                foreach (var message in messages)
+                {
+                    _logger.LogError("[ERROR MESSAGE]: " + message);
+                    Console.WriteLine(message.ToString().Trim());
+                    errors.Add(message);
+                }
+                TempData["ErrorsMessages"] = errors;
+                return View("Error");
             }
         }
     }
