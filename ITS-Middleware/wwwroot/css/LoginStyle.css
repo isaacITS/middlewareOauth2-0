@@ -1,0 +1,112 @@
+﻿.form-login, .form-restore-pass {
+    width: 400px;
+    background-color: #fff;
+    margin: auto;
+    text-align: center;
+    box-shadow: 5px 5px 10px 2px #00000073;
+    padding: 20px;
+    border-top: 4px solid #017bab;
+    border-radius: 10px;
+    color: #093C5D;
+}
+
+.form-login .login-form-content, .form-restore-pass .restore-form-content {
+    text-align: left;
+}
+
+.form-login .login-form-content label, .form-restore-pass .restore-form-content label {
+    font-weight: 600;
+}
+
+.form-login .login-form-content .input-group span, .form-restore-pass .restore-form-content .input-group span {
+    padding: 10px;
+    height: 43px;
+    line-height: 20px;
+    color: #fff;
+    background-color: #093C5D;
+    border-radius: 5px;
+    border: solid 1px #F1F1F1;
+}
+
+.form-login .login-form-content .input-group,
+.form-restore-pass .restore-form-content .input-group{
+    margin-bottom: 10px;
+}
+
+.form-login .login-form-content small,
+.form-restore-pass .restore-form-content small {
+    display: none;
+}
+
+.form-login .login-form-content .input-group input,
+.form-restore-pass .restore-form-content .input-group input{
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    transition: all .5s;
+    border: solid 1px #F1F1F1;
+}
+
+
+.form-login .btn-login-portal {
+    width: 95%;
+    margin-top: 5px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 10px;
+    background-color: #df1847;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    font-weight: bold;
+    padding: 10px;
+    transition: all .3s;
+}
+
+#icon-status-email {
+    background: none;
+    color: #12b100;
+    border: none;
+    display: none;
+}
+
+.form-login .btn-login-portal:hover {
+    background-color: #a90000;
+}
+
+.form-login h5,
+.form-restore-pass h5 {
+    height: 40px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid;
+    font-size: 24px;
+    text-transform: uppercase;
+    color: #093C5D;
+}
+
+.form-login img,
+.form-restore-pass img{
+    width: 250px;
+    margin-bottom: 15px;
+}
+
+.forgot-pass {
+    color: #093C5D;
+    text-decoration: none;
+    transition: all .2s;
+}
+.forgot-pass:hover {
+    color: #a90000;
+    text-decoration: underline;
+}
+
+.btn-send-email {
+    width: 95%;
+    margin-bottom: 10px;
+}
+
+@media screen and (max-width: 500px) {
+    .form-login, .form-restore-pass {
+        width: 95%;
+    }
+}

@@ -1,0 +1,42 @@
+﻿<style>
+    body, html{
+        background-color: #093C5D;
+        height: 100%;
+    }
+    .spacer {
+        margin-top: 0;
+        margin-bottom: 10px;
+        height: 50px;
+    }
+</style>
+
+<input type="hidden" value="@ViewBag.msg" id="alertMessage"/>
+<div class="spacer"></div>
+<form class="form-login" asp-controller="Auth" asp-action="Login" method="post">
+    <h5>Iniciar sesión</h5>
+    <img src="~/img/main-logo.png" alt="IT-Seekers image"/>
+    <div class="login-form-content">
+        <label for="email" class="label-form">Correo electrónico: </label>
+        <br />
+        <small class="text-danger">Ingresa un correo válido</small>
+        <div class="input-group flex-nowrap">
+            <span class="material-icons input-group-text" id="addon-wrapping">mail_outline</span>
+            <input type="email" class="form-control" name="email" id="email"  placeholder="Correo Electrónico" required aria-label="Correo Electrónico" aria-describedby="addon-wrapping">
+            <span class="material-icons" id="icon-status-email"></span>
+        </div>
+        <label for="pass" class="label-form">Contraseña: </label>
+        <div class="input-group flex-nowrap">
+            <span class="material-icons input-group-text" id="addon-wrapping">vpn_key</span>
+            <input type="password" class="form-control" name="pass" id="Pass" placeholder="Contraseña" required aria-label="Contraseña" aria-describedby="addon-wrapping">
+            <span class="material-icons input-group-text" id="btn-action-pass">visibility_off</span>
+        </div>
+    </div>
+    <button class="btn btn-login-portal" id="btnLoginAuth" type="submit" disabled>Ingresar</button>
+    <br/>
+    <a class="forgot-pass" asp-controller="Auth" asp-action="RestorePass">¿Olvidaste la contraseña?</a>
+</form>
+
+@section scripts {
+    <script src="~/js/PassLogin.js" asp-append-version="true"></script>
+    <script src="~/js/passControlScript.js" asp-append-version="true"></script>
+}

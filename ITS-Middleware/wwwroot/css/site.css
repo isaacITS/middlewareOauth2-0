@@ -1,18 +1,612 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Passion+One:wght@700&display=swap');
 html {
-  font-size: 14px;
+    font-size: 14px;
+    font-family: 'Roboto';
+}
+
+.btn span {
+    margin: 0;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+    font-family: 'Roboto';
+}
+
+.btn span {
+    font-size: 18px;
+}
+
+body .table {
+    text-align: center;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 2px 3px 6px 1px #00000057;
+}
+
+body .table .btn {
+    width: 35px;
+    height: 35px;
+    padding: 6px;
+}
+
+body .table .btn span {
+    line-height: 20px;
+}
+
+body .table thead tr th {
+    text-align: center;
+    border: none;
+}
+
+body .table thead {
+    background-color: #022338;
+    color: #fff;
+}
+
+body .table tbody tr td {
+    background-color: #fefefe;
+    color: #191919;
+    vertical-align: middle;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+}
+
+body .table tbody tr td .btn-secondary {
+    background-color: #022338;
+    border: none;
+    border-radius: 25px;
+    transition: all .3s;
+}
+
+body .table tbody tr td .btn-secondary:hover {
+    background-color: #093C5D;
+}
+
+body .table tbody tr td .btn-secondary[title='Desactivar'] {
+    color: #00ff04;
+}
+
+body .table tbody tr td .btn-secondary[title='Activar'],
+body .table tbody tr td .btn-secondary[title='Activar '] {
+    color: #FF372D;
+}
+
+body .table tbody tr td .dropend button {
+    width: 100%;
+    font-weight: 600;
+    font-size: 11pt;
+    transition: all .2s;
+}
+
+body .table tbody tr td .dropend button:focus {
+    box-shadow: 4px 4px 6px 0px #022338;
+}
+
+body .table tbody tr td .dropend .dropdown-menu {
+    background-color: #093C5d;
+    transition: all .3s;
+}
+
+body .table tbody tr td .dropend .dropdown-menu li {
+    color: #fff;
+    font-weight: 600;
+}
+
+body .table tbody tr td .dropend .dropdown-menu li:hover {
+    background-color: #093C5D;
+    box-shadow: none;
+}
+
+header nav {
+    height: 100%;
+    width: 210px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #093C5D;
+    overflow-x: hidden;
+    padding-top: 60px;
+    transition: 0.5s;
+}
+
+header nav .sidenav {
+    position: relative;
+    height: 100%;
+}
+
+header nav .sidenav a {
+    padding: 5px 5px 5px 15px;
+    text-decoration: none;
+    font-size: 14px;
+    color: #e4e4e4;
+    display: block;
+    transition: .3s ease-in-out, box-shadow .3s ease-in-out;
+    font-weight: 900;
+    border-left: solid 2px #df1847;
+    margin-bottom: 5px;
+    width: 100%;
+}
+
+header nav .sidenav .userNameOnline {
+    position: absolute;
+    bottom: 0;
+    font-size: 14px;
+}
+
+header nav .sidenav a:hover {
+    color: #f1f1f1;
+    box-shadow: inset 250px 0 0 0 #df1847;
+}
+
+header nav .sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+
+header .nav-bar-top {
+    background-color: #022338;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    height: 50px;
+    z-index: 2;
+    padding: 10px;
+    box-shadow: 1px 7px 3px 2px #00000014;
+}
+
+header .nav-bar-top h3 {
+    text-align: left;
+    color: #e7e7e7;
+    margin-left: 50px;
+    font-size: 20px;
+    line-height: 27px;
+    font-weight: 600;
+}
+
+header .nav-bar-top .pc-width {
+    position: absolute;
+    right: 25px;
+    top: 5px;
+    text-decoration: none;
+    font-size: 20px;
+    background-color: #df1847;
+    padding: 6px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    text-align: center;
+}
+
+header .nav-bar-top .pc-width .icon-user-online {
+    margin-right: 5px;
+    font-weight: bold;
+    color: #fafafa;
+}
+
+#btn-active-menu {
+    margin: 5px;
+    color: #e7e7e7;
+    cursor: pointer;
+    position: absolute;
+    top: 3px;
+    left: 20px;
+    transition: all .3s;
+}
+
+#btn-active-menu:hover {
+    color: #df1847;
+}
+
+#btn-active-menu #btn-icon-menu {
+    font-size: 30px;
+}
+
+.modal {
+    animation-name: animateModal;
+    animation-duration: .5s;
+}
+
+.modal .modal-dialog .modal-content {
+    position: relative;
+}
+
+.modal .modal-dialog .modal-content .btn-generate-pass {
+    border: solid 1px #022338;
+    font-weight: 600;
+    color: #022338;
+    transition: all .3s;
+}
+
+.modal .modal-dialog .modal-content .btn-generate-pass:hover {
+    background-color: #022338;
+    color: #f6f6f6;
+}
+
+.modal .modal-dialog .modal-content .label-form {
+    font-weight: 600;
+}
+
+.modal .modal-dialog .modal-content form .mb-3 .form-select,
+.modal .modal-dialog .modal-content form .mb-3 .form-select option {
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.modal .modal-dialog .modal-content .input-group span {
+    color: #f8f8f8;
+    background-color: #022338;
+}
+
+.modal .modal-dialog .modal-content .modal-header h3 {
+    text-align: center;
+    font-weight: 600;
+}
+
+.modal .modal-dialog .modal-content .modal-body form .mb-3 .alert-danger {
+    padding-bottom: 0;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.modal .modal-dialog .modal-content .modal-body form .mb-3 .alert-danger p {
+    margin-top: 5px;
+    margin-top: 10px;
+}
+
+.modal .modal-dialog .modal-content .modal-body form textarea {
+    height: 80px;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload {
+    width: 100%;
+    margin-top: 25px;
+    text-align: center;
+    color: #022338;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload h2 {
+    font-weight: 600;
+    font-size: 17px;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload .file-upload-btn {
+    width: 100%;
+    color: #fff;
+    background-color: #022338;
+    border: none;
+    padding: 5px;
+    border-radius: 4px;
+    transition: all .2s ease;
+    outline: none;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload .file-upload-btn:hover {
+    background-color: #0223382c;
+    color: #002999;
+    transition: all .2s ease;
+    cursor: pointer;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload .file-upload-btn:active {
+    border: 0;
+    transition: all .2s ease;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload .file-upload-content {
+    display: none;
+    text-align: center;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload .file-upload-input {
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    outline: none;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload .image-saved {
+    margin-bottom: 10px;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload .image-saved img {
+    width: 15%;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload .image-upload-wrap {
+    border: solid 2px #02233813;
+    border-radius: 5px;
+    position: relative;
+    transition: all .2s ease-in-out;
+    margin-top: 10px;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload .image-dropping,
+.image-upload-wrap:hover {
+    background-color: #02233813;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload .image-title-wrap {
+    padding: 0 10px 5px 5px;
+    color: #222;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload .image-title-wrap .image-title {
+    font-weight: 600;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload .drag-text {
+    text-align: center;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload .drag-text h3 {
+    font-weight: bold;
+    color: #022338;
+    font-size: 20px;
+    padding: 40px 0;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload .file-upload-image {
+    max-width: 350px;
+    margin: auto;
+    padding: 20px;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload .remove-image {
+    margin: 0;
+    color: #970f00;
+    background: none;
+    border: none;
+    padding: 5px;
+    border-radius: 5px;
+    transition: all .2s ease;
+    outline: none;
+    font-weight: 700;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload .upload-image {
+    border: none;
+    background-color: #005e10;
+    color: #fff;
+    font-weight: 600;
+    transition: all .2s;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload .upload-image:hover {
+    background-color: #00ff2a28;
+    color: #008116;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload .remove-image:hover {
+    background: #ff1e0033;
+    color: #ff0000;
+    transition: all .2s ease;
+    cursor: pointer;
+}
+
+.modal .modal-dialog .modal-content .modal-body .file-upload .remove-image:active {
+    border: 0;
+    transition: all .2s ease;
+}
+
+.modal .modal-dialog .modal-content .modal-body input[type='password'] {
+    letter-spacing: 2px;
+    font-weight: 900;
+}
+
+.ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100px;
+    height: 100px;
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 150px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    box-shadow: 0 0 20px rgba(0, 0, 0, .5);
+    z-index: 20;
+}
+
+.ring:before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    width: 100%;
+    height: 100%;
+    border: 3px solid transparent;
+    border-top: 3px solid #FF372D;
+    border-right: 3px solid #FF372D;
+    border-radius: 50%;
+    animation: animateC 2s linear infinite;
+}
+
+#btn-action-pass {
+    cursor: pointer;
+    background: none;
+    color: #093C5D;
+    transition: all .3s;
+}
+
+#btn-action-pass:hover {
+    background-color: #093C5D;
+    color: #f5f5f5;
+}
+
+#imageSaved {
+    transition: all .3s ease-in-out;
+    cursor: pointer;
+}
+
+#imageSaved:hover,
+#imageSaved:focus {
+    transform: scale(4);
+}
+
+.ring span {
+    display: block;
+    position: absolute;
+    top: calc(50% - 2px);
+    left: 50%;
+    width: 50%;
+    height: 4px;
+    background: transparent;
+    transform-origin: left;
+    animation: animate 2s linear infinite;
+}
+
+.ring span:before {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #FF372D;
+    top: -6px;
+    right: -8px;
+    box-shadow: 0 0 20px #FF372D;
+}
+
+.content-header-table {
+    margin-top: 60px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.content-header-table .title-table {
+    font-size: 22px;
+    font-weight: bold;
+    color: #1d1d1d;
+    margin-top: 10px;
+    border-left: solid 5px #022338;
+    padding: 3px;
+    padding-left: 10px;
+    border-radius: 5px;
+    color: #151515ff;
+}
+
+.dataTables_length,
+.dataTables_filter {
+    margin-bottom: 10px;
+}
+
+.dataTables_info,
+.dataTables_paginate {
+    margin-top: 10px;
+}
+
+#dropdownMenu2 span {
+    margin-top: -3px;
+    font-size: 22px;
+}
+
+#modalRegisterView,
+#modalRegisterProjectView,
+#modalRegisterUserView {
+    background-color: #022338;
+    border: solid 1px #022338;
+    transition: ease-out .3s;
+    font-weight: 600;
+}
+
+#modalRegisterView:hover,
+#modalRegisterProjectView:hover,
+#modalRegisterUserView:hover {
+    background-color: #df1847;
+    border: solid 1px #df1847;
+}
+
+footer {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+@keyframes animateC {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes animate {
+    0% {
+        transform: rotate(45deg);
+    }
+    100% {
+        transform: rotate(405deg);
+    }
+}
+
+@keyframes animateModal {
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .content-header-table {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .content-header-table .title-table {
+        margin-bottom: 10px;
+    }
+}
+
+@media screen and (max-width: 450px) {
+    .sidenav {
+        padding-top: 15px;
+    }
+    .sidenav a {
+        font-size: 16px;
+    }
+    .nav-bar-top h3 {
+        font-size: 14px;
+    }
+    .container .title-table {
+        font-size: 15pt;
+    }
+}
+
+@media screen and (max-width: 410px) {
+    header .nav-bar-top .pc-width {
+        display: none;
+    }
 }

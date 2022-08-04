@@ -1,0 +1,20 @@
+﻿@using ITS_Middleware.Models.Entities
+@model Proyecto
+
+<form id="deleteProjectForm">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="Nombre" id="Nombre"/>
+
+    <div class="mb-3">
+        <div class="alert alert-danger text-center" role="alert">
+            El proyecto <strong id="projectName"></strong> será eliminado de forma permanente.
+            <p><span class="align-middle material-icons">report_problem</span>&nbsp;Esta accion no se puede deshacer</p>
+        </div>
+    </div>
+ </form>
+
+ <script>
+     $('#projectName').append($('#Nombre').val())
+ </script>
+
+ <script src="~/js/projectScripts.js" asp-append-version="true"></script>

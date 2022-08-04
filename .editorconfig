@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# CA5350: No usar algoritmos criptográficos poco seguros
+dotnet_diagnostic.CA5350.severity = none

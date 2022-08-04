@@ -1,0 +1,105 @@
+﻿@using ITS_Middleware.Models.Entities
+@model ProjectImgFile
+@{
+   IEnumerable<MetodosAuth> metodosAuth = ViewData["MetodosAuth"] as IEnumerable<MetodosAuth>;
+}
+
+<form id="updateProjectForm">
+        <input type="hidden" asp-for="Id" name="Id"/>
+        <input type="hidden" asp-for="FechaAlta" name="FechaAlta"/>
+        <input type="hidden" asp-for="Activo" name="Activo"/>
+        <input type="hidden" asp-for="IdUsuarioRegsitra"/>
+        <div class="mb-3">
+            <label for="Nombre" class="label-form">Nombre:</label>
+            <div class="input-group flex-nowrap">
+                <span class="material-icons input-group-text" id="addon-wrapping">grid_view</span>
+                <input class="form-control" asp-for="Nombre" id="Nombre" placeholder="Nombre" />
+            </div>
+            <p><small class="text-danger" id="messageNombre"></small></p>
+        </div>
+        <div class="mb-3">
+            <div class="form-floating">
+              <textarea class="form-control" maxlength="500" placeholder="Descripción del proyecto:" asp-for="Descripcion" id="Descripcion"></textarea>
+              <label cclass="label-form" for="Descripcion" style="font-weight: 600;">Descripción: </label>
+            </div>
+            <p><small class="text-danger" id="messageDescripcion"></small></p>
+        </div>
+        <label for="MetodoAutenticacion" class="label-form">Metodos de autenticación:</label>
+        <br />
+        <div class="row">
+            @foreach (MetodosAuth metodosAuthLocal in metodosAuth)
+            {
+                <div class="col-6">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="@metodosAuthLocal.Id" value="@metodosAuthLocal.Nombre">
+                        <label class="form-check-label" for="@metodosAuthLocal.Id">@metodosAuthLocal.Nombre</label>
+                    </div>
+                </div>
+            }
+        </div>
+            <input asp-for="MetodosAutenticacion" id="auth-method-list" type="hidden" />
+            <input id="authMethodsLength" type="hidden" value="@metodosAuth.Count()"/>
+            <br />
+        <div class="mb-3">
+            <label for="Enlace" class="label-form">Enlace del sitio:</label>
+            <div class="input-group flex-nowrap">
+                <span class="material-icons input-group-text" id="addon-wrapping">add_link</span>
+                <input type="url" class="form-control" id="Enlace" asp-for="Enlace" placeholder="Enlace del sitio" />
+            </div>
+             <p><small class="text-danger" id="messageEnlace"></small></p>
+        </div>
+        <input type="hidden" asp-for="ImageUrl" id="ImageUrl"/>
+</form>
+
+<div class="file-upload">
+    <h2>Actualizar imagen de proyecto</h2>
+    <div class="image-saved">
+        <small id="textStatusImage"></small>
+        <img src="" id="imageSaved" alt="" srcset="">
+    </div>
+    <button class="file-upload-btn" type="button" onclick="$('.file-upload-input').trigger( 'click' )"><span class="align-middle material-icons">image</span>&nbsp;Seleccionar imagen</button>
+    <div class="image-upload-wrap">
+        <input class="file-upload-input" asp-for="ImageFile" id="ImageFile" type='file' onchange="readURL(this);" accept="image/*" />
+        <div class="drag-text">
+            <h3><span class="align-middle material-icons">image</span>&nbsp;Arrastra o selecciona una imagen</h3>
+        </div>
+    </div>
+    <div class="file-upload-content">
+        <img class="file-upload-image" src="#" alt="your image" />
+        <div class="image-title-wrap">
+            <span class="image-title"></span>
+            <br>
+            <button type="button" onclick="removeUpload()" class="remove-image"><span class="align-middle md-16 material-icons">close</span>&nbsp;Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    //marking registered auth methods
+    var allAuthMethods = $('.form-check-input').map(function() {
+        return this.value
+    }).get()
+    var methodsListRegistered = $('#auth-method-list').val()
+    var methodsSavedList = methodsListRegistered.split(',')
+
+    $(document).ready(() => {
+        allAuthMethods.forEach(method => {
+        methodsSavedList.forEach(mSaved => {
+            if (method == mSaved) {
+                $(`.form-check-input[value='${method}']`).prop('checked', true)
+            }
+        })
+    })
+        if ($('#ImageUrl').val().length > 5) {
+            $('#imageSaved').attr('src', $('#ImageUrl').val())
+            $('#textStatusImage').append('Imagen registrada del proyecto')
+            $('#textStatusImage').css('color', "#000")
+        } else {
+            $('#textStatusImage').append('Este proyecto no cuenta con una imagen registrada')
+            $('#textStatusImage').css('color', "#D60000")
+        }
+    })
+</script>
+
+<script src="~/js/projectScripts.js" asp-append-version="true"></script>
+<script src="~/js/passControlScript.js" asp-append-version="true"></script>

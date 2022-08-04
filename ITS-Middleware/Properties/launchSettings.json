@@ -8,7 +8,7 @@
     }
   },
   "profiles": {
-    "ITS_Middleware": {
+    "ITS_Middleware (Development)": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
@@ -23,6 +23,15 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
+    },
+    "ITS_Middleware (Production)": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Production"
+      },
+      "applicationUrl": "https://localhost:7137;http://localhost:5137",
+      "dotnetRunMessages": true
     }
   }
 }

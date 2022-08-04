@@ -1,0 +1,129 @@
+﻿@using ITS_Middleware.Models.Entities
+@using System.Linq.Expressions
+@model List<Proyecto>
+@{
+    IEnumerable<Usuario> usuarios = ViewData["UserList"] as IEnumerable<Usuario>;
+}
+
+<style>
+    .admin-projects {
+        box-shadow: inset 250px 0 0 0 #df1847;
+    }
+</style>
+
+<div class="content-header-table">
+    <h2 class="title-table">Administración de Proyectos</h2>
+    <a class="btn btn-primary" id="modalRegisterProjectView" data-bs-toggle="modal" data-bs-target="#projectModal">
+        <span class="align-middle material-icons">library_add</span>&nbsp;Agregar Proyecto
+    </a>
+</div>
+
+<div class="table-responsive" id="usersTableContent">
+    <table class="table table-striped table-hover" style="width:100%">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Métodos de autenticación</th>
+                <th>Fecha de Alta</th>
+                <th>Registrado por</th>
+                <th>Acciones</th>
+                <th>Estatus</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Proyecto project in Model)
+            {
+                @foreach (Usuario usuarioLocal in usuarios)
+                {
+                    if (project.IdUsuarioRegsitra == usuarioLocal.Id)
+                    {
+                        project.IdUsuarioRegsitraNavigation = usuarioLocal;
+                    }
+                }
+                <tr>
+                    <td>@project.Nombre</td>
+                    @{
+                        string[] methodsList = project.MetodosAutenticacion.Split(",");
+                    }
+                    <td>
+                        <div class="dropend">
+                            <button class="btn dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false"><span class="align-middle material-icons">list</span>&nbsp;Ver métodos</button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                                @for(int i = 0; i < methodsList.Length; i++)
+                                {
+                                    <li class="dropdown-item">@methodsList[i]</li>
+                                }
+                            </ul>
+                        </div>
+                    </td>
+                    <td>@project.FechaAlta.ToShortDateString()</td>
+                    @if (project.IdUsuarioRegsitraNavigation == null)
+                    {
+                        <td class="text-danger font-italic">Usuario eliminado</td>
+                    }
+                    else
+                    {
+                        <td>@project.IdUsuarioRegsitraNavigation.Nombre</td>
+                    }
+                    <td>
+                        <button class="btn btn-primary modalUpdateProjectView" data-idProject="@project.Id" data-bs-toggle="modal" data-bs-target="#projectModal" title="Editar Proyecto">
+                            <span class="material-icons">edit</span>
+                        </button>
+                        <button class="btn btn-danger modalDeleteProjectView" data-idProject="@project.Id" data-bs-toggle="modal" data-bs-target="#projectModal" title="Eliminar proyecto">
+                            <span class="material-icons">delete</span>
+                        </button>
+                        <button class="btn btn-dark modalReadDescription" data-description="@project.Descripcion" data-bs-toggle="modal" data-bs-target="#projectModal" title="Leer descripción">
+                            <span class="material-icons">library_books</span>
+                        </button>
+                        <input type="hidden" value="@project.Enlace" id="linkProject"/>
+                    </td>
+                    <td>
+                        <button class="btn btn-secondary modalStatusProjectView" data-idProject="@project.Id" title="@if (project.Activo){<text>Desactivar</text>}else{<text>Activar</text>}" data-bs-toggle="modal" data-bs-target="#projectModal">
+                            <span class="material-icons">@if (project.Activo)
+                                {
+                                    <text>done</text>
+                                }
+                                else
+                                {
+                                    <text>clear</text>
+                                }</span>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!--MODAL FOR USRE CRUD-->
+<div class="modal fade" id="projectModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="staticBackdropLabel"></h3>
+                <button type="button" class="btn-close btn-close-modal-view" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body"></div>
+            <div class="modal-footer"></div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function getDescription(description) {
+        $('.modal-dialog').fadeOut(1)
+        $('#viewsLoader').show()
+        var linkProject = $('#linkProject').val()
+        $('.modal-title').html('Descripción del proyecto')
+        $(".modal-body").html(`<p class="text-justify">${description}</p><p><strong>Enlace:&nbsp;</strong>${linkProject}</p>`)
+        $('.modal-footer').html("<button type='button' class='btn btn-outline-secondary btn-close-modal-view' data-bs-dismiss='modal'><span class='align-middle material-icons'>close</span>&nbsp;Cerrar</button>")
+        $('#viewsLoader').hide()
+        $('.modal-dialog').fadeIn()
+    }
+
+    $('.modalReadDescription').on('click', function() {
+        getDescription($(this).attr('data-description'))
+    })
+</script>
+<script src="~/js/DataTable.js" type="text/javascript"></script>
+<script src="~/js/projectScriptsGetViews.js" type="text/javascript"></script>

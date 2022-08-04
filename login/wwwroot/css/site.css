@@ -1,0 +1,293 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap');
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
+
+body .content-form {
+    position: relative;
+    padding: 35px;
+}
+
+.content-form .form-login {
+    width: 425px;
+    background-color: #ffffffdb;
+    box-shadow: 2px 5px 5px 1px #00000033;
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+    border-radius: 10px;
+    padding: 30px;
+    position: absolute;
+    text-align: center;
+    color: #3b3b3b;
+    position: relative;
+}
+
+body .content-form .form-login .loader-form {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    background-color: #0000000b;
+    z-index: 10;
+    top: 0;
+    left: 0;
+    border-radius: 10px;
+    backdrop-filter: blur(5px);
+    display: none;
+}
+
+body .content-form .form-login .loader-form .loader-form-spinner {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, 0);
+}
+
+body .content-form .form-login .loader-form .loader-form-spinner .spinner-border {
+    box-shadow: 2px 2px 5px 1px #00000032;
+    width: 4rem !important;
+    height: 4rem !important;
+}
+
+.content-form .form-login h1 {
+    font-size: 20px;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    font-weight: 900;
+    color: #3b3b3b;
+}
+
+.content-form .form-login .mb-3 {
+    text-align: left;
+}
+
+.content-form .form-login .mb-3 .form-control {
+    border: none;
+    background: none;
+    border-radius: 5px 5px 0 0;
+    border-bottom: solid 2px #3b3b3b7c;
+    opacity: 0.6;
+    transition: opacity .3s ease-in-out;
+    margin: 0;
+}
+
+.content-form .form-login .mb-3 label {
+    opacity: .6;
+}
+
+.content-form .form-login .mb-3 .text-danger {
+    font-size: 10pt;
+}
+
+.content-form .form-login .forgot-password button {
+    border: none;
+    outline: none;
+    color: #5e5e5e;
+    transition: all .3s;
+    margin-bottom: 10px;
+}
+
+.content-form .form-login .forgot-password button:hover {
+    color: #000;
+    font-weight: 500;
+}
+
+.content-form .form-login .mb-3 .form-control:focus>.content-form form .mb-3 label {
+    opacity: 1;
+}
+
+.content-form .form-login .mb-3 .form-control:focus,
+.content-form .form-login .mb-3 .form-control:hover {
+    border-bottom: solid 2px #000000;
+    overflow: hidden;
+    box-shadow: none;
+    opacity: 1;
+}
+
+.content-form .form-login .mb-3 label {
+    font-size: 14px;
+    transition: all 0.2s ease-in-out;
+}
+
+.content-form .form-login .sign-in {
+    background-color: #3b3b3b;
+    color: #fff;
+    border: solid 1px #3b3b3b;
+    transition: all .2s;
+    padding: 5px;
+}
+
+.content-form .form-login .sign-in:hover {
+    background-color: #000000;
+}
+
+body .content-form .form-login .oauth-services {
+    width: 80%;
+    margin: auto;
+    margin-top: 10px;
+}
+
+.content-form .form-login .oauth-services .divisor {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.content-form .form-login .oauth-services .divisor p {
+    margin: 10px;
+}
+
+.content-form .form-login .oauth-services .divisor hr {
+    width: 150px;
+}
+
+.content-form .form-login .oauth-services .row {
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+
+.content-form .form-login .oauth-services .row .col button {
+    font-size: 16pt;
+    width: 45px;
+    height: 45px;
+    text-align: center;
+    border-radius: 25px;
+    transition: all .2s ease-in;
+    color: #fff;
+}
+
+.content-form .form-login .oauth-services .row .col button:hover {
+    transform: scale(2);
+}
+
+.content-form .form-login .oauth-services .row .col {
+    margin: 5px;
+}
+
+.content-form .form-login .oauth-services .row #Facebook {
+    background-color: #005b97;
+}
+
+.content-form .form-login .oauth-services .row #Facebook:hover {
+    background: none;
+    color: #005b97;
+}
+
+.content-form .form-login .oauth-services .row #Twitter {
+    background-color: #0078c9;
+}
+
+.content-form .form-login .oauth-services .row #Twitter:hover {
+    background: none;
+    color: #0078c9;
+}
+
+.content-form .form-login .oauth-services .row #Google {
+    background-color: #ca0000;
+}
+
+.content-form .form-login .oauth-services .row #Google:hover {
+    background: none;
+    color: #ca0000;
+}
+
+.content-form .form-login .oauth-services .row #Github {
+    background-color: #292929;
+}
+
+.content-form .form-login .oauth-services .row #Github:hover {
+    background: none;
+    color: #292929;
+}
+
+.content-form .form-login .oauth-services .row #Microsoft {
+    background-color: #008829;
+}
+
+.content-form .form-login .oauth-services .row #Microsoft:hover {
+    background: none;
+    color: #008829;
+}
+
+.content-form .form-login .oauth-services .row #Numero-de-telefono {
+    background-color: #5e5e5e;
+}
+
+.content-form .form-login .oauth-services .row #Numero-de-telefono:hover {
+    background: none;
+    color: #5e5e5e;
+}
+
+.content-form .form-login .oauth-services .row #Yahoo {
+    background-color: #390096;
+}
+
+.content-form .form-login .oauth-services .row #Yahoo:hover {
+    background: none;
+    color: #390096;
+}
+
+.content-form .form-login .oauth-services .row #Apple {
+    background-color: #5e5e5e;
+}
+
+.content-form .form-login .oauth-services .row #Apple:hover {
+    background: none;
+    color: #5e5e5e;
+}
+
+.modal .modal-dialog {
+    animation-name: animateModal;
+    animation-duration: .5s;
+}
+
+.modal .modal-dialog .modal-content .modal-footer button {
+    border: none;
+    transition: all .3s ease-in-out;
+}
+
+.modal .modal-dialog .modal-content .modal-footer .btn-close-modal {
+    background-color: #00000013;
+}
+
+.modal .modal-dialog .modal-content .modal-footer .btn-close-modal:hover {
+    background-color: #c9000016;
+    color: #c80000;
+}
+
+#sendEmailRestorePass:hover {
+    background-color: #008deb1a;
+    color: #0071bdff;
+}
+
+
+@keyframes animateModal {
+    from {
+        top: -50px;
+    }
+    to {
+        top: 0;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    body .content-form {
+            padding: 10px;
+        }
+
+        .content-form .form-login {
+            width: 100%;
+            margin: auto;
+            position: relative;
+            padding: 15px;
+            padding-top: 30px;
+        }
+
+            .content-form .form-login h1 {
+                font-size: 18px;
+            }
+    }

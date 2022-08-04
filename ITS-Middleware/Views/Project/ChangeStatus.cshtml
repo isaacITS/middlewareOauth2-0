@@ -1,0 +1,27 @@
+﻿@using ITS_Middleware.Models.Entities
+@model Proyecto
+
+<form id="updateStatusProjectForm">
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="FechaAlta">
+        <input type="hidden" asp-for="Activo" id="Activo">
+        <input type="hidden" asp-for="Descripcion"/>
+        <input type="hidden" id="Nombre" asp-for="Nombre"/>
+        <input type="hidden" asp-for="MetodosAutenticacion"/>
+        <input type="hidden" asp-for="IdUsuarioRegsitra"/>
+        <input type="hidden" asp-for="Enlace"/>
+        <div class="alert alert-warning text-center" role="alert">
+          Se <strong id="action-update"></strong> el proyecto <strong id="projectName"></strong>
+        </div>
+ </form>
+
+<script type="text/javascript">
+    $('#projectName').append($('#Nombre').val())
+    if ($('#Activo').val() == "True") {
+        $('#action-update').append("Desactivará")
+    } else {
+        $('#action-update').append("Activará")
+    }
+</script>
+
+<script src="~/js/projectScripts.js" asp-append-version="true"></script>

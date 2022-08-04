@@ -1,89 +1,244 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Authorization;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
+﻿using Microsoft.AspNetCore.Mvc;
+using ITS_Middleware.Tools;
+using ITS_Middleware.Models.Entities;
+using ITS_Middleware.ExceptionsHandler;
+using ITS_Middleware.Helpers;
+using ITS_Middleware.Constants;
 
 namespace ITS_Middleware.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class AuthController : ControllerBase
+    public class AuthController : Controller
     {
-        public static Models.User user = new Models.User();
-        private readonly IConfiguration config;
+        private readonly ILogger<AuthController> _logger;
+        TokenJwt tokenJwt = new();
+        RequestHelper requestHelper = new();
+        private readonly IHostEnvironment _env;
 
-
-        public AuthController(IConfiguration configuraiton)
+        public AuthController(ILogger<AuthController> logger, IHostEnvironment env)
         {
-            config = configuraiton;
+            _logger = logger;
+            _env = env;
         }
 
-        [HttpPost("register")]
-        public async Task<ActionResult<Models.User>> Register(UserInput req)
-        {
-            user.Username = req.Username;
-            user.Password = GetSHA256(req.Password);
 
-            return Ok(user);
-        }
-
-        //Autenticacion de usaurio
-        [HttpPost("auth")]
-        public async Task<ActionResult<string>> Auth(UserInput req)
+        public async Task<IActionResult> Login()
         {
-            if (user.Username != req.Username)
+            try
             {
-                return BadRequest("User Not found");
+                Usuario usuario = new()
+                {
+                    Activo = true,
+                    Nombre = "Administrador",
+                    FechaAlta = DateTime.Now,
+                    Email = "admin.oauth@it-seekers.com",
+                    Pass = "admin123",
+                    Puesto = "Administrador"
+                };
+                var response = await requestHelper.RegisterUser(usuario);
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName")))
+                {
+                    return View();
+                }
+                ViewBag.userName = HttpContext.Session.GetString("userName");
+                return RedirectToAction("Projects", "Home");
             }
-            if (user.Password != GetSHA256(req.Password))
+            catch (Exception ex)
             {
-                return BadRequest("Incorrect password");
+                List<string> errors = new List<string>();
+                var messages = ex.FromHierarchy(x => x.InnerException).Select(x => x.Message);
+                foreach (var message in messages)
+                {
+                    _logger.LogError("[ERROR MESSAGE]: " + message);
+                    Console.WriteLine(message.ToString().Trim());
+                    errors.Add(message);
+                }
+                TempData["ErrorsMessages"] = errors;
+                return View("Error");
             }
-
-            string token = GenerateToken(user);
-            return Ok(token);
         }
 
-
-
-        //Generar token
-        private string GenerateToken(Models.User user)
+        /*      Methods Requests        */
+        //Autenticacion de credenciales
+        [HttpPost]
+        public async Task<IActionResult> Login(string email, string pass)
         {
-            List<Claim> claims = new List<Claim>
+            try
             {
-                new Claim(ClaimTypes.Name, user.Username, user.Password),
-            };
-
-            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
-                config.GetSection("appSettings:token").Value));
-
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-
-            var token = new JwtSecurityToken(
-                claims: claims,
-                expires: DateTime.Now.AddHours(1),
-                signingCredentials: creds);
-
-            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-
-            return jwt;
+                var response = await requestHelper.SignIn(email, pass);
+                if (response.Ok)
+                {
+                    string id = response.MsgHeader;
+                    string nombre = response.Msg;
+                    HttpContext.Session.SetString("userName", nombre);
+                    HttpContext.Session.SetString("idUser", id);
+                    HttpContext.Session.SetString("SecretToken", response.Token);
+                    Vars.SECRET_TOKEN = response.Token;
+                    return RedirectToAction("Home", "Home");
+                }
+                ViewBag.msg = response.Msg;
+                return View();
+            }
+            catch (Exception ex)
+            {
+                List<string> errors = new List<string>();
+                var messages = ex.FromHierarchy(x => x.InnerException).Select(x => x.Message);
+                foreach (var message in messages)
+                {
+                    _logger.LogError("[ERROR MESSAGE]: " + message);
+                    Console.WriteLine(message.ToString().Trim());
+                    errors.Add(message);
+                }
+                TempData["ErrorsMessages"] = errors;
+                return View("Error");
+            }
         }
 
 
-        //Encriptar contraseña
-        public static string GetSHA256(string str)
+        public IActionResult RestorePass()
         {
-            SHA256 sha256 = SHA256.Create();
-            ASCIIEncoding encoding = new ASCIIEncoding();
-            byte[] stream = null;
-            StringBuilder sb = new StringBuilder();
-            stream = sha256.ComputeHash(encoding.GetBytes(str));
-            for (int i = 0; i < stream.Length; i++) sb.AppendFormat("{0:x2}", stream[i]);
-            return sb.ToString();
+            try
+            {
+                return View();
+            }
+            catch (Exception ex)
+            {
+                List<string> errors = new List<string>();
+                var messages = ex.FromHierarchy(x => x.InnerException).Select(x => x.Message);
+                foreach (var message in messages)
+                {
+                    _logger.LogError("[ERROR MESSAGE]: " + message);
+                    Console.WriteLine(message.ToString().Trim());
+                    errors.Add(message);
+                }
+                TempData["ErrorsMessages"] = errors;
+                return View("Error");
+            }
+        }
+
+        //Restore password method
+        [HttpPost]
+        public async Task<IActionResult> GenerateToken([FromBody] string email)
+        {
+            try
+            {
+                var user = await requestHelper.GetUserByEmail(email);
+                if (user != null)
+                {
+                    if (!user.Activo) return Json(new { ok = false, status = 205, msg = "El usuario se encuentra deshabilitado" });
+                    var token = tokenJwt.CreateToken(user.Id);
+                    var response = requestHelper.UpdateUserTokenRecovery(email, token);
+                    if (response.Result.Ok)
+                    {
+                        var baseUrl = $"{this.Request.Scheme}://{this.Request.Host.Value}";
+                        var bodyEmail = System.IO.File.ReadAllText(Path.Combine(_env.ContentRootPath, @"wwwroot\htmlViews\resetPassMessage.html"))
+                            .Replace("{contact-name}", user.Nombre)
+                            .Replace("{link-update-pass}", $"{baseUrl}/Auth/UpdatePass?token={token}");
+                        SendEmail.SendEmailReq(email, bodyEmail, "Recuperación de contraseña, portal de administración Oauth2.0");
+                    }
+                    return Json(response);
+                }
+                return Json(new { Ok = false, Status = 400, Msg = $"No se encontró el usuario con el correo {email}" });
+            }
+            catch (Exception ex)
+            {
+                List<string> errors = new List<string>();
+                var messages = ex.FromHierarchy(x => x.InnerException).Select(x => x.Message);
+                foreach (var message in messages)
+                {
+                    _logger.LogError("[ERROR MESSAGE]: " + message);
+                    Console.WriteLine(message.ToString().Trim());
+                    errors.Add(message);
+                }
+                TempData["ErrorsMessages"] = errors;
+                return Json(new { Ok = false, Status = 500, Msg = "Error" });
+            }
+        }
+
+        public async Task<IActionResult> UpdatePass(string token)
+        {
+            try 
+            {
+                if (tokenJwt.TokenIsValid(token))
+                {
+                    string[] dataToken = Encrypt.DecryptString(token).Split("$");
+                    int id = int.Parse(dataToken[0]);
+                    var user = await requestHelper.GetUserById(id);
+                    if (user != null)
+                    {
+                        if (user.TokenRecovery == token) return View("UpdatePassword", user);
+                    }
+                }
+                ViewBag.msg = "El enlace para recuperar contraseña ha expirado o no es válido";
+                return View("Login");
+            }
+            
+            catch (Exception ex)
+            {
+                List<string> errors = new List<string>();
+                var messages = ex.FromHierarchy(x => x.InnerException).Select(x => x.Message);
+                foreach (var message in messages)
+                {
+                    _logger.LogError("[ERROR MESSAGE]: " + message);
+                    Console.WriteLine(message.ToString().Trim());
+                    errors.Add(message);
+                }
+                TempData["ErrorsMessages"] = errors;
+                return View("Error");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdatePass(Usuario userModel)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var response = await requestHelper.UpdateUserPassword(userModel);
+                    return Json(response);
+                }
+                return Json(new { Ok = false, Status = 400, Msg = "Los datos recibidos no son válidos o están incompletos", MsgHeader = "Información no válida"});
+            }
+            catch (Exception ex)
+            {
+                List<string> errors = new List<string>();
+                var messages = ex.FromHierarchy(x => x.InnerException).Select(x => x.Message);
+                foreach (var message in messages)
+                {
+                    _logger.LogError("[ERROR MESSAGE]: " + message);
+                    Console.WriteLine(message.ToString().Trim());
+                    errors.Add(message);
+                }
+                TempData["ErrorsMessages"] = errors;
+                return Json(new { Ok = false, Status = 500, Msg = "Error" });
+            }
+        }
+
+
+
+        //Clear session
+        public IActionResult Logout()
+        {
+            try
+            {
+                HttpContext.Session.Remove("userName");
+                HttpContext.Session.Remove("idUser");
+                HttpContext.Session.Remove("SecretToken");
+                return View("Login");
+            }
+            catch (Exception ex)
+            {
+                List<string> errors = new List<string>();
+                var messages = ex.FromHierarchy(x => x.InnerException).Select(x => x.Message);
+                foreach (var message in messages)
+                {
+                    _logger.LogError("[ERROR MESSAGE]: " + message);
+                    Console.WriteLine(message.ToString().Trim());
+                    errors.Add(message);
+                }
+                TempData["ErrorsMessages"] = errors;
+                return View("Error");
+            }
         }
     }
 }
