@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using OauthAPI.Helpers;
 using OauthAPI.Models.Entities;
 using OauthAPI.Tools;
 
@@ -23,6 +24,7 @@ namespace OauthAPI.Controllers
                 var trySignIn = DbHelper.SignIn(email, pass);
                 if (trySignIn.Ok)
                 {
+                    trySignIn.Token = JwtToken.GenerateToken();
                     return Ok(trySignIn);
                 }
                 return Unauthorized(trySignIn);

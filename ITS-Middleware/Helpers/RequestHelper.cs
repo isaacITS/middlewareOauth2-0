@@ -2,6 +2,7 @@
 using ITS_Middleware.Models.Entities;
 using ITS_Middleware.Tools;
 using Newtonsoft.Json;
+using System.Net.Http.Headers;
 using System.Text;
 
 namespace ITS_Middleware.Helpers
@@ -16,10 +17,11 @@ namespace ITS_Middleware.Helpers
             httpClient = new HttpClient(clientHandler, false)
             {
                 BaseAddress = new Uri(Vars.API_URI),
-                Timeout = TimeSpan.FromSeconds(59.9)
+                Timeout = TimeSpan.FromMinutes(2)
             };
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Vars.SECRET_TOKEN);
             httpClient.DefaultRequestHeaders.Accept.Clear();
-            httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
         /*=====> HTTP GET REQUEST <=======*/

@@ -3,6 +3,7 @@ using ITS_Middleware.Tools;
 using ITS_Middleware.Models.Entities;
 using ITS_Middleware.ExceptionsHandler;
 using ITS_Middleware.Helpers;
+using ITS_Middleware.Constants;
 
 namespace ITS_Middleware.Controllers
 {
@@ -70,6 +71,8 @@ namespace ITS_Middleware.Controllers
                     string nombre = response.Msg;
                     HttpContext.Session.SetString("userName", nombre);
                     HttpContext.Session.SetString("idUser", id);
+                    HttpContext.Session.SetString("SecretToken", response.Token);
+                    Vars.SECRET_TOKEN = response.Token;
                     return RedirectToAction("Home", "Home");
                 }
                 ViewBag.msg = response.Msg;
@@ -220,6 +223,7 @@ namespace ITS_Middleware.Controllers
             {
                 HttpContext.Session.Remove("userName");
                 HttpContext.Session.Remove("idUser");
+                HttpContext.Session.Remove("SecretToken");
                 return View("Login");
             }
             catch (Exception ex)

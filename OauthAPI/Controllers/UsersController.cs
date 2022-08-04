@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using OauthAPI.Helpers;
 using OauthAPI.Models.Entities;
 using OauthAPI.Tools;
 
@@ -13,6 +14,13 @@ namespace OauthAPI.Controllers
         public UsersController(ILogger<UsersController> logger)
         {
             _logger = logger;
+        }
+
+
+        [HttpGet]
+        public IActionResult GetMyFuckingToken()
+        {
+            return new ObjectResult(JwtToken.GenerateToken());
         }
 
         [HttpGet]

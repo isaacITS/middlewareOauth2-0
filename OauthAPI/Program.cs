@@ -19,10 +19,10 @@ OauthAPI.Constants.Vars.CONNECTION_STRING = builder.Configuration.GetSection("Ap
 
 
 string SecretKey = builder.Configuration.GetSection("ApplicationSettings:Jwt:SecretKey").Value.ToString();
-string Issuer = builder.Configuration.GetSection("ApplicationSettings:Jwt:Issuer").Value.ToString();
-string Audience = builder.Configuration.GetSection("ApplicationSettings:Jwt:Audience").Value.ToString();
+OauthAPI.Constants.Vars.ISSUER = builder.Configuration.GetSection("ApplicationSettings:Jwt:Issuer").Value.ToString();
+OauthAPI.Constants.Vars.AUDIENCE = builder.Configuration.GetSection("ApplicationSettings:Jwt:Audience").Value.ToString();
 
-SymmetricSecurityKey SecuritySecretKey = new(Encoding.UTF8.GetBytes(SecretKey));
+OauthAPI.Constants.Vars.SECURITY_SECRET_KEY = new(Encoding.UTF8.GetBytes(SecretKey));
 
 builder.Services.AddDbContext<OauthContextDb>(options =>
 {
@@ -31,18 +31,18 @@ builder.Services.AddDbContext<OauthContextDb>(options =>
 
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultAuthenticateScheme = "JwtOauth20";
-    options.DefaultChallengeScheme = "JwtOauth20";
+    options.DefaultAuthenticateScheme = "JwtBearer";
+    options.DefaultChallengeScheme = "JwtBearer";
 })
-    .AddJwtBearer("JwtOauth20", jwtOptions =>
+    .AddJwtBearer("JwtBearer", jwtOptions =>
     {
         jwtOptions.TokenValidationParameters = new TokenValidationParameters()
         {
-            IssuerSigningKey = SecuritySecretKey,
+            IssuerSigningKey = OauthAPI.Constants.Vars.SECURITY_SECRET_KEY,
             ValidateIssuer = true,
             ValidateAudience = true,
-            ValidIssuer = Issuer,
-            ValidAudience = Audience,
+            ValidIssuer = OauthAPI.Constants.Vars.ISSUER,
+            ValidAudience = OauthAPI.Constants.Vars.AUDIENCE,
             ValidateLifetime = true
         };
     });

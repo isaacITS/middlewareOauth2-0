@@ -14,6 +14,10 @@
         public static string? PATH;
         public static string? APIKEY;
 
+
+        //Secret Token
+        public static string? SECRET_TOKEN;
+
         #endregion WEB APPLICATION CONFIGURATION
     }
 }
