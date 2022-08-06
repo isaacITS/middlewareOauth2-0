@@ -1,11 +1,11 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace login.Helpers
+namespace OauthAPI.Helpers
 {
     public class Encrypt
     {
-        public static string Sha256(string str)
+        public static string sha256(string str)
         {
             SHA256 sha256 = SHA256.Create();
             var hash = new StringBuilder();

@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using OauthAPI.ExceptionsHandler;
+using OauthAPI.Helpers;
 using OauthAPI.Models.Entities;
 using OauthAPI.Tools;
 
@@ -17,6 +19,7 @@ namespace OauthAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult GetAll()
         {
             try
@@ -38,6 +41,7 @@ namespace OauthAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult GetById(int id)
         {
             try
@@ -58,8 +62,8 @@ namespace OauthAPI.Controllers
             }
         }
 
-        [HttpPost]
-        public IActionResult GetByEmail([FromBody] string email)
+        [HttpGet]
+        public IActionResult GetByEmail(string email)
         {
             try
             {
@@ -81,6 +85,7 @@ namespace OauthAPI.Controllers
 
 
         [HttpPost] /*<ENDPOINT REGISTER NEW USER BY PROJECCT>*/
+        [Authorize]
         public IActionResult Register(UsuariosProyecto userModel)
         {
             try
@@ -103,6 +108,7 @@ namespace OauthAPI.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         public IActionResult Update(UsuariosProyecto userModel)
         {
             try
@@ -127,6 +133,57 @@ namespace OauthAPI.Controllers
         }
 
         [HttpPut]
+        public IActionResult UpdateToken(string token, int id)
+        {
+            try
+            {
+                if (!ValidateTokenEncrypted.TokenIsValid(token)) return Unauthorized(new { ok = false, status = 400, msgHeader = "No se pudo actualizar el usuario", msg = "La información recibida no es válida" });
+                var user = DbHelper.GetUserByProjectById(id);
+                user.TokenRecovery = token;
+                if (DbHelper.UpdateUserByProject(user)) return Ok(new { ok = true, status = 200, msgHeader = "Correo con token enviado", msg = $"Hola {user.NombreCompleto} te hemos enviado un correo electrónico para actualizar tu conttraseña" });
+                throw new Exception();
+            }
+            catch (Exception ex)
+            {
+                List<string> errors = new List<string>();
+                var messages = ex.FromHierarchy(x => x.InnerException).Select(x => x.Message);
+                foreach (var message in messages)
+                {
+                    _logger.LogError("[ERROR MESSAGE]: " + message);
+                    Console.WriteLine(message.ToString().Trim());
+                    errors.Add(message);
+                }
+                return BadRequest(new { ok = false, status = 500, msg = ex.Message.ToString() });
+            }
+        }
+
+        [HttpPut]
+        public IActionResult UpdatePassword(UpdateData updateData)
+        {
+            try
+            {
+                if (!ValidateTokenEncrypted.TokenIsValid(updateData.Token)) return Unauthorized(new { ok = false, status = 400, msgHeader = "No se pudo actualizar el usuario", msg = "La información recibida no es válida" });
+                var user = DbHelper.GetUserByProjectById(updateData.Id);
+                
+                if (DbHelper.UpdateUserByProject(user)) return Ok(new { ok = true, status = 200, msgHeader = "Contraseña actualizada con exito", msg = $"Hola {user.NombreCompleto} ahora puedes ingresar con tu nueva contraseña" });
+                throw new Exception();
+            }
+            catch (Exception ex)
+            {
+                List<string> errors = new List<string>();
+                var messages = ex.FromHierarchy(x => x.InnerException).Select(x => x.Message);
+                foreach (var message in messages)
+                {
+                    _logger.LogError("[ERROR MESSAGE]: " + message);
+                    Console.WriteLine(message.ToString().Trim());
+                    errors.Add(message);
+                }
+                return BadRequest(new { ok = false, status = 500, msg = ex.Message.ToString() });
+            }
+        }
+
+        [HttpPut]
+        [Authorize]
         public IActionResult UpdateStatus(int id)
         {
             try
@@ -151,6 +208,7 @@ namespace OauthAPI.Controllers
         }
 
         [HttpDelete]
+        [Authorize]
         public IActionResult Delete(int id)
         {
             try

@@ -21,7 +21,7 @@
         </main>
     </div>
 
-    <div class="modal fade" id="signInPhoneModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="false">
+    <div class="modal fade" id="signInPhoneModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -51,7 +51,7 @@
       </div>
     </div>
 
-    <div class="modal fade" id="restorePassModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="false">
+    <div class="modal fade" id="restorePassModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -61,13 +61,13 @@
       <div class="modal-body">
           <div id="messageInvalidEmail" style="display: none;" class="alert alert-danger" role="alert"></div>
         <div class="mb-3">
-            <label class="form-label" for="emailResPass">Escribe tu correo electrónico:</label>
+            <label class="form-label" for="emailResPass">Escribe tu correo electrónico, para enviar un correo para el cambio de contraseña:</label>
              <input class="form-control" type="email" id="emailResPass" placeholder="Correo electrónico"/>
          </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-close-modal" data-bs-dismiss="modal"><i class="bi bi-x-lg"></i>&nbsp;Cancelar</button>
-        <button type="button" id="sendEmailRestorePass" class="btn btn-primary" disabled data-bs-dismiss="modal"><i class="bi bi-send-check-fill"></i>&nbsp;Enviar correo</button>
+        <button type="button" id="sendEmailRestorePass" class="btn btn-primary" disabled><i class="bi bi-send-check-fill"></i>&nbsp;Enviar correo</button>
       </div>
     </div>
   </div>
@@ -97,5 +97,6 @@
         firebase.initializeApp(firebaseConfig)
     </script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/usersScripts.js" asp-append-version="true"></script>
 </body>
 </html>

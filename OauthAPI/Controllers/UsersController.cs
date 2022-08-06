@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using OauthAPI.ExceptionsHandler;
 using OauthAPI.Helpers;
 using OauthAPI.Models.Entities;
@@ -18,6 +19,7 @@ namespace OauthAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult GetAll()
         {
             try
@@ -39,6 +41,7 @@ namespace OauthAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult GetById(int id)
         {
             try
@@ -60,6 +63,7 @@ namespace OauthAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult GetByEmail(string email)
         {
             try
@@ -82,6 +86,7 @@ namespace OauthAPI.Controllers
 
 
         [HttpPost] /*<ENDPOINT REGISTER NEW USER (ADMIN PORTAL)>*/
+        [Authorize]
         public IActionResult Register(Usuario user)
         {
             try
@@ -104,6 +109,7 @@ namespace OauthAPI.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         public IActionResult Update(Usuario user)
         {
             try
@@ -128,6 +134,7 @@ namespace OauthAPI.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         public IActionResult UpdateStatus(int id)
         {
             try
@@ -152,6 +159,7 @@ namespace OauthAPI.Controllers
         }
 
         [HttpDelete]
+        [Authorize]
         public IActionResult Delete(int id)
         {
             try

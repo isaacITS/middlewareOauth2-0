@@ -1,7 +1,13 @@
-﻿<style>
+﻿@if(!string.IsNullOrEmpty(ViewBag.Message))
+{
+    <input type="hidden" value="@ViewBag.Message" id="errorMessage"/>
+}
+
+<style>
         .container {
             position: relative;
             color: #494949;
+            background-color: #fff;
         }
         
         .container .content-page-not-found {
@@ -55,3 +61,9 @@
             <i id="animated-icon" class="bi bi-search"></i>
         </div>
     </div>
+
+<script type="text/javascript">
+    if ($('#errorMessage').val().length > 10) {
+            ShowToastMessage('error', "Enlace de actualizacón no válido o expirado", @ViewBag.Message)
+        }
+</script>

@@ -19,6 +19,7 @@ namespace OauthAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult GetAll()
         {
             try
@@ -40,6 +41,7 @@ namespace OauthAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult GetById(int id)
         {
             try
@@ -82,6 +84,7 @@ namespace OauthAPI.Controllers
         }
 
         [HttpPost] /*<ENDPOINT REGISTER NEW PROJECT (ADMIN PORTAL)>*/
+        [Authorize]
         public IActionResult Register(Proyecto project)
         {
             try
@@ -104,6 +107,7 @@ namespace OauthAPI.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         public IActionResult Update(Proyecto project)
         {
             try
@@ -126,6 +130,7 @@ namespace OauthAPI.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         public IActionResult UpdateStatus(int id)
         {
             try
@@ -150,6 +155,7 @@ namespace OauthAPI.Controllers
         }
 
         [HttpDelete]
+        [Authorize]
         public IActionResult Delete(int id)
         {
             try

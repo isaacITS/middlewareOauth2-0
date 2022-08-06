@@ -21,7 +21,6 @@ insert into metodosAuth values('Cuenta Facebook');
 insert into metodosAuth values('Cuenta Twitter');
 insert into metodosAuth values('Correo y contrasena');
 insert into metodosAuth values('Cuenta Github');
-insert into metodosAuth values('Cuenta Apple');
 insert into metodosAuth values('Numero de telefono');
 insert into metodosAuth values('Cuenta Microsoft');
 insert into metodosAuth values('Cuenta Yahoo');
@@ -33,6 +32,7 @@ create table proyectos(
 	fechaAlta datetime not null,
 	metodosAutenticacion varchar(300) not null,
 	activo bit not null,
+	imageUrl varchar(300),
 	idUsuarioRegsitra int foreign key references usuarios(id)
 );
 
@@ -44,5 +44,6 @@ create table usuariosProyecto(
 	pass varchar(200) not null,
 	fechaCreacion datetime,
 	fechaAcceso datetime,
+	activo bit not null,
 	idProyecto int foreign key references proyectos(id)
 );

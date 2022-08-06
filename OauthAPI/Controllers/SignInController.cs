@@ -78,7 +78,7 @@ namespace OauthAPI.Controllers
                 {
                     return Ok(new { ok = true, status = 200, msg = "Se ha enviado un correo con un token para actualizar la contraseña", msgHeader = $"Correo enviado a {email}" });
                 }
-                return Unauthorized(new { ok = false, status = 400, msg = $"No se encotró un usuario registrado con el correo {email}", msgHeader = "Usuairo no encontrado" });
+                throw new Exception();
             }
             catch (Exception ex)
             {
@@ -103,7 +103,7 @@ namespace OauthAPI.Controllers
                 {
                     return Ok(new { ok = true, status = 200, msg = $"Hola {usuario.Nombre}, se ha actualizado su contraseña", msgHeader = "Contraseña actualizada" });
                 }
-                return Unauthorized(new { ok = false, status = 400, msg = "No se encotró un usuario registrado", msgHeader = "Usuairo no encontrado" });
+                throw new Exception();
             }
             catch (Exception ex)
             {

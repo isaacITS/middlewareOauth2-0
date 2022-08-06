@@ -8,10 +8,10 @@ namespace login.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        RequestHelper requestHelper = new();
+        readonly RequestHelper requestHelper = new();
         private readonly IHostEnvironment _env;
-        TokenJwt tokenJwt = new();
-        IConfiguration config;
+        readonly TokenJwt tokenJwt = new();
+        private readonly IConfiguration config;
 
         public HomeController(ILogger<HomeController> logger, IConfiguration config, IHostEnvironment env)
         {
@@ -29,12 +29,13 @@ namespace login.Controllers
 
                 if (resultProject == null) return View("NotFound");
                 ViewData["project"] = resultProject;
+                ViewData["ProjectName"] = resultProject.Nombre;
                 if (resultProject.Activo) return View();
                 return View("NotFound");
             }
             catch (Exception ex)
             {
-                List<string> errors = new List<string>();
+                List<string> errors = new();
                 var messages = ex.FromHierarchy(x => x.InnerException).Select(x => x.Message);
                 foreach (var message in messages)
                 {
@@ -57,7 +58,7 @@ namespace login.Controllers
             }
             catch (Exception ex)
             {
-                List<string> errors = new List<string>();
+                List<string> errors = new();
                 var messages = ex.FromHierarchy(x => x.InnerException).Select(x => x.Message);
                 foreach (var message in messages)
                 {
@@ -72,31 +73,33 @@ namespace login.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> SendEmailRes(string email, string projectName, int projectId)
+        public async Task<IActionResult> SendEmailRes(string email, string projectName, string projectImage)
         {
             try
             {
                 var user = await requestHelper.GetUserProject(email);
-                if (user != null)
+                if (user != null && !string.IsNullOrEmpty(user.NombreCompleto))
                 {
-                    var token = tokenJwt.CreateToken(user.Id);
-                    user.TokenRecovery = token;
-                    var response = await requestHelper.UpdateUserProject(user);
-                    if (!response.Ok) return Json(new { ok = false, status = 400, msg = "No se ha enviado el correo, intenta nuevamente", msgHeader = "No se envió el correo" });
-
+                    var token = tokenJwt.CreateToken(user.Id, projectName, string.IsNullOrEmpty(projectImage) ? "NoImage" : projectImage);
+                    var response = await requestHelper.UpdateToken(token, user.Id);
+                    if (!response.Ok) return Json(response);
                     var baseUrl = $"{this.Request.Scheme}://{this.Request.Host.Value}";
-                    var bodyEmail = System.IO.File.ReadAllText(Path.Combine(_env.ContentRootPath, @"wwwroot\htmlTemlates\restorePassword.html"))
+                    var bodyEmail = System.IO.File.ReadAllText(Path.Combine(_env.ContentRootPath, @"wwwroot\htmlTemplates\restorePassword.html"))
                         .Replace("{contact-name}", user.NombreCompleto)
-                        .Replace("{nombre-empresa}", projectName)
+                        .Replace("{project-name}", projectName)
+                        .Replace("{image-project-url}", string.IsNullOrEmpty(projectImage) ? "NotFound" : projectImage)
                         .Replace("{link-update-pass}", $"{baseUrl}/Home/UpdatePass?token={token}");
-                    SendEmail.SendEmailReq(email, bodyEmail, $"{projectName} - actualización de contraseña");
+                    SendEmail.SendEmailReq(email, bodyEmail, 
+                        $"{projectName} - actualización de contraseña", 
+                        config.GetSection("ApplicationSettings:EmailConfig:email").Value.ToString(),
+                        config.GetSection("ApplicationSettings:EmailConfig:password").Value.ToString());
                     return Json(response);
                 }
-                return Json(new { ok = false, status = 400, msg = $"Al parecer no existe un usuario registrado con correo: {email}", msgHeader = "Usuario no encontrado" });
+                return Json(new { ok = false, status = 400, msg = $"Al parecer no existe un usuario registrado con correo: {email}", msgHeader = "No se pudo enviar el correo" });
             }
             catch (Exception ex)
             {
-                List<string> errors = new List<string>();
+                List<string> errors = new();
                 var messages = ex.FromHierarchy(x => x.InnerException).Select(x => x.Message);
                 foreach (var message in messages)
                 {
@@ -109,20 +112,25 @@ namespace login.Controllers
             }
         }
 
-        public async Task<IActionResult> UpdatePassword(string token)
+        public IActionResult UpdatePassword(string token)
         {
             try
             {
-                ViewBag.Message = "El token para actualizar la contraseña no es válido";
-                if (!string.IsNullOrEmpty(token) && tokenJwt.TokenIsValid(token)) return View("SignIn");
+                ViewBag.Message = "El token para actualizar la contraseña no es válido o ha expirado";
+                if (string.IsNullOrEmpty(token) || !tokenJwt.TokenIsValid(token)) return View("NotFound");
 
-                int id = int.Parse(Encrypt.DecryptString(token).Split("$")[0]);
-                var user = await requestHelper.GetUserProjectById(id);
-                return View(user);
+                var dataUpdate = new UpdateData
+                {
+                    Token = token,
+                    Id = int.Parse(Encrypt.DecryptString(token).Split("$")[0]),
+                    ImageProject = Encrypt.DecryptString(token).Split("$")[2],
+                    ProjectName = Encrypt.DecryptString(token).Split("$")[1]
+                };
+                return View(dataUpdate);
             }
             catch (Exception ex)
             {
-                List<string> errors = new List<string>();
+                List<string> errors = new();
                 var messages = ex.FromHierarchy(x => x.InnerException).Select(x => x.Message);
                 foreach (var message in messages)
                 {
@@ -136,21 +144,19 @@ namespace login.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdatePassword(UsuariosProyecto userModel)
+        public async Task<IActionResult> UpdatePassword(UpdateData updateData)
         {
             try
             {
-                if (ModelState.IsValid)
-                {
-                    userModel.Pass = Encrypt.sha256(userModel.Pass);
-                    var response = await requestHelper.UpdateUserProject(userModel);
-                    return Json(response);
-                }
-                throw new Exception();
+                ViewBag.Message = "El enlace para actualizar la contraseña ha expirado o no es válido";
+                if (string.IsNullOrEmpty(updateData.NewPass) || !tokenJwt.TokenIsValid(updateData.Token)) return View("NotFound");
+                updateData.NewPass = Encrypt.Sha256(updateData.NewPass);
+                var response = await requestHelper.UpdatePasword(updateData);
+                return Json(response);
             }
             catch (Exception ex)
             {
-                List<string> errors = new List<string>();
+                List<string> errors = new();
                 var messages = ex.FromHierarchy(x => x.InnerException).Select(x => x.Message);
                 foreach (var message in messages)
                 {

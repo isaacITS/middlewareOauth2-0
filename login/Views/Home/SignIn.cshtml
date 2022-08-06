@@ -2,9 +2,11 @@
 @{
    Proyecto project = ViewData["project"] as Proyecto;
 }
+
 <div class="content-form">
     <input type="hidden" value="@project.ImageUrl" id="projectImageUrl"/>
     <input type="hidden" value="@project.Id" id="projectId"/>
+    <input type="hidden" value="@project.Nombre" id="projectName"/>
     <div class="form-login" id="signInForm">
         <h1>Inicia sesión en <strong>@project.Nombre</strong></h1>
         <div class="form-floating mb-3">
@@ -27,27 +29,27 @@
             string[] authMethods = project.MetodosAutenticacion.Split(",");
             if(authMethods.Length > 1)
             {
-                    <div class="oauth-services">
-                        <div class="divisor">
-                            <hr><p>o</p><hr>
-                        </div>
-                        <div class="row">
-                            @foreach(string method in authMethods)
+                        <div class="oauth-services">
+                            <div class="divisor">
+                                <hr><p>o</p><hr>
+                            </div>
+                            <div class="row">
+                                @foreach(string method in authMethods)
                         {
                             if(method != "Correo y contrasena" && method != "Numero de telefono")
                             {
-                                    <div class="col">
-                                        <button class="btn" id="@method" type="button"><i class="fab fa-@method.ToLower()"></i></button>
-                                    </div>
+                                        <div class="col">
+                                            <button class="btn" id="@method" type="button"><i class="fab fa-@method.ToLower()"></i></button>
+                                        </div>
                             } else if(method == "Numero de telefono")
                             {
-                                    <div class="col">
-                                        <button class="btn" id="@method.Replace(' ','-')" type="button" data-bs-toggle="modal" data-bs-target="#signInPhoneModal"><i class="fas fa-phone"></i></button>
-                                    </div>
+                                        <div class="col">
+                                            <button class="btn" id="@method.Replace(' ','-')" type="button" data-bs-toggle="modal" data-bs-target="#signInPhoneModal"><i class="fas fa-phone"></i></button>
+                                        </div>
                             }
                         }
+                            </div>
                         </div>
-                    </div>
             }
         }
         <div class="loader-form">

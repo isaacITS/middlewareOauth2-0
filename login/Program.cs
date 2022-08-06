@@ -1,3 +1,4 @@
+using login.Constants;
 using login.Helpers.Log;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,18 +7,16 @@ IWebHostEnvironment _env = builder.Environment;
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Configuration.AddJsonFile($"appsettings.{_env.EnvironmentName}.json", optional: true, reloadOnChange: true);
-login.Constants.Vars.API_URI = builder.Configuration.GetSection("ApplicationSettings:ApiSettings:DefaultUri").Value.ToString();
+VarsHelpers.API_URI = builder.Configuration.GetSection("ApplicationSettings:ApiSettings:DefaultUri").Value.ToString();
 
 builder.Services.AddSingleton<ILoggerManager, LoggerManager>();
 builder.Services.AddLogging(config => config.AddLog4Net("log4net.config", true));
-
-//Firebase configuration
-login.Constants.Vars.ApiKey = builder.Configuration.GetSection("ApplicationSettings:firebaseSecret:apiKey").Value.ToString();
-login.Constants.Vars.AuthDomain = builder.Configuration.GetSection("ApplicationSettings:firebaseSecret:authDomain").Value.ToString();
-login.Constants.Vars.ProjectId = builder.Configuration.GetSection("ApplicationSettings:firebaseSecret:projectId").Value.ToString();
-login.Constants.Vars.StorageBucket = builder.Configuration.GetSection("ApplicationSettings:firebaseSecret:storageBucket").Value.ToString();
-login.Constants.Vars.MessagingSenderId = builder.Configuration.GetSection("ApplicationSettings:firebaseSecret:messagingSenderId").Value.ToString();
-login.Constants.Vars.AppId = builder.Configuration.GetSection("ApplicationSettings:firebaseSecret:appId").Value.ToString();
+VarsHelpers.ApiKey = builder.Configuration.GetSection("ApplicationSettings:firebaseSecret:apiKey").Value.ToString();
+VarsHelpers.AuthDomain = builder.Configuration.GetSection("ApplicationSettings:firebaseSecret:authDomain").Value.ToString();
+VarsHelpers.ProjectId = builder.Configuration.GetSection("ApplicationSettings:firebaseSecret:projectId").Value.ToString();
+VarsHelpers.StorageBucket = builder.Configuration.GetSection("ApplicationSettings:firebaseSecret:storageBucket").Value.ToString();
+VarsHelpers.MessagingSenderId = builder.Configuration.GetSection("ApplicationSettings:firebaseSecret:messagingSenderId").Value.ToString();
+VarsHelpers.AppId = builder.Configuration.GetSection("ApplicationSettings:firebaseSecret:appId").Value.ToString();
 
 var app = builder.Build();
 

@@ -1,6 +1,7 @@
 ﻿using ITS_Middleware.ExceptionsHandler;
 using ITS_Middleware.Helpers;
 using ITS_Middleware.Models.Entities;
+using ITS_Middleware.Tools;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ITS_Middleware.Controllers
@@ -9,10 +10,12 @@ namespace ITS_Middleware.Controllers
     {
         private readonly ILogger<UserByProjectController> _logger;
         RequestHelper requestHelper = new();
+        private readonly IHostEnvironment _env;
 
-        public UserByProjectController(ILogger<UserByProjectController> logger)
-        { 
+        public UserByProjectController(ILogger<UserByProjectController> logger, IHostEnvironment env)
+        {
             _logger = logger;
+            _env = env;
         }
 
         public async Task<IActionResult> Register()
@@ -47,12 +50,28 @@ namespace ITS_Middleware.Controllers
         {
             try
             {
+                var password = user.Pass;
+                var baseUrl = "https://its-oauth-login.azurewebsites.net/";
                 user.FechaCreacion = DateTime.Now;
                 user.FechaAcceso = user.FechaCreacion;
                 user.Activo = true;
+
                 if (ModelState.IsValid)
                 {
                     var response = await requestHelper.RegisterUserByProject(user);
+                    if (!response.Ok) return Json(response);
+
+                    int IdProyect = user.IdProyecto == null ? default : user.IdProyecto.Value;
+                    var project = await requestHelper.GetProjectById(IdProyect);
+
+                    var bodyEmail = System.IO.File.ReadAllText(Path.Combine(_env.ContentRootPath, @"wwwroot\htmlViews\CreacionNuevaCuenta.html"))
+                        .Replace("{contact-name}", user.NombreCompleto)
+                        .Replace("{nombre-empresa}", project.Nombre)
+                        .Replace("{link-update}", baseUrl + $"?project={project.Nombre}")
+                        .Replace("{user-email}", user.Email)
+                        .Replace("{user-pass}", password)
+                        .Replace("{imagen-empresa}", !string.IsNullOrEmpty(project.ImageUrl) ? project.ImageUrl : "¡Bienvenido!");
+                    SendEmail.SendEmailReq(user.Email, bodyEmail, $"Nueva cuenta para: {project.Nombre}");
                     return Json(response);
                 }
                 return Json(user);
@@ -113,7 +132,35 @@ namespace ITS_Middleware.Controllers
         {
             try
             {
+                string password = user.Pass;
+                string email = user.Email;
+                var oldUser = await requestHelper.GetUserByProjectById(user.Id);
                 var response = await requestHelper.UpdateUserByProject(user);
+                var baseUrl = "https://its-oauth-login.azurewebsites.net/";
+                if (response.Ok)
+                {
+                    if (oldUser.Email != email || (!string.IsNullOrEmpty(password) && oldUser.Pass != Encrypt.sha256(password)))
+                    {
+                        int IdProyect = user.IdProyecto == null ? default : user.IdProyecto.Value;
+                        var project = await requestHelper.GetProjectById(IdProyect);
+
+                        string dataUpdated = oldUser.Email != email && oldUser.Pass != user.Pass ? "el correo y contraseña" : oldUser.Email != email ? "el correo" : oldUser.Pass != user.Pass ? "la contraseña" : "";
+                        password = oldUser.Pass != Encrypt.sha256(password) ? password : "Tu contraseña sigue siendo la misma";
+
+                        var bodyEmail = System.IO.File.ReadAllText(Path.Combine(_env.ContentRootPath, @"wwwroot\htmlViews\CambioDatos.html"))
+                            .Replace("{contact-name}", user.NombreCompleto)
+                            .Replace("{nombre-empresa}", project.Nombre)
+                            .Replace("{link-update}", baseUrl + $"?project={project.Nombre}")
+                            .Replace("{dato}", dataUpdated)
+                            .Replace("{user-email}", email)
+                            .Replace("{user-pass}", password)
+                            .Replace("{imagen-empresa}", !string.IsNullOrEmpty(project.ImageUrl) ? project.ImageUrl : "¡Bienvenido!");
+
+                        SendEmail.SendEmailReq(oldUser.Email, bodyEmail, $"¡Se han actualizado sus datos de: {project.Nombre}");
+                        if (oldUser.Email != email) SendEmail.SendEmailReq(email, bodyEmail, $"¡Se han actualizado sus datos de: {project.Nombre}");
+                    }
+                    return Json(response);
+                }
                 return Json(response);
             }
             catch (Exception ex)
@@ -177,7 +224,7 @@ namespace ITS_Middleware.Controllers
             try
             {
                 var response = await requestHelper.UpdateUserByProjectStatus(id);
-                    return Json(response);
+                return Json(response);
             }
             catch (Exception ex)
             {

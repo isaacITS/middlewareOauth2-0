@@ -386,7 +386,9 @@ namespace OauthAPI.Tools
         {
             try
             {
-                return _context.UsuariosProyectos.FirstOrDefault(uP => uP.Email == email);
+                var user = _context.UsuariosProyectos.FirstOrDefault(uP => uP.Email == email);
+                return user;
+
             }
             catch (Exception)
             {
