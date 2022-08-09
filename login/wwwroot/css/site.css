@@ -15,7 +15,7 @@ body .content-form {
 
 .content-form .form-login {
     width: 425px;
-    background-color: #ffffffdb;
+    background-color: #ffff;
     box-shadow: 2px 5px 5px 1px #00000033;
     -webkit-backdrop-filter: blur(5px);
     backdrop-filter: blur(5px);

@@ -54,6 +54,7 @@ namespace login.Controllers
             try
             {
                 var response = await requestHelper.SignIn(signinData);
+                if (response.Status == 500 || response.Status == 401) throw new Exception(response.Msg);
                 return Json(response);
             }
             catch (Exception ex)
@@ -80,6 +81,7 @@ namespace login.Controllers
                 var baseUrl = $"{this.Request.Scheme}://{this.Request.Host.Value}/Home/UpdatePassword";
                 var token = tokenJwt.CreateToken(projectName, email);
                 var response = await requestHelper.UpdateToken(token, email, baseUrl);
+                if (response.Status == 500 || response.Status == 401) throw new Exception(response.Msg);
                 return Json(response);
             }
             catch (Exception ex)
@@ -139,6 +141,7 @@ namespace login.Controllers
                 ViewBag.Message = "El enlace para actualizar la contraseña ha expirado o no es válido";
                 if (string.IsNullOrEmpty(updateData.NewPass) || !tokenJwt.TokenIsValid(updateData.Token)) return View("NotFound");
                 var response = await requestHelper.UpdatePasword(updateData);
+                if (response.Status == 500 || response.Status == 401) throw new Exception(response.Msg);
                 return Json(response);
             }
             catch (Exception ex)

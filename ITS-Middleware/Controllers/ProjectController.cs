@@ -10,8 +10,8 @@ namespace ITS_Middleware.Controllers
     public class ProjectController : Controller
     {
         private readonly ILogger<ProjectController> _logger;
-        RequestHelper requestHelper = new();
-        IConfiguration config;
+        readonly RequestHelper requestHelper = new();
+        readonly IConfiguration config;
 
         public ProjectController(ILogger<ProjectController> logger, IConfiguration _config)
         {
@@ -24,10 +24,7 @@ namespace ITS_Middleware.Controllers
         {
             try
             {
-                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName")))
-                {
-                    return RedirectToAction("Login", "Auth");
-                }
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName"))) return RedirectToAction("Login", "Auth");
                 var methods = await requestHelper.GetAllAuthMethods();
                 ViewData["MetodosAuth"] = methods;
                 return PartialView();
@@ -73,6 +70,7 @@ namespace ITS_Middleware.Controllers
                 if (ModelState.IsValid)
                 {
                     var response = await requestHelper.RegisterProject(project);
+                    if (response.Status == 500 || response.Status == 401) throw new Exception(response.Msg);
                     return Json(response);
                 }
                 return Json(new { Ok = false, Status = 400, Msg = "Información incompleta, intenta nuevamente" });
@@ -97,12 +95,7 @@ namespace ITS_Middleware.Controllers
         {
             try
             {
-                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName")))
-                {
-                    return RedirectToAction("Login", "Auth");
-                }
-                else
-                {
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName"))) return RedirectToAction("Login", "Auth");
                     if (id == null)
                     {
                         return Json(new { Ok = false, Status = 400, Msg = "No se ingresó un ID válido" });
@@ -127,7 +120,6 @@ namespace ITS_Middleware.Controllers
                     var metodos = await requestHelper.GetAllAuthMethods();
                     ViewData["MetodosAuth"] = metodos;
                     return PartialView(projectImg);
-                }
             }
             catch (Exception ex)
             {
@@ -168,6 +160,7 @@ namespace ITS_Middleware.Controllers
                     project.ImageUrl = string.IsNullOrEmpty(imageUrl) ? "" : imageUrl;
                 }
                 var response = await requestHelper.UpdateProject(project);
+                if (response.Status == 500 || response.Status == 401) throw new Exception(response.Msg);
                 return Json(response);
             }
             catch (Exception ex)
@@ -191,12 +184,7 @@ namespace ITS_Middleware.Controllers
         {
             try
             {
-                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName")))
-                {
-                    return RedirectToAction("Login", "Auth");
-                }
-                else
-                {
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName"))) return RedirectToAction("Login", "Auth");
                     if (id == null)
                     {
                         return Json(new { Ok = false, Status = 400, Msg = "No se ingresó un ID válido" });
@@ -207,7 +195,6 @@ namespace ITS_Middleware.Controllers
                         return Json(new { Ok = false, Status = 400, Msg = "No se encontró un proyecto registrado" });
                     }
                     return PartialView(project);
-                }
             }
             catch (Exception ex)
             {
@@ -232,6 +219,7 @@ namespace ITS_Middleware.Controllers
             try
             {
                 var response = await requestHelper.DeleteProject(id);
+                if (response.Status == 500 || response.Status == 401) throw new Exception(response.Msg);
                 return Json(response);
             }
             catch (Exception ex)
@@ -254,12 +242,7 @@ namespace ITS_Middleware.Controllers
         {
             try
             {
-                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName")))
-                {
-                    return RedirectToAction("Login", "Auth");
-                }
-                else
-                {
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName"))) return RedirectToAction("Login", "Auth");
                     if (id == null)
                     {
                         return Json(new { Ok = false, Msg = "No se ingresó un ID válido" });
@@ -270,7 +253,6 @@ namespace ITS_Middleware.Controllers
                         return Json(new { Ok = false, Msg = "El ID no coincide con un usuario registrado" });
                     }
                     return PartialView("ChangeStatus", project);
-                }
             }
             catch (Exception ex)
             {
@@ -293,6 +275,7 @@ namespace ITS_Middleware.Controllers
             try
             {
                 var response = await requestHelper.UpdateProjectStatus(id);
+                if (response.Status == 500 || response.Status == 401) throw new Exception(response.Msg);
                 return Json(response);
             }
             catch (Exception ex)

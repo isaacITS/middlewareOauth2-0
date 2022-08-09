@@ -20,7 +20,6 @@ function GetUsersList() {
     $("#sidenav").css('width', "0")
     btnIconMenu.innerHTML = 'menu'
     btnActiveMenu.setAttribute('title', 'Abrir Menu')
-
     $('#contentView').fadeOut(1)
     $('#viewsLoader').show()
     $.ajax({

@@ -8,7 +8,7 @@ namespace ITS_Middleware.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        RequestHelper requestHelper = new();
+        readonly RequestHelper requestHelper = new();
 
         public HomeController(ILogger<HomeController> logger)
         {
@@ -46,10 +46,8 @@ namespace ITS_Middleware.Controllers
         {
             try
             {
-                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName")))
-                {
-                    return RedirectToAction("Login", "Auth");
-                }
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName"))) return RedirectToAction("Login", "Auth");
+
                 var projects = await requestHelper.GetAllProjects();
                 var users = await requestHelper.GetAllUsers(true);
                 ViewData["UserList"] = users;
@@ -76,10 +74,7 @@ namespace ITS_Middleware.Controllers
         {
             try
             {
-                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName")))
-                {
-                    return RedirectToAction("Login", "Auth");
-                }
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName"))) return RedirectToAction("Login", "Auth");
                 var users = await requestHelper.GetAllUsers(false);
                 return PartialView(users);
             }
@@ -104,10 +99,7 @@ namespace ITS_Middleware.Controllers
         {
             try
             {
-                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName")))
-                {
-                    return RedirectToAction("Login", "Auth");
-                }
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName"))) return RedirectToAction("Login", "Auth");
                 var usersByProject = await requestHelper.GetAllUsersByProject();
                 var projects = await requestHelper.GetAllProjects();
                 ViewData["ProjectsList"] = projects;

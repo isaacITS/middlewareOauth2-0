@@ -22,10 +22,7 @@ namespace ITS_Middleware.Controllers
         {
             try
             {
-                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName")))
-                {
-                    return RedirectToAction("Login", "Auth");
-                }
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName"))) return RedirectToAction("Login", "Auth");
                 return PartialView();
             }
             catch (Exception ex)
@@ -54,6 +51,7 @@ namespace ITS_Middleware.Controllers
                 if (ModelState.IsValid)
                 {
                     var response = await requestHelper.RegisterUser(user);
+                    if (response.Status == 500 || response.Status == 401) throw new Exception(response.Msg);
                     if (!response.Ok)
                     {
                         return Json(response);
@@ -90,12 +88,7 @@ namespace ITS_Middleware.Controllers
         {
             try
             {
-                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName")))
-                {
-                    return RedirectToAction("Login", "Auth");
-                }
-                else
-                {
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName"))) return RedirectToAction("Login", "Auth");
                     if (id == null || id == 1)
                     {
                         return Json(new { Ok = false, MsgHeader = "No se puede editar el usaurio", Msg = "No se ingresó un ID válido o no puede ser editado" });
@@ -106,7 +99,6 @@ namespace ITS_Middleware.Controllers
                         return Json(new { Ok = false, MsgHeader = "No se encontró el usuario", Msg = "El ID no coincide con un usuario registrado" });
                     }
                     return PartialView(usuario);
-                }
             }
             catch (Exception ex)
             {
@@ -132,6 +124,7 @@ namespace ITS_Middleware.Controllers
                 string email = user.Email;
                 var oldUser = await requestHelper.GetUserById(user.Id);
                 var response = await requestHelper.UpdateUser(user);
+                if (response.Status == 500 || response.Status == 401) throw new Exception(response.Msg);
                 if (response.Ok)
                 {
                     if (oldUser.Email != email || (!string.IsNullOrEmpty(password) && oldUser.Pass != Encrypt.sha256(password)))
@@ -172,12 +165,7 @@ namespace ITS_Middleware.Controllers
         {
             try
             {
-                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName")))
-                {
-                    return RedirectToAction("Login", "Auth");
-                }
-                else
-                {
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName"))) return RedirectToAction("Login", "Auth");
                     if (id == null || id == 1)
                     {
                         return Json(new { Ok = false, MsgHeader = "No se puede editar el usuario", Msg = "No se ingresó un ID válido o no puede ser activado/desactivado" });
@@ -188,7 +176,7 @@ namespace ITS_Middleware.Controllers
                         return Json(new { Ok = false, MsgHeader = "Usuario no encontrado", Msg = "El ID no coincide con un usuario registrado" });
                     }
                     return PartialView(usuario);
-                }
+                
             }
             catch (Exception ex)
             {
@@ -212,6 +200,7 @@ namespace ITS_Middleware.Controllers
             try
             {
                 var response = await requestHelper.UpdateUserStatus(id);
+                if (response.Status == 500 || response.Status == 401) throw new Exception(response.Msg);
                 return Json(response);
             }
             catch (Exception ex)
@@ -235,12 +224,7 @@ namespace ITS_Middleware.Controllers
         {
             try
             {
-                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName")))
-                {
-                    return RedirectToAction("Login", "Auth");
-                }
-                else
-                {
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName"))) return RedirectToAction("Login", "Auth");
                     if (id == null || id == 1)
                     {
                         return Json(new { Ok = false, MsgHeader = "No se puede encontrar un usuario", Msg = "No se ingresó un ID válido o no puede ser eliminado" });
@@ -251,7 +235,6 @@ namespace ITS_Middleware.Controllers
                         return Json(new { Ok = false, MsgHeader = "No se encontró un usuario", Msg = "El ID No coincide con un usuario registrado" });
                     }
                     return PartialView(usuario);
-                }
             }
             catch (Exception ex)
             {
@@ -275,6 +258,7 @@ namespace ITS_Middleware.Controllers
             try
             {
                 var response = await requestHelper.DeleteUser(id);
+                if (response.Status == 500 || response.Status == 401) throw new Exception(response.Msg);
                 return Json(response);
             }
             catch (Exception ex)

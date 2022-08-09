@@ -25,10 +25,7 @@ namespace ITS_Middleware.Controllers
         {
             try
             {
-                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName")))
-                {
-                    return View();
-                }
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName"))) return View();
                 ViewBag.userName = HttpContext.Session.GetString("userName");
                 return RedirectToAction("Projects", "Home");
             }
@@ -55,6 +52,7 @@ namespace ITS_Middleware.Controllers
             try
             {
                 var response = await requestHelper.SignIn(email, pass);
+                if (response.Status == 500 || response.Status == 401) throw new Exception(response.Msg);
                 if (response.Ok)
                 {
                     string id = response.MsgHeader;
@@ -114,6 +112,7 @@ namespace ITS_Middleware.Controllers
                 var baseUrl = $"{this.Request.Scheme}://{this.Request.Host.Value}/Auth/UpdatePass";
                 var token = tokenJwt.CreateToken(email);
                 var response = await requestHelper.UpdateUserTokenRecovery(email, token, baseUrl);
+                if (response.Status == 500 || response.Status == 401) throw new Exception(response.Msg);
                 return Json(response);
             }
             catch (Exception ex)
@@ -173,6 +172,7 @@ namespace ITS_Middleware.Controllers
                 if (ModelState.IsValid)
                 {
                     var response = await requestHelper.UpdateUserPassword(userModel);
+                    if (response.Status == 500 || response.Status == 401) throw new Exception(response.Msg);
                     return Json(response);
                 }
                 return Json(new { Ok = false, Status = 400, Msg = "Los datos recibidos no son válidos o están incompletos", MsgHeader = "Información no válida" });

@@ -22,10 +22,8 @@ namespace ITS_Middleware.Controllers
         {
             try
             {
-                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName")))
-                {
-                    return RedirectToAction("Login", "Auth");
-                }
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName")))  return RedirectToAction("Login", "Auth");
+                
                 var projects = await requestHelper.GetAllProjects();
                 ViewData["ProjectsList"] = projects;
                 return PartialView();
@@ -59,6 +57,7 @@ namespace ITS_Middleware.Controllers
                 if (ModelState.IsValid)
                 {
                     var response = await requestHelper.RegisterUserByProject(user);
+                    if (response.Status == 500 || response.Status == 401) throw new Exception(response.Msg);
                     if (!response.Ok) return Json(response);
 
                     int IdProyect = user.IdProyecto == null ? default : user.IdProyecto.Value;
@@ -97,12 +96,7 @@ namespace ITS_Middleware.Controllers
         {
             try
             {
-                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName")))
-                {
-                    return RedirectToAction("Login", "Auth");
-                }
-                else
-                {
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName"))) return RedirectToAction("Login", "Auth");
                     var usuario = await requestHelper.GetUserByProjectById(id);
                     ViewData["ProjectsList"] = await requestHelper.GetAllProjects();
                     if (usuario == null)
@@ -110,7 +104,6 @@ namespace ITS_Middleware.Controllers
                         return Json(new { Ok = false, Status = 400, Msg = "El ID no coincide con un usuario registrado" });
                     }
                     return PartialView(usuario);
-                }
             }
             catch (Exception ex)
             {
@@ -137,6 +130,7 @@ namespace ITS_Middleware.Controllers
                 var oldUser = await requestHelper.GetUserByProjectById(user.Id);
                 var response = await requestHelper.UpdateUserByProject(user);
                 var baseUrl = "https://its-oauth-login.azurewebsites.net/";
+                if (response.Status == 500 || response.Status == 401) throw new Exception(response.Msg);
                 if (response.Ok)
                 {
                     if (oldUser.Email != email || (!string.IsNullOrEmpty(password) && oldUser.Pass != Encrypt.sha256(password)))
@@ -184,12 +178,7 @@ namespace ITS_Middleware.Controllers
         {
             try
             {
-                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName")))
-                {
-                    return RedirectToAction("Login", "Auth");
-                }
-                else
-                {
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName"))) return RedirectToAction("Login", "Auth");
                     if (id == null || id == 1)
                     {
                         return Json(new { Ok = false, status = 400, Msg = "No se ingresó un ID válido o no puede ser activado/desactivado" });
@@ -200,7 +189,7 @@ namespace ITS_Middleware.Controllers
                         return Json(new { Ok = false, status = 400, Msg = "El ID no coincide con un usuario registrado" });
                     }
                     return PartialView(usuario);
-                }
+                
             }
             catch (Exception ex)
             {
@@ -224,6 +213,7 @@ namespace ITS_Middleware.Controllers
             try
             {
                 var response = await requestHelper.UpdateUserByProjectStatus(id);
+                if (response.Status == 500 || response.Status == 401) throw new Exception(response.Msg);
                 return Json(response);
             }
             catch (Exception ex)
@@ -246,19 +236,13 @@ namespace ITS_Middleware.Controllers
         {
             try
             {
-                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName")))
-                {
-                    return RedirectToAction("Login", "Auth");
-                }
-                else
-                {
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName"))) return RedirectToAction("Login", "Auth");
                     var usuario = await requestHelper.GetUserByProjectById(id);
                     if (usuario == null)
                     {
                         return Json(new { Ok = false, Msg = "El ID No coincide con un usuario registrado" });
                     }
                     return PartialView(usuario);
-                }
             }
             catch (Exception ex)
             {
@@ -280,7 +264,8 @@ namespace ITS_Middleware.Controllers
         {
             try
             {
-                var response = await requestHelper.DeleteUserByProject(id); 
+                var response = await requestHelper.DeleteUserByProject(id);
+                if (response.Status == 500 || response.Status == 401) throw new Exception(response.Msg);
                 return Json(response);
             }
             catch (Exception ex)
