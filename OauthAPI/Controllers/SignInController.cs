@@ -17,7 +17,8 @@ namespace OauthAPI.Controllers
 
         public SignInController(ILogger<SignInController> logger, IHostEnvironment env, IConfiguration config)
         {
-            _logger = logger;            _env = env;
+            _logger = logger;
+            _env = env;
             this.config = config;
         }
 

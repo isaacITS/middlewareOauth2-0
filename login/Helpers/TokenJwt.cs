@@ -2,10 +2,10 @@
 {
     public class TokenJwt
     {
-        public string CreateToken(string projectName, string imageUrl, string email)
+        public string CreateToken(string projectName, string email)
         {
             var expiresDate = DateTime.Now.AddMinutes(15);
-            return (Encrypt.EncryptString($"{ expiresDate }${projectName}${imageUrl}${email}"));
+            return (Encrypt.EncryptString($"{ expiresDate }${projectName}${email}"));
         }
 
         public bool TokenIsValid(string token)

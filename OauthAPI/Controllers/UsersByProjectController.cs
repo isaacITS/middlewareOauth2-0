@@ -95,8 +95,8 @@ namespace OauthAPI.Controllers
         {
             try
             {
-                if (DbHelper.RegisterUSerByProject(userModel)) return Ok(new { ok = true, status = 200, msgHeader = "¡Usaurio registrado!", msg = $"Se ha registrado el usuario {userModel.NombreCompleto}" });
-                return Unauthorized(new { ok = false, status = 400, msgHeader = "No se registró el usuario", msg = $"El correo {userModel.Email} ya está registrado, intenta usar otro" });
+                if (DbHelper.RegisterUSerByProject(userModel)) return Ok(new { ok = true, status = 200, msgHeader = "¡Usuario registrado!", msg = $"Se ha registrado el usuario {userModel.NombreCompleto}" });
+                return Unauthorized(new { ok = false, status = 400, msgHeader = "No se registró el usuario", msg = $"El correo o teléfono ya está registrado, verificalos e intenta uno nuevo" });
             }
             catch (Exception ex)
             {
@@ -118,10 +118,12 @@ namespace OauthAPI.Controllers
         {
             try
             {
+                var oldPhone = DbHelper.GetUserByProjectByPhone(userModel.Telefono).Telefono;
                 var oldEmail = DbHelper.GetUserByProjectById(userModel.Id).Email;
                 if (!DbHelper.isUserProjectEmailAvailable(userModel.Email) && userModel.Email != oldEmail) return Unauthorized(new { ok = false, status = 400, msgHeader = "No se actualizó el usuario", msg = $"El correo {userModel.Email} ya está registrado, intenta usar otro" });
+                if (!DbHelper.isUserProjectEmailAvailable(userModel.Telefono) && userModel.Telefono != oldPhone) return Unauthorized(new { ok = false, status = 400, msgHeader = "No se actualizó el usuario", msg = $"El teléfono {userModel.Telefono} ya está registrado, intenta usar otro" });
                 if (DbHelper.UpdateUserByProject(userModel)) return Ok(new { ok = true, status = 200, msgHeader = "Usuario actualizado", msg = $"Se ha actualizado el usuario {userModel.NombreCompleto}" });
-                return Unauthorized(new { ok = false, status = 400, msgHeader = "No se pudo actualizar el usuario",  msg = "Intenta actualizar el usaurio nuevamente, más tarde"});
+                return Unauthorized(new { ok = false, status = 400, msgHeader = "No se pudo actualizar el usuario", msg = "Intenta actualizar el usuario nuevamente, más tarde" });
             }
             catch (Exception ex)
             {
@@ -185,6 +187,7 @@ namespace OauthAPI.Controllers
                 var user = DbHelper.GetUserByProjectByEmail(updateData.Email);
                 if (user.TokenRecovery != updateData.Token) return Unauthorized(new { ok = false, status = 400, msgHeader = "No se pudo actualizar la contraseña", msg = "El link para actualizar la contraseña no es válido" });
                 user.TokenRecovery = null;
+                user.Pass = updateData.NewPass;
                 if (DbHelper.UpdateUserByProject(user)) return Ok(new { ok = true, status = 200, msgHeader = "Contraseña actualizada con exito", msg = $"Hola {user.NombreCompleto} ahora puedes ingresar con tu nueva contraseña" });
                 throw new Exception();
             }

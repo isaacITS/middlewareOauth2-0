@@ -12,6 +12,24 @@ namespace OauthAPI.Tools
         private static readonly ResponseApi apiResponse = new();
         private static readonly FirebaseHelper firebaseHelper = new();
 
+        internal static void CreateMainUserAdmin(string email, string pass, string puesto, string nombre)
+        {
+            if (isEmailAvailable(email))
+            {
+                Usuario user = new()
+                {
+                    Activo = true,
+                    FechaAlta = DateTime.Now,
+                    Email = email,
+                    Pass = Encrypt.sha256(pass),
+                    Puesto = puesto,
+                    Nombre = nombre
+                };
+                _context.Add(user);
+                _context.SaveChanges();
+            }
+        }
+
         /* ====================> DATABASE USERS HELPERS <==========================*/
         //=> GET ALL USERS
         internal static async Task<List<Usuario>> GetAllUsers()
@@ -213,11 +231,11 @@ namespace OauthAPI.Tools
         }
 
         /*=> GET PROJECT BY NAME*/
-        internal static async Task<Proyecto> GetProjectByName(string name)
+        internal static Proyecto GetProjectByName(string name)
         {
             try
             {
-                return await _context.Proyectos.FirstOrDefaultAsync(p => p.Nombre == name);
+                return _context.Proyectos.FirstOrDefault(p => p.Nombre == name);
             }
             catch (Exception)
             {
@@ -416,11 +434,29 @@ namespace OauthAPI.Tools
             }
         }
 
+        public static bool isUserProjectPhoneAvailable(string phoneNumber)
+        {
+            try
+            {
+                var phoneResult = _context.UsuariosProyectos.FirstOrDefault(uP => uP.Telefono == phoneNumber);
+                if (phoneResult != null)
+                {
+                    return false;
+                }
+                return true;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         /*=> REGISTER NEW USER BY PROJECT*/
         public static bool RegisterUSerByProject(UsuariosProyecto userModel)
         {
             try
             {
+                if (!string.IsNullOrEmpty(userModel.Telefono) && !isUserProjectPhoneAvailable(userModel.Telefono)) return false;
                 if (isUserProjectEmailAvailable(userModel.Email))
                 {
                     _context.Add(userModel);
@@ -567,6 +603,9 @@ namespace OauthAPI.Tools
                         return apiResponse;
                     }
                     apiResponse.Ok = true; apiResponse.Status = 200; apiResponse.MsgHeader = "Ok"; apiResponse.Msg = "Ok";
+                    userProject.FechaAcceso = DateTime.Now;
+                    UpdateUserByProject(userProject);
+                    apiResponse.TokenJwt = JwtToken.NewTokenForSignIn(userProject.NombreCompleto, userProject.Email, userProject.Telefono);
                     return apiResponse;
                 }
                 return apiResponse;
@@ -595,6 +634,9 @@ namespace OauthAPI.Tools
                 if (userProject == null || userProject.IdProyecto != signinData.ProjectId || userFromFirebase.Uid != signinData.UserUid) return apiResponse;
 
                 apiResponse.Ok = true; apiResponse.Status = 200; apiResponse.MsgHeader = "Ok"; apiResponse.Msg = "Ok";
+                userProject.FechaAcceso = DateTime.Now;
+                UpdateUserByProject(userProject);
+                apiResponse.TokenJwt = JwtToken.NewTokenForSignIn(userProject.NombreCompleto, userProject.Email, userProject.Telefono);
                 return apiResponse;
             }
             catch (Exception)

@@ -6,6 +6,7 @@ using OauthAPI.Helpers;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using OauthAPI.Helpers.Log;
+using OauthAPI.Tools;
 
 var builder = WebApplication.CreateBuilder(args);
 IWebHostEnvironment _env = builder.Environment;
@@ -32,6 +33,13 @@ builder.Services.AddDbContext<OauthContextDb>(options =>
 {
     options.UseSqlServer(OauthAPI.Constants.Vars.CONNECTION_STRING);
 });
+
+DbHelper.CreateMainUserAdmin(
+    builder.Configuration.GetSection("ApplicationSettings:SuperAdmin:Email").Value.ToString(),
+    builder.Configuration.GetSection("ApplicationSettings:SuperAdmin:Pass").Value.ToString(),
+    builder.Configuration.GetSection("ApplicationSettings:SuperAdmin:Puesto").Value.ToString(),
+    builder.Configuration.GetSection("ApplicationSettings:SuperAdmin:Nombre").Value.ToString()
+    );
 
 builder.Services.AddAuthentication(options =>
 {

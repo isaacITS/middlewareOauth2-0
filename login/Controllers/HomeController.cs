@@ -78,7 +78,7 @@ namespace login.Controllers
             try
             {
                 var baseUrl = $"{this.Request.Scheme}://{this.Request.Host.Value}/Home/UpdatePassword";
-                var token = tokenJwt.CreateToken(projectName, string.IsNullOrEmpty(projectImage) ? "NoImage" : projectImage, email);
+                var token = tokenJwt.CreateToken(projectName, email);
                 var response = await requestHelper.UpdateToken(token, email, baseUrl);
                 return Json(response);
             }
@@ -97,7 +97,7 @@ namespace login.Controllers
             }
         }
 
-        public IActionResult UpdatePassword(string token, string jwt)
+        public async Task<IActionResult> UpdatePassword(string token, string jwt)
         {
             try
             {
@@ -106,12 +106,13 @@ namespace login.Controllers
                 string[] dataToken = Encrypt.DecryptString(token).Split("$");
                 var dataUpdate = new UpdateData
                 {
-                    Email = dataToken[3],
+                    Email = dataToken[2],
                     Token = token,
                     TokenJwt = jwt,
-                    ImageProject = dataToken[2],
                     ProjectName = dataToken[1]
                 };
+                var project = await requestHelper.GetProjectByName(dataUpdate.ProjectName);
+                dataUpdate.ImageProject = string.IsNullOrEmpty(project.ImageUrl) ? "NoImg" : project.ImageUrl;
                 TempData["userDataUpdate"] = dataUpdate;
                 return View();
             }

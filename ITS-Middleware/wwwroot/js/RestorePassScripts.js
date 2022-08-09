@@ -22,6 +22,9 @@ $(document).ready(() => {
                         ShowToastMessage('error', response.msgHeader, response.msg)
                     } else {
                         ShowToastMessage('success', response.msgHeader, response.msg)
+                        setTimeout(function () {
+                            window.location.href = siteurl
+                        }, 5000);
                     }
                 },
                 failure: function(response) {

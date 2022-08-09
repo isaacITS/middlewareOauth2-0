@@ -271,10 +271,7 @@ namespace ITS_Middleware.Helpers
         {
             try
             {
-                var dataJson = JsonConvert.SerializeObject(new { email, token, siteUrl });
-                var data = new StringContent(dataJson, Encoding.UTF8, "application/json");
-
-                var response = await httpClient.PutAsync($"{Vars.API_URI}SignIn/UpdateToken", data);
+                var response = await httpClient.PutAsync($"{Vars.API_URI}SignIn/UpdateToken?email={email}&token={token}&siteUrl={siteUrl}", null);
                 var resultResponse = JsonConvert.DeserializeObject<ResponseApi>(response.Content.ReadAsStringAsync().Result);
                 return resultResponse;
             }

@@ -21,20 +21,10 @@ namespace ITS_Middleware.Controllers
         }
 
 
-        public async Task<IActionResult> Login()
+        public IActionResult Login()
         {
             try
             {
-                Usuario usuario = new()
-                {
-                    Activo = true,
-                    Nombre = "Administrador",
-                    FechaAlta = DateTime.Now,
-                    Email = "admin.oauth@it-seekers.com",
-                    Pass = "admin123",
-                    Puesto = "Administrador"
-                };
-                var response = await requestHelper.RegisterUser(usuario);
                 if (string.IsNullOrEmpty(HttpContext.Session.GetString("userName")))
                 {
                     return View();

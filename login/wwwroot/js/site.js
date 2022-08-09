@@ -174,7 +174,7 @@ function signIn(data) {
                 ShowToastMessage('error', response.msgHeader, response.msg)
             } else {
                 ShowToastMessage('success', "Ingresando...", "En un momento serás redireccionado a la pantalla principal")
-                window.location.href = `${redirectToUrl}/signIn?token=${tokenService}`
+                window.location.href = `${redirectToUrl}/signIn?token=${response.tokenJwt}`
             }
         },
         failure: function (response) {
