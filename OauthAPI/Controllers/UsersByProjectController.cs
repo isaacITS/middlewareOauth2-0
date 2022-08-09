@@ -12,10 +12,14 @@ namespace OauthAPI.Controllers
     public class UsersByProjectController : ControllerBase
     {
         private readonly ILogger<UsersByProjectController> _logger;
+        private readonly IHostEnvironment _env;
+        private readonly IConfiguration config;
 
-        public UsersByProjectController(ILogger<UsersByProjectController> logger)
+        public UsersByProjectController(ILogger<UsersByProjectController> logger, IHostEnvironment env, IConfiguration config)
         {
             _logger = logger;
+            _env = env;
+            this.config = config;
         }
 
         [HttpGet]
@@ -63,6 +67,7 @@ namespace OauthAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult GetByEmail(string email)
         {
             try
@@ -132,16 +137,29 @@ namespace OauthAPI.Controllers
             }
         }
 
+
         [HttpPut]
-        public IActionResult UpdateToken(string token, int id)
+        public IActionResult UpdateToken(string token, string email, string Url)
         {
             try
             {
-                if (!ValidateTokenEncrypted.TokenIsValid(token)) return Unauthorized(new { ok = false, status = 400, msgHeader = "No se pudo actualizar el usuario", msg = "La información recibida no es válida" });
-                var user = DbHelper.GetUserByProjectById(id);
+                if (!ValidateTokenEncrypted.TokenIsValid(token)) return Unauthorized(new { ok = false, status = 400, msgHeader = "No se pudo enviar el correo", msg = "La información recibida no es válida" });
+                var user = DbHelper.GetUserByProjectByEmail(email);
+                if (user == null || !user.Activo) return Unauthorized(new { ok = false, status = 400, msgHeader = "No se pudo enviar el correo", msg = "El usuario no se encuentra registrado o se encuentra deshabilitado" });
+                var project = DbHelper.GetProjectById(user.IdProyecto == null ? default : user.IdProyecto.Value);
                 user.TokenRecovery = token;
-                if (DbHelper.UpdateUserByProject(user)) return Ok(new { ok = true, status = 200, msgHeader = "Correo con token enviado", msg = $"Hola {user.NombreCompleto} te hemos enviado un correo electrónico para actualizar tu conttraseña" });
-                throw new Exception();
+                if (!DbHelper.UpdateUserByProject(user)) throw new Exception();
+                var tokenJwt = JwtToken.GenerateTokenUpdatePass();
+                var bodyEmail = System.IO.File.ReadAllText(Path.Combine(_env.ContentRootPath, @"EmailViewTemplates\UserProject\restorePassword.html"))
+                        .Replace("{contact-name}", user.NombreCompleto)
+                        .Replace("{project-name}", project.Nombre)
+                        .Replace("{image-project-url}", string.IsNullOrEmpty(project.ImageUrl) ? "NotFound" : project.ImageUrl)
+                        .Replace("{link-update-pass}", $"{Url}?token={token}&jwt={tokenJwt}");
+                SendEmail.SendEmailReq(email, bodyEmail,
+                    $"{project.Nombre} - actualización de contraseña",
+                    config.GetSection("ApplicationSettings:EmailConfig:email").Value.ToString(),
+                    config.GetSection("ApplicationSettings:EmailConfig:password").Value.ToString());
+                return Ok(new { ok = true, status = 200, msgHeader = "Se ha enviado el correo electrónico", msg = $"Hola {user.NombreCompleto} te hemos enviado un correo electrónico para actualizar tu conttraseña" });
             }
             catch (Exception ex)
             {
@@ -158,13 +176,15 @@ namespace OauthAPI.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         public IActionResult UpdatePassword(UpdateData updateData)
         {
             try
             {
-                if (!ValidateTokenEncrypted.TokenIsValid(updateData.Token)) return Unauthorized(new { ok = false, status = 400, msgHeader = "No se pudo actualizar el usuario", msg = "La información recibida no es válida" });
-                var user = DbHelper.GetUserByProjectById(updateData.Id);
-                
+                if (!ValidateTokenEncrypted.TokenIsValid(updateData.Token)) return Unauthorized(new { ok = false, status = 400, msgHeader = "No se pudo actualizar la contraseña", msg = "El link para actualizar la contraseña no es válido" });
+                var user = DbHelper.GetUserByProjectByEmail(updateData.Email);
+                if (user.TokenRecovery != updateData.Token) return Unauthorized(new { ok = false, status = 400, msgHeader = "No se pudo actualizar la contraseña", msg = "El link para actualizar la contraseña no es válido" });
+                user.TokenRecovery = null;
                 if (DbHelper.UpdateUserByProject(user)) return Ok(new { ok = true, status = 200, msgHeader = "Contraseña actualizada con exito", msg = $"Hola {user.NombreCompleto} ahora puedes ingresar con tu nueva contraseña" });
                 throw new Exception();
             }

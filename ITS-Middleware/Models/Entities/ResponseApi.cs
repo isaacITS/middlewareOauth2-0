@@ -7,5 +7,6 @@
         public int Status { get; set; }
         public string? Msg { get; set; }
         public string? Token { get; set; }
+        public string? TokenJwt { get; set; }
     }
 }

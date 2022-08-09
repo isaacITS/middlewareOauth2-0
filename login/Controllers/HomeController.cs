@@ -77,25 +77,10 @@ namespace login.Controllers
         {
             try
             {
-                var user = await requestHelper.GetUserProject(email);
-                if (user != null && !string.IsNullOrEmpty(user.NombreCompleto))
-                {
-                    var token = tokenJwt.CreateToken(user.Id, projectName, string.IsNullOrEmpty(projectImage) ? "NoImage" : projectImage);
-                    var response = await requestHelper.UpdateToken(token, user.Id);
-                    if (!response.Ok) return Json(response);
-                    var baseUrl = $"{this.Request.Scheme}://{this.Request.Host.Value}";
-                    var bodyEmail = System.IO.File.ReadAllText(Path.Combine(_env.ContentRootPath, @"wwwroot\htmlTemplates\restorePassword.html"))
-                        .Replace("{contact-name}", user.NombreCompleto)
-                        .Replace("{project-name}", projectName)
-                        .Replace("{image-project-url}", string.IsNullOrEmpty(projectImage) ? "NotFound" : projectImage)
-                        .Replace("{link-update-pass}", $"{baseUrl}/Home/UpdatePass?token={token}");
-                    SendEmail.SendEmailReq(email, bodyEmail, 
-                        $"{projectName} - actualización de contraseña", 
-                        config.GetSection("ApplicationSettings:EmailConfig:email").Value.ToString(),
-                        config.GetSection("ApplicationSettings:EmailConfig:password").Value.ToString());
-                    return Json(response);
-                }
-                return Json(new { ok = false, status = 400, msg = $"Al parecer no existe un usuario registrado con correo: {email}", msgHeader = "No se pudo enviar el correo" });
+                var baseUrl = $"{this.Request.Scheme}://{this.Request.Host.Value}/Home/UpdatePassword";
+                var token = tokenJwt.CreateToken(projectName, string.IsNullOrEmpty(projectImage) ? "NoImage" : projectImage, email);
+                var response = await requestHelper.UpdateToken(token, email, baseUrl);
+                return Json(response);
             }
             catch (Exception ex)
             {
@@ -112,21 +97,23 @@ namespace login.Controllers
             }
         }
 
-        public IActionResult UpdatePassword(string token)
+        public IActionResult UpdatePassword(string token, string jwt)
         {
             try
             {
-                ViewBag.Message = "El token para actualizar la contraseña no es válido o ha expirado";
+                ViewBag.Message = "El enlace para actualizar la contraseña no es válido o ha expirado";
                 if (string.IsNullOrEmpty(token) || !tokenJwt.TokenIsValid(token)) return View("NotFound");
-
+                string[] dataToken = Encrypt.DecryptString(token).Split("$");
                 var dataUpdate = new UpdateData
                 {
+                    Email = dataToken[3],
                     Token = token,
-                    Id = int.Parse(Encrypt.DecryptString(token).Split("$")[0]),
-                    ImageProject = Encrypt.DecryptString(token).Split("$")[2],
-                    ProjectName = Encrypt.DecryptString(token).Split("$")[1]
+                    TokenJwt = jwt,
+                    ImageProject = dataToken[2],
+                    ProjectName = dataToken[1]
                 };
-                return View(dataUpdate);
+                TempData["userDataUpdate"] = dataUpdate;
+                return View();
             }
             catch (Exception ex)
             {
@@ -150,7 +137,6 @@ namespace login.Controllers
             {
                 ViewBag.Message = "El enlace para actualizar la contraseña ha expirado o no es válido";
                 if (string.IsNullOrEmpty(updateData.NewPass) || !tokenJwt.TokenIsValid(updateData.Token)) return View("NotFound");
-                updateData.NewPass = Encrypt.Sha256(updateData.NewPass);
                 var response = await requestHelper.UpdatePasword(updateData);
                 return Json(response);
             }

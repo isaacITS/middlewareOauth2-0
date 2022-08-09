@@ -7,6 +7,26 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="EmailViewTemplates\CambioDatos.html" />
+    <None Remove="EmailViewTemplates\CreacionNuevaCuenta.html" />
+    <None Remove="EmailViewTemplates\newAccount.html" />
+    <None Remove="EmailViewTemplates\resetPassMessage.html" />
+    <None Remove="EmailViewTemplates\updateAccount.html" />
+    <None Remove="EmailViewTemplates\UserProject\restorePassword.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="EmailViewTemplates\UserAdmin\resetPassMessage.html">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="EmailViewTemplates\UserProject\restorePassword.html">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FirebaseAdmin" Version="2.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.6" />

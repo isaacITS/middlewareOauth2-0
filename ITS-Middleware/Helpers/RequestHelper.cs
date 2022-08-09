@@ -267,11 +267,11 @@ namespace ITS_Middleware.Helpers
             }
         }
 
-        public async Task<ResponseApi> UpdateUserTokenRecovery(string email, string token)
+        public async Task<ResponseApi> UpdateUserTokenRecovery(string email, string token, string siteUrl)
         {
             try
             {
-                var dataJson = JsonConvert.SerializeObject(new { email = email, token = token });
+                var dataJson = JsonConvert.SerializeObject(new { email, token, siteUrl });
                 var data = new StringContent(dataJson, Encoding.UTF8, "application/json");
 
                 var response = await httpClient.PutAsync($"{Vars.API_URI}SignIn/UpdateToken", data);
@@ -288,6 +288,7 @@ namespace ITS_Middleware.Helpers
             try
             {
                 userModel.Pass = Encrypt.sha256(userModel.Pass);
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userModel.TokenRecovery);
                 var userJson = JsonConvert.SerializeObject(userModel);
                 var data = new StringContent(userJson, Encoding.UTF8, "application/json");
 
@@ -422,7 +423,7 @@ namespace ITS_Middleware.Helpers
         {
             try
             {
-                var objectData = new { id = id, imageUrl = imageUrl };
+                var objectData = new { id, imageUrl };
                 var dataJson = JsonConvert.SerializeObject(objectData);
                 var data = new StringContent(dataJson, Encoding.UTF8, "application/json");
 

@@ -63,11 +63,11 @@ namespace OauthAPI.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetByName(string project)
+        public async Task<IActionResult> GetByName(string project)
         {
             try
             {
-                return Ok(DbHelper.GetProjectByName(project));
+                return Ok(await DbHelper.GetProjectByName(project));
             }
             catch (Exception ex)
             {

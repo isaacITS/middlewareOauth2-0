@@ -1,15 +1,25 @@
-﻿@if(!string.IsNullOrEmpty(ViewBag.Message))
-{
-    <input type="hidden" value="@ViewBag.Message" id="errorMessage"/>
-}
+﻿<input type="hidden" value="@ViewBag.Message" id="errorMessage" />
 
+<div class="toast-container position-fixed top-0 start-0 p-3">
+    <div id="errorToastMessage" class="toast text-bg-danger" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <i class="bi bi-exclamation-square-fill me-2"></i>
+            <strong class="me-auto"> Error</strong>
+            <small>Enlace inválido o expirado</small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body text-light">
+            @ViewBag.Message
+        </div>
+    </div>
+</div>
 <style>
-        .container {
-            position: relative;
-            color: #494949;
-            background-color: #fff;
-        }
-        
+    .container {
+        position: relative;
+        color: #494949;
+        background-color: #fff;
+    }
+
         .container .content-page-not-found {
             margin-top: 50px;
             position: absolute;
@@ -21,49 +31,72 @@
             text-align: center;
             border-radius: 5px;
         }
-        
-        .container .content-page-not-found h1 {
-            font-weight: 900;
-            font-size: 55pt;
-            margin-bottom: 50px;
-        }
-        
-        .container .content-page-not-found h1 i {
-            font-size: 30px;
-        }
-        
-        .container .content-page-not-found h3 {
-            margin-bottom: 10px;
-        }
-        
-        #animated-icon {
-            font-size: 50pt;
-            position: absolute;
-            animation-name: moveIcon;
-            animation-duration: 5s;
-            animation-iteration-count: infinite;
-            text-shadow: 2px 6px 8px #0f0f0f57;
-        }
-        
-        @@keyframes moveIcon {
-            0% { left: 0; top: 0; }
-            25% { left: 100%; top: 0; }
-            50% { left: 100%; top: 100%; }
-            75% { left: 0; top: 100%; }
-            100% { left: 0; top: 0; }
-        }
-    </style>
-    <div class="container">
-        <div class="content-page-not-found">
-            <h1><i class="bi bi-search"></i>&nbsp;404</h1>
-            <h3>No se ha encontrado la página</h3>
-            <p>Al parecer la página que estas solicitando no se ha encontrado o acualmente se encuentra deshabilitada.</p>
-            <i id="animated-icon" class="bi bi-search"></i>
-        </div>
-    </div>
 
-<script type="text/javascript">
-    if ($('#errorMessage').val().length > 10) {
-            ShowToastMessage('error', "Enlace de actualizacón no válido o expirado", @ViewBag.Message)
+            .container .content-page-not-found h1 {
+                font-weight: 900;
+                font-size: 55pt;
+                margin-bottom: 50px;
+            }
+
+                .container .content-page-not-found h1 i {
+                    font-size: 30px;
+                }
+
+            .container .content-page-not-found h3 {
+                margin-bottom: 10px;
+            }
+
+    #animated-icon {
+        font-size: 50pt;
+        position: absolute;
+        animation-name: moveIcon;
+        animation-duration: 5s;
+        animation-iteration-count: infinite;
+        text-shadow: 2px 6px 8px #0f0f0f57;
+    }
+
+    @@keyframes moveIcon {
+        0% {
+            left: 0;
+            top: 0;
         }
-</script>
+
+        25% {
+            left: 100%;
+            top: 0;
+        }
+
+        50% {
+            left: 100%;
+            top: 100%;
+        }
+
+        75% {
+            left: 0;
+            top: 100%;
+        }
+
+        100% {
+            left: 0;
+            top: 0;
+        }
+    }
+</style>
+<div class="container">
+    <div class="content-page-not-found">
+        <h1><i class="bi bi-search"></i>&nbsp;404</h1>
+        <h3>No se ha encontrado la página</h3>
+        <p>Al parecer la página que estas solicitando no se ha encontrado o acualmente se encuentra deshabilitada.</p>
+        <i id="animated-icon" class="bi bi-search"></i>
+    </div>
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        if ($('#errorMessage').val().length > 10) {
+            const toastLiveExample = document.getElementById('errorToastMessage')
+            const toastBtp = new bootstrap.Toast(toastLiveExample)
+            toastBtp.show()
+        }
+    </script>
+}

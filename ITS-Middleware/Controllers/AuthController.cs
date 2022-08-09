@@ -121,23 +121,10 @@ namespace ITS_Middleware.Controllers
         {
             try
             {
-                var user = await requestHelper.GetUserByEmail(email);
-                if (user != null)
-                {
-                    if (!user.Activo) return Json(new { ok = false, status = 205, msg = "El usuario se encuentra deshabilitado" });
-                    var token = tokenJwt.CreateToken(user.Id);
-                    var response = requestHelper.UpdateUserTokenRecovery(email, token);
-                    if (response.Result.Ok)
-                    {
-                        var baseUrl = $"{this.Request.Scheme}://{this.Request.Host.Value}";
-                        var bodyEmail = System.IO.File.ReadAllText(Path.Combine(_env.ContentRootPath, @"wwwroot\htmlViews\resetPassMessage.html"))
-                            .Replace("{contact-name}", user.Nombre)
-                            .Replace("{link-update-pass}", $"{baseUrl}/Auth/UpdatePass?token={token}");
-                        SendEmail.SendEmailReq(email, bodyEmail, "Recuperación de contraseña, portal de administración Oauth2.0");
-                    }
-                    return Json(response);
-                }
-                return Json(new { Ok = false, Status = 400, Msg = $"No se encontró el usuario con el correo {email}" });
+                var baseUrl = $"{this.Request.Scheme}://{this.Request.Host.Value}/Auth/UpdatePass";
+                var token = tokenJwt.CreateToken(email);
+                var response = await requestHelper.UpdateUserTokenRecovery(email, token, baseUrl);
+                return Json(response);
             }
             catch (Exception ex)
             {
@@ -154,24 +141,25 @@ namespace ITS_Middleware.Controllers
             }
         }
 
-        public async Task<IActionResult> UpdatePass(string token)
+        public async Task<IActionResult> UpdatePass(string token, string jwt)
         {
-            try 
+            try
             {
-                if (tokenJwt.TokenIsValid(token))
+                ViewBag.msg = "El enlace para recuperar contraseña ha expirado o no es válido";
+                if (!string.IsNullOrEmpty(token) && tokenJwt.TokenIsValid(token))
                 {
                     string[] dataToken = Encrypt.DecryptString(token).Split("$");
-                    int id = int.Parse(dataToken[0]);
-                    var user = await requestHelper.GetUserById(id);
+                    var user = await requestHelper.GetUserByEmail(dataToken[1]);
                     if (user != null)
                     {
-                        if (user.TokenRecovery == token) return View("UpdatePassword", user);
+                        if (user.TokenRecovery != token) return View("Login");
+                        user.TokenRecovery = jwt;
+                        return View("UpdatePassword", user);
                     }
                 }
-                ViewBag.msg = "El enlace para recuperar contraseña ha expirado o no es válido";
                 return View("Login");
             }
-            
+
             catch (Exception ex)
             {
                 List<string> errors = new List<string>();
@@ -197,7 +185,7 @@ namespace ITS_Middleware.Controllers
                     var response = await requestHelper.UpdateUserPassword(userModel);
                     return Json(response);
                 }
-                return Json(new { Ok = false, Status = 400, Msg = "Los datos recibidos no son válidos o están incompletos", MsgHeader = "Información no válida"});
+                return Json(new { Ok = false, Status = 400, Msg = "Los datos recibidos no son válidos o están incompletos", MsgHeader = "Información no válida" });
             }
             catch (Exception ex)
             {

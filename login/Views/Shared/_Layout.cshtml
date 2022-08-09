@@ -56,7 +56,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="restorePassModalLabel">Restablecer contraseña</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close closeModalButton" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
           <div id="messageInvalidEmail" style="display: none;" class="alert alert-danger" role="alert"></div>
@@ -66,7 +66,7 @@
          </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-close-modal" data-bs-dismiss="modal"><i class="bi bi-x-lg"></i>&nbsp;Cancelar</button>
+        <button type="button" class="btn btn-close-modal closeModalButton" data-bs-dismiss="modal"><i class="bi bi-x-lg"></i>&nbsp;Cancelar</button>
         <button type="button" id="sendEmailRestorePass" class="btn btn-primary" disabled><i class="bi bi-send-check-fill"></i>&nbsp;Enviar correo</button>
       </div>
     </div>
@@ -75,7 +75,6 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    @await RenderSectionAsync("Scripts", required: false)
     <script type="text/javascript">
         siteurl='@Url.Content("~/")';
     </script>
@@ -98,5 +97,6 @@
     </script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/usersScripts.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

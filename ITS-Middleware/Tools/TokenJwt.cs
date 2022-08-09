@@ -2,12 +2,12 @@
 {
     public class TokenJwt
     {
-        public string CreateToken(int id)
+        public string CreateToken(string email)
         {
             try
             {
                 var expiresDate = DateTime.Now.AddMinutes(15);
-                return (Encrypt.EncryptString($"{id}${expiresDate}"));
+                return (Encrypt.EncryptString($"{expiresDate}${email}"));
             }
             catch (Exception)
             {
@@ -21,7 +21,7 @@
             {
                 DateTime dateTimeNow = DateTime.Now;
                 string[] result = Encrypt.DecryptString(token).Split("$");
-                DateTime dateTimeExpires = DateTime.Parse(result[1]);
+                DateTime dateTimeExpires = DateTime.Parse(result[0]);
                 if (dateTimeExpires < dateTimeNow)
                 {
                     return false;

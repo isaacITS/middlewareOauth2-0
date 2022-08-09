@@ -18,7 +18,7 @@ var microsoftProvider = new firebase.auth.OAuthProvider('microsoft.com');
 
 $(document).ready(() => {
     projectImage = $('#projectImageUrl').val()
-    if (projectImage != "") {
+    if (projectImage != "" && projectImage != null && projectImage != 'undefined') {
         $('body').css('background', 'no-repeat center center fixed url(https://director.cl/wp-content/themes/Director_Theme/img/PageLoader/loading.gif)')
         $('body').css('background-size', 'cover')
         $('<img/>').attr('src', projectImage).on('load', () => {
@@ -30,6 +30,7 @@ $(document).ready(() => {
         $('body').css('background', '#fff')
     }
 })
+
 
 $('#email, #pass').on('change keyup paste', () => {
     if (isEmailValid && $('#pass').val().length > 2) {

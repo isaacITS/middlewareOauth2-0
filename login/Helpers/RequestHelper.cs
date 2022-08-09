@@ -1,6 +1,7 @@
 ﻿using login.Constants;
 using login.Models.Entities;
 using Newtonsoft.Json;
+using System.Net.Http.Headers;
 using System.Text;
 
 namespace login.Helpers
@@ -15,10 +16,10 @@ namespace login.Helpers
             httpClient = new HttpClient(clientHandler, false)
             {
                 BaseAddress = new Uri(VarsHelpers.API_URI),
-                Timeout = TimeSpan.FromSeconds(60)
+                Timeout = TimeSpan.FromMinutes(2)
             };
             httpClient.DefaultRequestHeaders.Accept.Clear();
-            httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
 
@@ -57,13 +58,13 @@ namespace login.Helpers
             }
         }
 
-        public async Task<UsuariosProyecto> GetUserProject(string email)
+        public async Task<ResponseApi> UpdateToken(string token, string email, string Url)
         {
             try
             {
-                var response = await httpClient.GetAsync($"{VarsHelpers.API_URI}UsersByProject/GetByEmail?email={email}");
+                var response = await httpClient.PutAsync($"{VarsHelpers.API_URI}UsersByProject/UpdateToken?token={token}&email={email}&Url={Url}", null);
                 var responseBody = response.Content.ReadAsStringAsync().Result;
-                var userResult = JsonConvert.DeserializeObject<UsuariosProyecto>(responseBody);
+                var userResult = JsonConvert.DeserializeObject<ResponseApi>(responseBody);
                 return userResult;
             }
             catch (Exception)
@@ -72,25 +73,25 @@ namespace login.Helpers
             }
         }
 
-
-        public async Task<ResponseApi> UpdateToken(string token, int id)
-        {
-            var response = await httpClient.PutAsync($"{VarsHelpers.API_URI}UsersByProject/UpdateToken?token={token}&id={id}", null);
-            var responseBody = response.Content.ReadAsStringAsync().Result;
-            var userResult = JsonConvert.DeserializeObject<ResponseApi>(responseBody);
-            return userResult;
-        }
-
         public async Task<ResponseApi> UpdatePasword(UpdateData updateData)
         {
-            updateData.NewPass = Encrypt.Sha256(updateData.NewPass);
-            var dataJson = JsonConvert.SerializeObject(updateData);
-            var data = new StringContent(dataJson, Encoding.UTF8, "application/json");
+            try
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", updateData.TokenJwt);
 
-            var response = await httpClient.PutAsync($"{VarsHelpers.API_URI}UsersByProject/UpdatePassword", data);
-            var responseBody = response.Content.ReadAsStringAsync().Result;
-            var userResult = JsonConvert.DeserializeObject<ResponseApi>(responseBody);
-            return userResult;
+                updateData.NewPass = Encrypt.Sha256(updateData.NewPass);
+                var dataJson = JsonConvert.SerializeObject(updateData);
+                var data = new StringContent(dataJson, Encoding.UTF8, "application/json");
+
+                var response = await httpClient.PutAsync($"{VarsHelpers.API_URI}UsersByProject/UpdatePassword", data);
+                var responseBody = response.Content.ReadAsStringAsync().Result;
+                var userResult = JsonConvert.DeserializeObject<ResponseApi>(responseBody);
+                return userResult;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
     }

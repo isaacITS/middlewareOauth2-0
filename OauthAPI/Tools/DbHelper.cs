@@ -9,16 +9,16 @@ namespace OauthAPI.Tools
     internal static class DbHelper
     {
         private static readonly OauthContextDb _context = new();
-        private static ResponseApi apiResponse = new();
-        private static FirebaseHelper firebaseHelper = new();
+        private static readonly ResponseApi apiResponse = new();
+        private static readonly FirebaseHelper firebaseHelper = new();
 
         /* ====================> DATABASE USERS HELPERS <==========================*/
         //=> GET ALL USERS
-        internal static List<Usuario> GetAllUsers()
+        internal static async Task<List<Usuario>> GetAllUsers()
         {
             try
             {
-                return _context.Usuarios.Where(u => u.Id > 0).ToList();
+                return await _context.Usuarios.Where(u => u.Id > 0).ToListAsync();
             }
             catch (Exception)
             {
@@ -142,29 +142,6 @@ namespace OauthAPI.Tools
             }
         }
 
-        //==> UPDATE USER TOKEN RECOVERY
-        public static bool UpdateTokenUser(string email, string token)
-        {
-            try
-            {
-                var getUser = GetUserByEmail(email);
-                if (getUser == null)
-                {
-                    return false;
-                }
-                getUser.TokenRecovery = token;
-                var local = _context.Set<Usuario>().Local.FirstOrDefault(entry => entry.Id.Equals(getUser.Id));
-                if (local != null) _context.Entry(local).State = EntityState.Detached;
-                _context.Entry(getUser).State = EntityState.Modified;
-                _context.SaveChanges();
-                return true;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
         //==> UPDATE USER PASSWORD
         public static bool UpdateUserPassword(Usuario userModel)
         {
@@ -236,11 +213,11 @@ namespace OauthAPI.Tools
         }
 
         /*=> GET PROJECT BY NAME*/
-        internal static Proyecto GetProjectByName(string name)
+        internal static async Task<Proyecto> GetProjectByName(string name)
         {
             try
             {
-                return _context.Proyectos.FirstOrDefault(p => p.Nombre == name);
+                return await _context.Proyectos.FirstOrDefaultAsync(p => p.Nombre == name);
             }
             catch (Exception)
             {

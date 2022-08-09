@@ -20,11 +20,11 @@ namespace OauthAPI.Controllers
 
         [HttpGet]
         [Authorize]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
             try
             {
-                return Ok(DbHelper.GetAllUsers());
+                return Ok(await DbHelper.GetAllUsers());
             }
             catch (Exception ex)
             {

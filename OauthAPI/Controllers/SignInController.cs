@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using OauthAPI.ExceptionsHandler;
 using OauthAPI.Helpers;
 using OauthAPI.Models.Entities;
@@ -11,10 +12,13 @@ namespace OauthAPI.Controllers
     public class SignInController : ControllerBase
     {
         private readonly ILogger<SignInController> _logger;
+        private readonly IHostEnvironment _env;
+        private readonly IConfiguration config;
 
-        public SignInController(ILogger<SignInController> logger)
+        public SignInController(ILogger<SignInController> logger, IHostEnvironment env, IConfiguration config)
         {
-            _logger = logger;
+            _logger = logger;            _env = env;
+            this.config = config;
         }
 
         [HttpGet]
@@ -70,13 +74,24 @@ namespace OauthAPI.Controllers
         }
 
         [HttpPut]
-        public IActionResult UpdateToken(string email, string token)
+        public IActionResult UpdateToken(string email, string token, string siteUrl)
         {
             try
             {
-                if (DbHelper.UpdateTokenUser(email, token))
+                if (!ValidateTokenEncrypted.TokenIsValid(token)) return Ok(new { ok = false, status = 400, msg = "La información que se esta ingresando no es correcta, verifica los datos", msgHeader = "No se ha enviado el correo electrónico" });
+                var user = DbHelper.GetUserByEmail(email);
+                if (user == null || !user.Activo) return Ok(new { ok = false, status = 400, msg = "Al parecer no existe un usuario registrado o se encuentra deshabilitado", msgHeader = "No se ha enviado el correo electrónico" });
+                user.TokenRecovery = token;
+                if (DbHelper.UpdateUser(user))
                 {
-                    return Ok(new { ok = true, status = 200, msg = "Se ha enviado un correo con un token para actualizar la contraseña", msgHeader = $"Correo enviado a {email}" });
+                    var tokenJwt = JwtToken.GenerateTokenUpdatePass();
+                    var bodyEmail = System.IO.File.ReadAllText(Path.Combine(_env.ContentRootPath, @"EmailViewTemplates\UserAdmin\resetPassMessage.html"))
+                    .Replace("{contact-name}", user.Nombre)
+                    .Replace("{link-update-pass}", $"{siteUrl}?token={token}&jwt={tokenJwt}");
+                    SendEmail.SendEmailReq(email, bodyEmail, "Recuperación de contraseña, portal de administración Oauth2.0",
+                        config.GetSection("ApplicationSettings:EmailConfig:email").Value.ToString(),
+                        config.GetSection("ApplicationSettings:EmailConfig:password").Value.ToString());
+                    return Ok(new { ok = true, status = 200, msg = $"Hola {user.Nombre}, te hemos enviado un correo electrónico", msgHeader = "Correo electrónico enviado con exito" });
                 }
                 throw new Exception();
             }
@@ -95,10 +110,12 @@ namespace OauthAPI.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         public IActionResult UpdatePassword(Usuario usuario)
         {
             try
             {
+                usuario.TokenRecovery = null;
                 if (DbHelper.UpdateUserPassword(usuario))
                 {
                     return Ok(new { ok = true, status = 200, msg = $"Hola {usuario.Nombre}, se ha actualizado su contraseña", msgHeader = "Contraseña actualizada" });
