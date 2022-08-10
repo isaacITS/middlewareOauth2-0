@@ -127,19 +127,22 @@ namespace ITS_Middleware.Controllers
             {
                 string password = user.Pass;
                 string email = user.Email;
+                string celular = user.Telefono;
                 var oldUser = await requestHelper.GetUserByProjectById(user.Id);
                 var response = await requestHelper.UpdateUserByProject(user);
                 var baseUrl = "https://its-oauth-login.azurewebsites.net/";
                 if (response.Status == 500 || response.Status == 401) throw new Exception(response.Msg);
                 if (response.Ok)
                 {
-                    if (oldUser.Email != email || (!string.IsNullOrEmpty(password) && oldUser.Pass != Encrypt.sha256(password)))
+                    if (oldUser.Email != email || (!string.IsNullOrEmpty(password) && oldUser.Pass != Encrypt.sha256(password)) || oldUser.Telefono != celular)
                     {
                         int IdProyect = user.IdProyecto == null ? default : user.IdProyecto.Value;
                         var project = await requestHelper.GetProjectById(IdProyect);
 
                         string dataUpdated = oldUser.Email != email && oldUser.Pass != user.Pass ? "el correo y contraseña" : oldUser.Email != email ? "el correo" : oldUser.Pass != user.Pass ? "la contraseña" : "";
+                        dataUpdated += oldUser.Telefono != celular ? ", tu Teléfono se ha actualizado": "No se agregó un Teléfono.";
                         password = oldUser.Pass != Encrypt.sha256(password) ? password : "Tu contraseña sigue siendo la misma";
+                         
 
                         var bodyEmail = System.IO.File.ReadAllText(Path.Combine(_env.ContentRootPath, @"wwwroot\htmlViews\CambioDatos.html"))
                             .Replace("{contact-name}", user.NombreCompleto)
@@ -148,6 +151,7 @@ namespace ITS_Middleware.Controllers
                             .Replace("{dato}", dataUpdated)
                             .Replace("{user-email}", email)
                             .Replace("{user-pass}", password)
+                            .Replace("{user-phone}", celular)
                             .Replace("{imagen-empresa}", !string.IsNullOrEmpty(project.ImageUrl) ? project.ImageUrl : "¡Bienvenido!");
 
                         SendEmail.SendEmailReq(oldUser.Email, bodyEmail, $"¡Se han actualizado sus datos de: {project.Nombre}");
