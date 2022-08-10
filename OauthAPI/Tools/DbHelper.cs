@@ -477,13 +477,7 @@ namespace OauthAPI.Tools
             try
             {
                 var userSaved = GetUserByProjectById(userModel.Id);
-                userModel.FechaCreacion = userSaved.FechaCreacion;
-                userModel.FechaAcceso = userSaved.FechaAcceso;
-                userModel.Activo = userSaved.Activo;
-                if (string.IsNullOrEmpty(userModel.Pass))
-                {
-                    userModel.Pass = userSaved.Pass;
-                }
+                if (string.IsNullOrEmpty(userModel.Pass)) userModel.Pass = userSaved.Pass;
 
                 var local = _context.Set<UsuariosProyecto>().Local.FirstOrDefault(entry => entry.Id.Equals(userModel.Id));
                 if (local != null) _context.Entry(local).State = EntityState.Detached;

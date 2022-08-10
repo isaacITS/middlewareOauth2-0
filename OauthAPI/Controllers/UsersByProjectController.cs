@@ -118,12 +118,12 @@ namespace OauthAPI.Controllers
         {
             try
             {
-                var oldPhone = DbHelper.GetUserByProjectByPhone(userModel.Telefono).Telefono;
-                var oldEmail = DbHelper.GetUserByProjectById(userModel.Id).Email;
-                if (!DbHelper.isUserProjectEmailAvailable(userModel.Email) && userModel.Email != oldEmail) return Unauthorized(new { ok = false, status = 400, msgHeader = "No se actualizó el usuario", msg = $"El correo {userModel.Email} ya está registrado, intenta usar otro" });
-                if (!DbHelper.isUserProjectEmailAvailable(userModel.Telefono) && userModel.Telefono != oldPhone) return Unauthorized(new { ok = false, status = 400, msgHeader = "No se actualizó el usuario", msg = $"El teléfono {userModel.Telefono} ya está registrado, intenta usar otro" });
+                var oldUser = DbHelper.GetUserByProjectById(userModel.Id);
+
+                if (!DbHelper.isUserProjectEmailAvailable(userModel.Email) && userModel.Email != oldUser.Email) return Unauthorized(new { ok = false, status = 400, msgHeader = "No se actualizó el usuario", msg = $"El correo {userModel.Email} ya está registrado, intenta usar otro" });
+                if ((!string.IsNullOrEmpty(userModel.Telefono) && !DbHelper.isUserProjectPhoneAvailable(userModel.Telefono)) && userModel.Telefono != oldUser.Telefono) return Unauthorized(new { ok = false, status = 400, msgHeader = "No se actualizó el usuario", msg = $"El teléfono {userModel.Telefono} ya está registrado, intenta usar otro" });
                 if (DbHelper.UpdateUserByProject(userModel)) return Ok(new { ok = true, status = 200, msgHeader = "Usuario actualizado", msg = $"Se ha actualizado el usuario {userModel.NombreCompleto}" });
-                return Unauthorized(new { ok = false, status = 400, msgHeader = "No se pudo actualizar el usuario", msg = "Intenta actualizar el usuario nuevamente, más tarde" });
+                throw new Exception();
             }
             catch (Exception ex)
             {
