@@ -15,9 +15,12 @@
             <p class="text-danger"><small id="messageEmail"></small></p>
         </div>
         <div class="form-floating mb-3">
-            <input class="form-control" type="password" name="pass" id="pass" placeholder="Contraseña" required />
-            <label class="form-label" for="pass"><i class="fas fa-key"></i>&nbsp;Contraseña:</label>
-            <p class="text-danger"><small id="messagePass"></small></p>
+             <input type="password" class="form-control" name="pass" id="pass" placeholder="Contraseña" required aria-label="Contraseña"  aria-describedby="addon-wrapping" >
+              <label class="form-label" for="pass"><i class="fas fa-key"></i>&nbsp;Contraseña:</label>
+        </div>
+        <div class="form-check form-switch text-left" style="text-align: left;">
+            <input class="form-check-input" type="checkbox" role="switch" id="showHidePass" style="text-align: left;">
+            <label class="form-check-label" for="showHidePass" style="float: left;">Ver contraseña</label>
         </div>
         <div class="forgot-password">
             <button data-bs-toggle="modal" data-bs-target="#restorePassModal" class="btn"><i class="bi bi-question-circle-fill"></i>&nbsp;¿Olvidase la contraseña?</button>
@@ -29,27 +32,27 @@
             string[] authMethods = project.MetodosAutenticacion.Split(",");
             if(authMethods.Length > 1)
             {
-                        <div class="oauth-services">
-                            <div class="divisor">
-                                <hr><p>o</p><hr>
-                            </div>
-                            <div class="row">
-                                @foreach(string method in authMethods)
+                                <div class="oauth-services">
+                                    <div class="divisor">
+                                        <hr><p>o</p><hr>
+                                    </div>
+                                    <div class="row">
+                                        @foreach(string method in authMethods)
                         {
                             if(method != "Correo y contrasena" && method != "Numero de telefono")
                             {
-                                        <div class="col">
-                                            <button class="btn" id="@method" type="button"><i class="fab fa-@method.ToLower()"></i></button>
-                                        </div>
+                                                <div class="col">
+                                                    <button class="btn" id="@method" type="button"><i class="fab fa-@method.ToLower()"></i></button>
+                                                </div>
                             } else if(method == "Numero de telefono")
                             {
-                                        <div class="col">
-                                            <button class="btn" id="@method.Replace(' ','-')" type="button" data-bs-toggle="modal" data-bs-target="#signInPhoneModal"><i class="fas fa-phone"></i></button>
-                                        </div>
+                                                <div class="col">
+                                                    <button class="btn" id="@method.Replace(' ','-')" type="button" data-bs-toggle="modal" data-bs-target="#signInPhoneModal"><i class="fas fa-phone"></i></button>
+                                                </div>
                             }
                         }
-                            </div>
-                        </div>
+                                    </div>
+                                </div>
             }
         }
         <div class="loader-form">

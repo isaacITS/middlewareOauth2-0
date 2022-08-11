@@ -104,6 +104,8 @@ body .table tbody tr td .dropend .dropdown-menu {
 body .table tbody tr td .dropend .dropdown-menu li {
     color: #fff;
     font-weight: 600;
+    padding: 1px;
+    padding-left: 10px;
 }
 
 body .table tbody tr td .dropend .dropdown-menu li:hover {

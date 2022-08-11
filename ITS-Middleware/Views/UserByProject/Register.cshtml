@@ -9,7 +9,7 @@
         <label for="Nombre" class="label-form">Nombre completo:</label>
         <div class="input-group flex-nowrap">
             <span class="material-icons input-group-text" id="addon-wrapping">person</span>
-            <input type="text" class="form-control" asp-for="NombreCompleto" id="Nombre" placeholder="Nombre" />
+            <input type="text" class="form-control" mmaxlength="80" asp-for="NombreCompleto" id="Nombre" placeholder="Nombre" />
         </div>
         <p><small class="text-danger" id="messageNombre"></small></p>
     </div>
@@ -36,7 +36,7 @@
         <label for="Email" class="label-form">Correo electr&oacute;nico:</label>
         <div class="input-group flex-nowrap">
             <span class="material-icons input-group-text" id="addon-wrapping">email</span>
-            <input type="email" class="form-control" asp-for="Email" id="Email" placeholder="Correo electr&oacute;nico" />
+            <input type="email" class="form-control" maxlength="100" asp-for="Email" id="Email" placeholder="Correo electr&oacute;nico" />
         </div>
         <p><small class="text-danger" id="messageEmail"></small></p>
     </div>
@@ -44,7 +44,7 @@
         <label for="Pass" class="label-form">Contrase&ntilde;a:</label>
         <div class="input-group flex-nowrap">
             <span class="material-icons input-group-text" id="addon-wrapping">vpn_key</span>
-            <input class="form-control" type="password" asp-for="Pass" id="Pass" placeholder="Contrase&ntilde;a" />
+            <input class="form-control" type="password" maxlength="150" asp-for="Pass" id="Pass" placeholder="Contrase&ntilde;a" />
             <span class="material-icons input-group-text" id="btn-action-pass">visibility_off</span>
         </div>
         <p><small class="text-danger" id="messagePass"></small></p>

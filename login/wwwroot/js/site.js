@@ -119,7 +119,6 @@ function getUiConfig() {
                 console.log(response.phoneNumber)
                 if (response != null && response.phoneNumber != null) {
                     var data = `phoneNumber=${response.phoneNumber.slice(-10)}&projectId=${projectId}&userUid=${response.uid}`
-                    tokenService = response.refreshToken
                     signIn(data)
                     $('.btn-close').click()
                 } else {
@@ -174,7 +173,11 @@ function signIn(data) {
                 ShowToastMessage('error', response.msgHeader, response.msg)
             } else {
                 ShowToastMessage('success', "Ingresando...", "En un momento serás redireccionado a la pantalla principal")
-                window.location.href = `${redirectToUrl}/signIn?token=${response.tokenJwt}`
+                if (!redirectToUrl.match(/^http?:\/\//i) || !redirectToUrl.match(/^https?:\/\//i)) {
+                   location.href = `https://${redirectToUrl}/${response.tokenJwt}`
+                } else {
+                    location.href = `${redirectToUrl}/${response.tokenJwt}`
+                }
             }
         },
         failure: function (response) {
@@ -245,3 +248,11 @@ function ShowToastMessage(type, title_short_text, body_text) {
     $('#toast-body-text').text(body_text);
     $('#liveToast').toast('show');
 }
+
+$('#showHidePass').on('change', () => {
+    if ($('#showHidePass').is(':checked')) {
+        $('#pass').attr('type', 'text')
+    } else {
+        $('#pass').attr('type', 'password')
+    }
+})

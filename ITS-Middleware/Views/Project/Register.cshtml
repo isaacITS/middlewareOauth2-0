@@ -9,7 +9,7 @@
         <label for="nombre" class="label-form">Nombre:</label>
         <div class="input-group flex-nowrap">
             <span class="material-icons input-group-text" id="addon-wrapping">grid_view</span>
-            <input class="form-control" asp-for="Nombre" id="Nombre" placeholder="Nombre" />
+            <input class="form-control" maxlength="50" asp-for="Nombre" id="Nombre" placeholder="Nombre" />
         </div>
         <p><small class="text-danger" id="messageNombre"></small></p>
     </div>
@@ -40,7 +40,7 @@
         <label for="Enlace" class="label-form">Enlace del sitio:</label>
         <div class="input-group flex-nowrap">
             <span class="material-icons input-group-text" id="addon-wrapping">add_link</span>
-            <input type="url" class="form-control" id="Enlace" asp-for="Enlace" placeholder="Enlace del sitio" />
+            <input type="url" class="form-control" maxlength="150" id="Enlace" asp-for="Enlace" placeholder="Enlace del sitio" />
         </div>
         <p><small class="text-danger" id="messageEnlace"></small></p>
     </div>

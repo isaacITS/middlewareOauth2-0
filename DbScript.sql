@@ -1,7 +1,3 @@
-create database middlewareITS;
-use middlewareITS;
-
-
 create table usuarios(
 	id int primary key identity(1,1),
 	nombre varchar(50) not null,
@@ -9,6 +5,7 @@ create table usuarios(
 	puesto varchar(50) not null,
 	email varchar(60) unique,
 	pass varchar(150) not null,
+	tokenRecovery varchar(300),
 	activo bit not null
 );
 
@@ -21,6 +18,7 @@ insert into metodosAuth values('Cuenta Facebook');
 insert into metodosAuth values('Cuenta Twitter');
 insert into metodosAuth values('Correo y contrasena');
 insert into metodosAuth values('Cuenta Github');
+insert into metodosAuth values('Cuenta Apple');
 insert into metodosAuth values('Numero de telefono');
 insert into metodosAuth values('Cuenta Microsoft');
 insert into metodosAuth values('Cuenta Yahoo');
@@ -32,7 +30,8 @@ create table proyectos(
 	fechaAlta datetime not null,
 	metodosAutenticacion varchar(300) not null,
 	activo bit not null,
-	imageUrl varchar(300),
+	enlace varchar(150),
+	imageUrl varchar(500),
 	idUsuarioRegsitra int foreign key references usuarios(id)
 );
 
@@ -45,5 +44,7 @@ create table usuariosProyecto(
 	fechaCreacion datetime,
 	fechaAcceso datetime,
 	activo bit not null,
+	telefono varcahr(15),
+	tokenRecovery varchar(300),
 	idProyecto int foreign key references proyectos(id)
 );

@@ -139,9 +139,9 @@ namespace ITS_Middleware.Controllers
                         int IdProyect = user.IdProyecto == null ? default : user.IdProyecto.Value;
                         var project = await requestHelper.GetProjectById(IdProyect);
 
-                        string dataUpdated = oldUser.Email != email && oldUser.Pass != user.Pass ? "el correo y contraseña" : oldUser.Email != email ? "el correo" : oldUser.Pass != user.Pass ? "la contraseña" : "";
-                        dataUpdated += oldUser.Telefono != phone ? ", tu Teléfono se ha actualizado": "No se agregó un Teléfono.";
-                        password = oldUser.Pass != Encrypt.sha256(password) ? password : "Tu contraseña sigue siendo la misma";
+                        string dataUpdated = oldUser.Email != email && (!string.IsNullOrEmpty(password) && oldUser.Pass != Encrypt.sha256(password)) ? "el correo y contraseña" : oldUser.Email != email ? "el correo" : !string.IsNullOrEmpty(password) && oldUser.Pass != Encrypt.sha256(password) ? "la contraseña" : "";
+                        dataUpdated += oldUser.Telefono != phone ? ", tu Teléfono se ha actualizado" : "No se agregó un Teléfono.";
+                        password = !string.IsNullOrEmpty(password) && oldUser.Pass != Encrypt.sha256(password) ? password : "Tu contraseña sigue siendo la misma";
                          
 
                         var bodyEmail = System.IO.File.ReadAllText(Path.Combine(_env.ContentRootPath, @"wwwroot\htmlViews\CambioDatos.html"))
